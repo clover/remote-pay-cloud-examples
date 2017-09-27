@@ -160,7 +160,7 @@ export default class Payment extends React.Component {
                                     return(
                                         <div key={'refund-'+i} className="space_between_row space_under">
                                             <div><strong>Refund</strong></div>
-                                            <div className="middle_grow"><strong>{refund.date.toLocaleDateString()}  •  {refund.date.toLocaleTimeString()}</strong></div>
+                                            <div className="middle_grow"/>
                                             <div><strong>{this.formatter.formatCurrency(refund.amount)}</strong></div>
                                         </div>)
                                 }, this)}

@@ -1,5 +1,6 @@
 import React from 'react';
 import Refund from "../models/Refund";
+import PaymentRefund from "../models/PaymentRefund";
 import clover from 'remote-pay-cloud-api';
 import OrderPayment from "../models/OrderPayment";
 import Transaction from "../models/Transaction";
@@ -382,7 +383,11 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     onRefundPaymentResponse(response){
         console.log('refundPaymentResponse', response);
         if(response.result === "SUCCESS") {
-            let refund = new Refund(response.refund.amount);
+            let refund = new PaymentRefund();
+            refund.setAmount(response.refund.amount);
+            refund.setOrderId(response.orderId);
+            refund.setPaymentId(response.paymentId);
+            refund.setRefundId(response.refund.id);
             let payment = this.store.getPaymentByCloverId(response.paymentId);
             payment.addRefund(refund);
             payment.setTransactionTitle("Refund");
