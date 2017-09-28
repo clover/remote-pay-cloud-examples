@@ -1039,7 +1039,7 @@ export default class Register extends React.Component {
                 </div>
                 <div className="register_right">
                     {!this.state.makingSale &&
-                    <div className="column_plain">
+                    <div className="column_plain full_height">
                         <div className="register_items">
                             {data.map((item, i) => {
                                 return <AvailableItem key={'item-' + i} item={item} onClick={this.addToOrder}/>

@@ -37,6 +37,8 @@ export default class Layout extends Component {
             delay: 100,
             result: 'No Result',
             response: false,
+            printers: [],
+            choosePrinter: false,
         };
 
         // Create binding for React since we aren't using React.createClass - https://daveceddia.com/avoid-bind-when-passing-props/.
@@ -59,8 +61,8 @@ export default class Layout extends Component {
         this.acceptSignature = this.acceptSignature.bind(this);
         this.rejectSignature = this.rejectSignature.bind(this);
         this.QRClicked = this.QRClicked.bind(this);
-        this.connectQR = this.connectQR.bind(this);
         this.handleScan = this.handleScan.bind(this);
+        this.choosePrinter = this.choosePrinter.bind(this);
 
         this.store = new Store();
         this.initStore();
@@ -142,13 +144,16 @@ export default class Layout extends Component {
     setStatus(message, reason) {
         //console.log(message, reason);
         if((typeof message === "object") && (message !== null)){
-            this.setState({statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false});
+            this.setState({statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false, choosePrinter: false});
+        }
+        else if(message == "Printers"){
+            this.setState({printers: reason})
         }
         else if (message == 'Sale Processed Successfully' || message == 'Auth Processed Successfully' || message === "PreAuth Successful" || message === "PreAuth Processed Successfully") {
             this.saleFinished(message);
         }
         else if(message === 'Response was not a sale'){
-            this.setState({responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false});
+            this.setState({responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false, choosePrinter: false});
             setTimeout(function() {
                 this.setState({statusToggle: false, fadeBackground: false});
             }.bind(this), 1200);
@@ -167,7 +172,8 @@ export default class Layout extends Component {
                 inputOptions: null,
                 fadeBackground: true,
                 responseFail: false,
-                refundSuccess: false
+                refundSuccess: false,
+                choosePrinter: false
             });
         }
     }
@@ -177,7 +183,7 @@ export default class Layout extends Component {
         if(message === 'PreAuth Successful'){
             this.setState({preAuth: true});
         }
-        this.setState({statusText: message, statusToggle: true, saleFinished: true, fadeBackground: true, responseFail: false, refundSuccess: false, response: true});
+        this.setState({statusText: message, statusToggle: true, saleFinished: true, fadeBackground: true, responseFail: false, refundSuccess: false, response: true, choosePrinter: false});
         setTimeout(function() {
             this.setState({statusToggle: false, fadeBackground: false, response: false});
         }.bind(this), 1500);
@@ -190,7 +196,7 @@ export default class Layout extends Component {
         if(message === 'Refund Processed Successfully'){
             this.setState({refundSuccess: true});
         }
-        this.setState({statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false});
+        this.setState({statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false, choosePrinter: false});
         setTimeout(function() {
             this.setState({statusToggle: false, fadeBackground: false});
         }.bind(this), 1500);
@@ -247,8 +253,9 @@ export default class Layout extends Component {
         this.cloverConnection.connectToDevice(this.state.uriText, null);
     }
 
-    connectQR(){
-
+    choosePrinter(printer){
+        console.log("printer chosen: ", printer);
+        this.setState({printer : printer, choosePrinter: false});
     }
 
     QRClicked(){
@@ -332,6 +339,8 @@ export default class Layout extends Component {
             height: 240,
             width: 320,
         };
+        let choosePrinter=this.state.choosePrinter;
+        //let choosePrinter = false;
 
         return (
             <div className="app-content">
@@ -382,6 +391,28 @@ export default class Layout extends Component {
                     }
                 </div>
                 }
+                {choosePrinter &&
+                <div className="popup popup_container choose_printer">
+                    {this.state.printers.map((printer, i) => {
+                        return <div key={'printer-' + i} className="printer_row" onClick={() =>{this.choosePrinter(printer)}}>
+                            <div className="row">
+                                <div>ID:</div>
+                                <div>{printer.id}</div>
+                            </div>
+                            <div className="row">
+                                <div>Name:</div>
+                                <div>{printer.name}</div>
+                            </div>
+                            <div className="row">
+                                <div>Type:</div>
+                                <div>{printer.type}</div>
+                            </div>
+
+                        </div>
+                    })}
+
+                </div>
+                }
                 {showBody? (
                     <div className="body_content">{React.cloneElement(this.props.children,
                         {
@@ -398,6 +429,7 @@ export default class Layout extends Component {
                             unfadeBackground: this.unfadeBackground,
                             responseFail: this.state.responseFail,
                             refundSuccess: this.state.refundSuccess,
+                            printers: this.state.printers,
                         })}
                     </div>
                 ):(

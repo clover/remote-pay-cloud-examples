@@ -39,6 +39,7 @@ export default class Store {
         this.automaticPaymentConfirmation = true;
         this.getNextPaymentId = this.getNextPaymentId.bind(this);
         this.customActivity = null;
+        this.printers = [];
 
     }
 
@@ -331,6 +332,14 @@ export default class Store {
 
     getCustomActivity(){
         return this.customActivity;
+    }
+
+    getPrinters(){
+        return this.printers;
+    }
+
+    setPrinters(printers){
+        this.printers = printers;
     }
 
 }
