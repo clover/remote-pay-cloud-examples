@@ -7,7 +7,7 @@
 
     webSocketFactory.create = function (config) {
         return {
-            get: function(endpoint) {
+            get: function (endpoint) {
                 let webSocketOverrides = {
                     createWebSocket: function (endpoint) {
                         // To support self-signed certificates you must pass rejectUnauthorized = false.

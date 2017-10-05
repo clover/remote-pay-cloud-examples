@@ -1,4 +1,4 @@
-(function(module) {
+(function (module) {
     const clover = require("remote-pay-cloud");
 
     var deviceConnectionConfiguration = module.exports;
@@ -10,7 +10,7 @@
      * @param useCloud
      * @returns {target}
      */
-    deviceConnectionConfiguration.create = function(connectionConfiguration, useCloud) {
+    deviceConnectionConfiguration.create = function (connectionConfiguration, useCloud) {
         let deviceConfiguration = null;
         if (useCloud) {
             // Cloud Configuration.
@@ -37,11 +37,11 @@
                 connectionConfiguration.imageUtil);
             // Append the pairing code handlers to the device configuration.
             deviceConfiguration = Object.assign(deviceConfiguration, {
-                onPairingCode: function(pairingCode) {
-                    console.log(`Your pairing code is ${pairingCode}, please enter this code on your device.`);
+                onPairingCode: function (pairingCode) {
+                    console.log(`    > Entering Pairing Code on Device: ${pairingCode}`);
                 },
-                onPairingSuccess: function(authToken) {
-                    console.log("Pairing succeeded, authToken is " + authToken);
+                onPairingSuccess: function (authToken) {
+                    console.log(`    > Got Pairing Auth Token: ${authToken}`);
                 }
             });
         }
