@@ -155,7 +155,6 @@ var exampleCLI = (function (module) {
                     ];
                     inquirer.prompt(printPrompt).then((answers) => {
                         cloverConnector.printImageFromURL("https://raw.githubusercontent.com/clover/clover-cloud-connector-unit-examples/master/public/images/test_receipt_8.jpg");
-                        setTimeout(() => showMenu(), 5000);
                     });
                 },
                 "Exit": () => disposeAndExit(cloverConnector)

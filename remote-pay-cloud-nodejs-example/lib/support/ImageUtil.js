@@ -19,9 +19,7 @@
                 }).then(({ filename, image}) => {
                     const bitmap = fs.readFileSync(`./${filename}`);
                     onLoad(bitmap);
-                    fs.unlink(`./${filename}`, ()=> {
-                        console.log("Temporary image file has been removed.");
-                    });
+                    fs.unlink(`./${filename}`, ()=> {});
                 }).catch((error) => {
                     onError(error);
                 });

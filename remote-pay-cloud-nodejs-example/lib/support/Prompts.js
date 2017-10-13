@@ -51,7 +51,7 @@
                 name: "99. Exit",
                 value: "Exit"
             }],
-            default: "PrintFromUrl"
+            default: "Sale"
         }
     ];
 

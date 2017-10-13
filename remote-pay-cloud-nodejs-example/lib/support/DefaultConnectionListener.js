@@ -1,6 +1,7 @@
 (function (module) {
     const clover = require("remote-pay-cloud");
     const inquirer = require('inquirer');
+    const MenuLauncher = require("../support/MenuLauncher");
 
     var defaultConnectorListener = module.exports;
 
@@ -35,7 +36,10 @@
             },
 
             onPrintJobStatusResponse(response) {
-                console.log("Printer status:" +  response.status);
+                console.log(`    > Printer status: ${response.status}`);
+                if (response.status == "ERROR" || response.status === "SUCCESS") {
+                    MenuLauncher.launchMenu();
+                }
             },
 
             onVerifySignatureRequest: function (request) {
