@@ -479,7 +479,13 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     onRetrievePrintersResponse(response){
         console.log("Printers Response",response);
         this.store.setPrinters(response.printers);
+        let printers = [];
+        printers.push({})
         this.setStatus("Printers", response.printers);
+    }
+
+    onPrintJobStatusResponse(response){
+        console.log("printJobStatusResponse", response);
     }
 
 }
