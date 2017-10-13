@@ -7,38 +7,55 @@
             return false;
         }
         return true;
-    }
+    };
 
-    prompts.initial = [
-        {
-            type: "list",
-            name: "followPrompts",
-            message: "Would you like to follow prompts or manually enter your configuration in the connectWithManualConfig function in lib/Example.js?",
-            choices: [{
-                name: "Follow prompts",
-                value: "prompts"
-            }, {
-                name: "Manually enter configuration",
-                value: "manual"
-            }],
-            default: "manual"
-        }
-    ];
-
-    prompts.configuration = [
+    prompts.actions = [
         {
             type: "list",
             name: "action",
             message: "What action would you like to take?",
             choices: [{
-                name: "Display a message on my Clove device",
-                value: "message"
+                name: "1. Sale",
+                value: "Sale"
             }, {
-                name: "Initiate a sale",
-                value: "sale"
+                name: "2. Auth",
+                value: "Auth"
+            }, {
+                name: "3. PreAuth",
+                value: "PreAuth"
+            }, {
+                name: "4. Vault Card",
+                value: "Vault"
+            }, {
+                name: "5. Manual Refund",
+                value: "ManualRefund"
+            }, {
+                name: "6. Read Card Data",
+                value: "ReadCard"
+            }, {
+                name: "7. Show Welcome Screen",
+                value: "ShowWelcomeScreen"
+            }, {
+                name: "8. Show Thank You Screen",
+                value: "ShowThankYouScreen"
+            }, {
+                name: "9. Display Message",
+                value: "DisplayMessage"
+            }, {
+                name: "10. Reset Device",
+                value: "ResetDevice"
+            }, {
+                name: "11. Print Image from URL",
+                value: "PrintFromUrl"
+            }, {
+                name: "99. Exit",
+                value: "Exit"
             }],
-            default: "message"
-        },
+            default: "PrintFromUrl"
+        }
+    ];
+
+    prompts.configuration = [
         {
             type: "input",
             name: "applicationId",
@@ -116,6 +133,43 @@
             message: "Enter your friendly id:",
             default: "friendly_id"
         }
-    ]
+    ];
+
+    prompts.preAuth = [
+        {
+            type: "confirm",
+            name: "preAuth",
+            message: "Do you want to capture the pre auth for $20?",
+            default: true
+        }
+    ];
+
+    prompts.tip = [
+        {
+            type: "confirm",
+            name: "tip",
+            message: "Would you like to add a $2.00 tip?",
+            default: false
+        }
+    ];
+
+    prompts.amount = [
+        {
+            type: "input",
+            name: "amount",
+            message: "Amount in cents",
+            default: 1000,
+            validate: required
+        }
+    ];
+
+    prompts.message = [
+        {
+            type: "input",
+            name: "message",
+            message: "Enter Message:",
+            default: "Hello!"
+        }
+    ];
 
 })(module);

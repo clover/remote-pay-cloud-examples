@@ -7,7 +7,7 @@ This example contains a simple Node.js application which demonstrates how to con
 
 ## Running the Example
 ```bash
-$ node ./lib/Examples.js
+$ node ./lib/ExamplesCLI.js
 ```
 
 ## Implementation Notes
