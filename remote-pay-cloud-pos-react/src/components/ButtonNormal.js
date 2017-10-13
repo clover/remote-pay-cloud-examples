@@ -34,8 +34,3 @@ export default class ButtonNormal extends React.Component {
         )
     }
 }
-
-ButtonNormal.defaulProps = {
-    color: "white",
-    extraClassNames: '',
-};

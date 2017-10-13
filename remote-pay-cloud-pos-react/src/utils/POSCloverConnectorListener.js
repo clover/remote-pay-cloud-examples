@@ -476,4 +476,10 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
         }
     }
 
+    onRetrievePrintersResponse(response){
+        console.log("Printers Response",response);
+        this.store.setPrinters(response.printers);
+        this.setStatus("Printers", response.printers);
+    }
+
 }
