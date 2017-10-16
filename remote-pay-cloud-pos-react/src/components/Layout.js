@@ -15,7 +15,7 @@ export default class Layout extends Component {
         super(props);
         this.state = {
             connected : false,
-            uriText : "wss://192.168.0.35:12345/remote_pay",
+            uriText : "wss://10.0.0.236:12345/remote_pay",
             pairingCode: '',
             statusText: '',
             statusToggle: false,
@@ -39,6 +39,7 @@ export default class Layout extends Component {
             response: false,
             printers: [],
             choosePrinter: false,
+            localhost: false
         };
 
         // Create binding for React since we aren't using React.createClass - https://daveceddia.com/avoid-bind-when-passing-props/.
@@ -290,6 +291,14 @@ export default class Layout extends Component {
         this.setState({fadeBackground: false});
     }
 
+    componentWillMount() {
+        //console.log('componentWillMount', location);
+        if (location.hostname === "localhost" || location.protocol === "https:"){
+            console.log('it\'s localhost');
+            this.setState({localhost: true});
+        }
+    }
+
     render() {
         let connectionState = "Disconnected";
         if( this.state.connected) {
@@ -340,7 +349,7 @@ export default class Layout extends Component {
             width: 320,
         };
         let choosePrinter=this.state.choosePrinter;
-        //let choosePrinter = false;
+        let localhost = this.state.localhost;
 
         return (
             <div className="app-content">
@@ -438,7 +447,6 @@ export default class Layout extends Component {
                         <p>Example POS</p>
 
                         {!showQR &&
-
                         <div className="column_plain center">
                             <h3>Enter the URI of your device</h3>
                             <p> This can be found in the Network Pay Display app</p>
@@ -446,11 +454,15 @@ export default class Layout extends Component {
                                 <input className="input_field" type="text" id="uri" value={this.state.uriText} onChange={this.handleChange}/>
                                 <ButtonNormal color="white" title="Connect" extra="connect_button" onClick={this.connect}/>
                             </div>
-                            <div className="row_padding">or</div>
-                            <div className="qr_button">
-                                <ButtonNormal color="white"  extra="connect_button margin_right" title="Connect with QR" onClick={this.QRClicked}/>
-                                <span className="qr_tooltip">This can be found by running your finger up and down four times on the screen while in Network Pay Display and then pressing the QR code to print</span>
+                            { localhost &&
+                            <div className="qr_box">
+                                <div className="row_padding">or</div>
+                                < div className="qr_button">
+                                    <ButtonNormal color="white"  extra="connect_button margin_right" title="Connect with QR" onClick={this.QRClicked}/>
+                                    <span className="qr_tooltip">This can be found by running your finger up and down four times on the screen while in Network Pay Display and then pressing the QR code to print</span>
+                                </div>
                             </div>
+                            }
                         </div>
                         }
                         {pairing}

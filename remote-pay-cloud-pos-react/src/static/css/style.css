@@ -1190,6 +1190,12 @@ input:checked + .slider:before {
     visibility: visible;
 }
 
+.qr_box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .qr_button{
     display: flex;
     flex-direction: row;
