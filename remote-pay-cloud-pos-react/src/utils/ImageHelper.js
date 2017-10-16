@@ -20,4 +20,12 @@ export default class ImageHelper {
         return image;
     }
 
+    getPrinterTypeImage(printerType){
+        let image = "images/star.png";
+        if(printerType === "Mini"){
+            image = "images/mini.png";
+        }
+        return image;
+    }
+
 }

@@ -42,9 +42,8 @@ export default class Device extends React.Component {
     }
 
     printText(){
-        this.setState({printType: "TEXT"});
         let pr = new sdk.remotepay.PrintRequest();
-        pr.setImageUrl([this.state.printImageURL]);
+        pr.setText([this.state.printTextContent]);
         this.cloverConnector.print(pr);
     }
 
@@ -80,6 +79,7 @@ export default class Device extends React.Component {
 
     handleImageChange(e) {
         e.preventDefault();
+        this.setState({showDropDown : false});
 
         let reader = new FileReader();
         let file = e.target.files[0];
@@ -185,6 +185,10 @@ export default class Device extends React.Component {
     render(){
         let printersAdded = this.state.printers.length > 0;
         const showDropDown = this.state.showDropDown;
+        let className = "button_dropdown";
+        if(showDropDown){
+            className = "button_dropdown_open"
+        }
         return(
             <div>
                 {printersAdded &&
@@ -205,30 +209,44 @@ export default class Device extends React.Component {
                             <ButtonPrinterDropdown title="Print Image from Url" onClick={this.printFromURL} printers={this.state.printers} dropDownClick={this.printerChosen} printType="URL"/>
                         </div>
                         <div className="misc_row">
-                            <div className="button_device">
-                                <div className="button_dropdown">
-                                    <input className="file_upload upload" name="file" id="file" type="file" onChange={(e)=>this.handleImageChange(e)} />
-                                    <label className="dropdown_button" htmlFor="file">Print Image</label>
-                                    <button onClick={this.showDropDown} className="dropdown_dropdown">V</button>
+                            <div className="dropdown_container">
+                                <div className={className}>
+                                    <div className="row button_device">
+                                        <input className="file_upload upload" name="file" id="file" type="file" onChange={(e)=>this.handleImageChange(e)} />
+                                        <label className="dropdown_button" htmlFor="file">Print Image</label>
+                                        <button onClick={this.showDropDown} className="dropdown_dropdown">
+                                            <i className="fa fa-caret-down" aria-hidden="true"/>
+                                        </button>
+                                    </div>
                                 </div>
                                 {showDropDown &&
                                 <div className="dropdown">
+                                    <div className="printer_row border_top">
+                                        <input className="file_upload" name="file" id={"file_dropdown_default"} type="file" onChange={(e)=>this.handleImageChange(e)} />
+                                        <label className="printer_row_no_border" htmlFor={"file_dropdown_default"}>
+                                            <img className="printer_image" src="images/printer.png"/>
+                                            <div>DEFAULT</div>
+                                        </label>
+                                    </div>
                                     {this.state.printers.map((printer, i) => {
                                         return (
                                             <div key={'printer-' + i} className="printer_row">
                                                 <input className="file_upload" name="file" id={"file_dropdown" + i} type="file" onChange={(e)=>this.handleImageChangeDropDown(e, printer)} />
-                                                <label htmlFor={"file_dropdown" + i}>
-                                                    <div className="row">
-                                                        <div>ID:</div>
-                                                        <div>{printer.id}</div>
-                                                    </div>
-                                                    <div className="row">
-                                                        <div>Name:</div>
-                                                        <div>{printer.name}</div>
-                                                    </div>
-                                                    <div className="row">
-                                                        <div>Type:</div>
-                                                        <div>{printer.type}</div>
+                                                <label  className="printer_row_no_border" htmlFor={"file_dropdown" + i}>
+                                                    <img className="printer_image" src="images/printer.png"/>
+                                                    <div>
+                                                        <div className="row_wrap print_row_bold">
+                                                            <div>Name:</div>
+                                                            <div>{printer.name}</div>
+                                                        </div>
+                                                        <div className="row_wrap print_row_small">
+                                                            <div>ID:</div>
+                                                            <div>{printer.id}</div>
+                                                        </div>
+                                                        <div className="row_wrap print_row_small">
+                                                            <div>Type:</div>
+                                                            <div>{printer.type}</div>
+                                                        </div>
                                                     </div>
                                                 </label>
                                             </div>
