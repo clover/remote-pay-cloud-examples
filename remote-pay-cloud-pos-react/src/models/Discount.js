@@ -1,12 +1,12 @@
-import CurrencyFormatter from "../utils/CurrencyFormatter";
+import CurrencyFormatter from '../utils/CurrencyFormatter';
 
 export default class Discount {
 
     constructor(name, amount, percentage) {
-        this.name = name;
         this.amountOff = amount;
-        this.percentageOff = percentage;
         this.formatter = new CurrencyFormatter();
+        this.name = name;
+        this.percentageOff = percentage;
     }
 
     getAmountOff() {

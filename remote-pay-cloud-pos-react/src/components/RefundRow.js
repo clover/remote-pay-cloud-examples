@@ -1,12 +1,10 @@
 import React from 'react';
-// import CurrencyFormatter from "./CurrencyFormatter";
 
 export default class RefundRow extends React.Component {
 
     constructor(props) {
         super(props);
         this.refund = this.props.refund;
-        // this.formatter = new CurrencyFormatter();
     }
 
     render(){

@@ -1,12 +1,12 @@
-import React, { Component } from 'react'
-import QrReader from 'react-qr-reader';
-import { Link } from 'react-router';
 import ButtonNormal from "./ButtonNormal";
 import Connect from "./../utils/CloverConnection";
-import Store from '../models/Store';
-import Item from '../models/Item';
-import Discount from '../models/Discount';
 const data = require ("../../src/items.js");
+import Discount from '../models/Discount';
+import Item from '../models/Item';
+import { Link } from 'react-router';
+import QrReader from 'react-qr-reader';
+import React, { Component } from 'react'
+import Store from '../models/Store';
 
 
 export default class Layout extends Component {
@@ -14,59 +14,59 @@ export default class Layout extends Component {
     constructor(props){
         super(props);
         this.state = {
-            connected : false,
-            uriText : "wss://10.0.0.236:12345/remote_pay",
-            pairingCode: '',
-            statusText: '',
-            statusToggle: false,
             challenge: false,
             challengeContent: null,
+            choosePrinter: false,
+            connected : false,
+            delay: 100,
+            fadeBackground: false,
+            inputOptions: null,
+            localhost: false,
+            pairingCode: '',
+            preAuth: false,
+            printers: [],
+            refundSuccess: false,
+            response: false,
+            responseFail: false,
+            result: 'No Result',
             request: null,
             saleFinished: false,
-            tipAmount: 0,
-            statusArray: null,
-            vaultedCard : false,
-            preAuth: false,
-            inputOptions: null,
-            fadeBackground: false,
-            responseFail: false,
             signatureRequest: null,
             showSignature: false,
-            refundSuccess: false,
             showQR: false,
-            delay: 100,
-            result: 'No Result',
-            response: false,
-            printers: [],
-            choosePrinter: false,
-            localhost: false
+            statusArray: null,
+            statusText: '',
+            statusToggle: false,
+            tipAdjust: false,
+            tipAmount: 0,
+            uriText : 'wss://192.168.0.35:12345/remote_pay',
+            vaultedCard : false
         };
 
-        // Create binding for React since we aren't using React.createClass - https://daveceddia.com/avoid-bind-when-passing-props/.
-        this.toggleConnectionState = this.toggleConnectionState.bind(this);
-        this.setPairingCode = this.setPairingCode.bind(this);
-        this.closePairingCode = this.closePairingCode.bind(this);
-        this.setStatus = this.setStatus.bind(this);
-        this.connect = this.connect.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.challenge = this.challenge.bind(this);
         this.acceptPayment = this.acceptPayment.bind(this);
-        this.rejectPayment = this.rejectPayment.bind(this);
-        this.tipAdded = this.tipAdded.bind(this);
-        this.closeStatus = this.closeStatus.bind(this);
-        this.closeCardData = this.closeCardData.bind(this);
-        this.inputOptions = this.inputOptions.bind(this);
-        this.fadeBackground = this.fadeBackground.bind(this);
-        this.unfadeBackground = this.unfadeBackground.bind(this);
-        this.confirmSignature = this.confirmSignature.bind(this);
         this.acceptSignature = this.acceptSignature.bind(this);
-        this.rejectSignature = this.rejectSignature.bind(this);
-        this.QRClicked = this.QRClicked.bind(this);
-        this.handleScan = this.handleScan.bind(this);
+        this.challenge = this.challenge.bind(this);
         this.choosePrinter = this.choosePrinter.bind(this);
+        this.closeStatusArray = this.closeStatusArray.bind(this);
+        this.closePairingCode = this.closePairingCode.bind(this);
+        this.closeStatus = this.closeStatus.bind(this);
+        this.confirmSignature = this.confirmSignature.bind(this);
+        this.connect = this.connect.bind(this);
+        this.fadeBackground = this.fadeBackground.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleError = this.handleError.bind(this);
+        this.handleScan = this.handleScan.bind(this);
+        this.inputOptions = this.inputOptions.bind(this);
+        this.QRClicked = this.QRClicked.bind(this);
+        this.rejectPayment = this.rejectPayment.bind(this);
+        this.rejectSignature = this.rejectSignature.bind(this);
+        this.setPairingCode = this.setPairingCode.bind(this);
+        this.setStatus = this.setStatus.bind(this);
+        this.tipAdded = this.tipAdded.bind(this);
+        this.toggleConnectionState = this.toggleConnectionState.bind(this);
+        this.unfadeBackground = this.unfadeBackground.bind(this);
 
         this.store = new Store();
-        this.initStore();
 
         this.cloverConnection = new Connect({
             toggleConnectionState: this.toggleConnectionState,
@@ -79,44 +79,41 @@ export default class Layout extends Component {
             inputOptions: this.inputOptions,
             confirmSignature: this.confirmSignature
         });
+
+        this.initStore();
     }
 
-    componentDidMount() {
-        window.addEventListener('beforeunload', () => {
-            let cloverConnector = this.cloverConnection.cloverConnector;
-            if (cloverConnector) {
-                cloverConnector.dispose();
-            }
-        });
-    }
-
-    initStore(){
+    initStore(){        // initializes store
         data.forEach(function(item){
             let newItem = new Item(item.id, item.title, item.itemPrice, item.taxable, item.tippable);
             this.store.addItem(newItem);
         }, this);
 
-        this.store.addDiscount(new Discount("10% Off", 0 , 0.1));
-        this.store.addDiscount(new Discount("$5 Off", 500 , 0.00));
+        this.store.addDiscount(new Discount('10% Off', 0 , 0.1));
+        this.store.addDiscount(new Discount('$5 Off', 500 , 0.00));
     }
 
-    toggleConnectionState(connected){
+    connect(){      // connects to Clover device
+        this.cloverConnection.connectToDevice(this.state.uriText, null);
+    }
+
+    toggleConnectionState(connected){       // toggles Clover device connection state
         this.setState({ connected: connected});
         if(connected){
-            this.setState({fadeBackground: false});
+            this.setState({ fadeBackground: false });
         }
     }
 
-    setPairingCode(pairingCode){
-        this.setState({ pairingCode: pairingCode, fadeBackground: true});
+    setPairingCode(pairingCode){        // sets pairing code
+        console.log('setPairingCode', pairingCode);
+        this.setState({ pairingCode: pairingCode, fadeBackground: true });
     }
 
-    closePairingCode(){
-        this.setState({ pairingCode: '', fadeBackground: false});
+    closePairingCode(){     // closes pairing code
+        this.setState({ pairingCode: '', fadeBackground: false });
     }
 
-    confirmSignature(request){
-        console.log("calling closeStatus");
+    confirmSignature(request){      // shows popup for confirming signature
         this.closeStatus();
         let signature = request.signature;
         this.setState({showSignature: true, fadeBackground: true, signatureRequest: request });
@@ -132,34 +129,34 @@ export default class Layout extends Component {
         }
     }
 
-    acceptSignature(){
+    acceptSignature(){      // accepts signature
         this.cloverConnection.cloverConnector.acceptSignature(this.state.signatureRequest);
         this.closeSignature();
     }
 
-    rejectSignature(){
+    rejectSignature(){      // rejects signature
         this.cloverConnection.cloverConnector.rejectSignature(this.state.signatureRequest);
         this.closeSignature();
     }
 
-    setStatus(message, reason) {
+    setStatus(message, reason) {        // decides how to display status
         //console.log(message, reason);
-        if((typeof message === "object") && (message !== null)){
-            this.setState({statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false, choosePrinter: false});
+        if((typeof message === 'object') && (message !== null)){
+            this.setState({ statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false, choosePrinter: false , tipAdjust: false, vaultedCard: false });
         }
-        else if(message == "Printers"){
-            this.setState({printers: reason})
+        else if(message == 'Printers'){
+            this.setState({ printers: reason })
         }
-        else if (message == 'Sale Processed Successfully' || message == 'Auth Processed Successfully' || message === "PreAuth Successful" || message === "PreAuth Processed Successfully") {
+        else if (message == 'Sale Processed Successfully' || message == 'Auth Processed Successfully' || message === 'PreAuth Successful' || message === 'PreAuth Processed Successfully') {
             this.saleFinished(message);
         }
         else if(message === 'Response was not a sale'){
-            this.setState({responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false, choosePrinter: false});
+            this.setState({ responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false, choosePrinter: false,  tipAdjust: false, vaultedCard: false });
             setTimeout(function() {
-                this.setState({statusToggle: false, fadeBackground: false});
+                this.setState({ statusToggle: false, fadeBackground: false });
             }.bind(this), 1200);
         }
-        else if(reason === "Toggle"){
+        else if(reason === 'Toggle'){
             this.statusToggle(message);
         }
         else{
@@ -174,99 +171,100 @@ export default class Layout extends Component {
                 fadeBackground: true,
                 responseFail: false,
                 refundSuccess: false,
-                choosePrinter: false
+                choosePrinter: false,
+                tipAdjust: false,
             });
         }
     }
 
-    saleFinished(message){
-        //console.log("saleFinished");
+    saleFinished(message){      // called when sale is finished
         if(message === 'PreAuth Successful'){
-            this.setState({preAuth: true});
+            this.setState({ preAuth: true });
         }
-        this.setState({statusText: message, statusToggle: true, saleFinished: true, fadeBackground: true, responseFail: false, refundSuccess: false, response: true, choosePrinter: false});
+        this.setState({ statusText: message, statusToggle: true, saleFinished: true, fadeBackground: true, responseFail: false, refundSuccess: false, response: true, choosePrinter: false,  tipAdjust: false, vaultedCard: false});
         setTimeout(function() {
-            this.setState({statusToggle: false, fadeBackground: false, response: false});
+            this.setState({ statusToggle: false, fadeBackground: false, response: false });
         }.bind(this), 1500);
     }
 
-    statusToggle(message){
+    statusToggle(message){      // shows status for 1.5 seconds then closes
         if(message === 'Card Successfully Vaulted'){
-            this.setState({vaultedCard: true, refundSuccess: false});
+            this.setState({ vaultedCard: true, refundSuccess: false, tipAdjust: false });
         }
-        if(message === 'Refund Processed Successfully'){
-            this.setState({refundSuccess: true});
+        else if(message === 'Refund Processed Successfully'){
+            this.setState({ refundSuccess: true, vaultedCard: false, tipAdjust: false });
         }
-        this.setState({statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false, choosePrinter: false});
+        else if(message === 'Tip adjusted successfully'){
+            this.setState({ refundSuccess: false, vaultedCard: false, tipAdjust: true });
+        }
+        else{
+            this.setState({ refundSuccess: false, vaultedCard: false, tipAdjust: false });
+        }
+        this.setState({ statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false, choosePrinter: false, inputOptions: null });
         setTimeout(function() {
-            this.setState({statusToggle: false, fadeBackground: false});
+            this.setState({ statusToggle: false, fadeBackground: false });
         }.bind(this), 1500);
     }
 
 
-    closeCardData(){
-        this.setState({statusArray : null, fadeBackground: false});
+    closeStatusArray(){ // closes status array
+        this.setState({ statusArray : null, fadeBackground: false });
     }
 
-    closeSignature(){
-        this.setState({showSignature: false, fadeBackground: false});
+    closeSignature(){       // closes signature verification popup
+        this.setState({ showSignature: false, fadeBackground: false });
     }
 
 
-    closeStatus(){
+    closeStatus(){      // closes status
         if(!this.state.challenge && !this.state.response){
-            this.setState({statusToggle: false});
+            this.setState({ statusToggle: false });
             if(this.state.statusArray === null){
-                this.setState({fadeBackground: false})
+                this.setState({ fadeBackground: false })
             }
         }
     }
 
-    tipAdded(tipAmount){
+    tipAdded(tipAmount){     // sets tip amount
         this.setState({tipAmount : tipAmount });
     }
 
-    challenge(challenge, request){
-        this.setState({statusToggle: true, statusText: challenge.message, challenge : true, request : request, inputOptions: null, challengeContent: challenge});
+    challenge(challenge, request){      // shows challenge as popup
+        this.setState({ statusToggle: true, statusText: challenge.message, challenge : true, request : request, inputOptions: null, challengeContent: challenge });
     }
 
-    acceptPayment(){
+    acceptPayment(){       // accepts payment
         this.cloverConnection.cloverConnector.acceptPayment(this.state.request.payment);
-        this.setState({challenge : false, statusToggle : false, fadeBackground: false});
+        this.setState({ challenge : false, statusToggle : false, fadeBackground: false });
     }
 
-    rejectPayment(){
+    rejectPayment(){        //rejects payment
         this.cloverConnection.cloverConnector.rejectPayment(this.state.request.payment, this.state.challengeContent);
-        this.setState({challenge: false, statusToggle: false, fadeBackground: false, responseFail: true});
+        this.setState({ challenge: false, statusToggle: false, fadeBackground: false, responseFail: true });
     }
 
-    inputOptions(io){
+    inputOptions(io){       // sets input options
         this.setState({inputOptions: io});
     }
 
-    inputClick(io){
+    inputClick(io){     // performs input option click
         this.cloverConnection.cloverConnector.invokeInputOption(io);
         this.closeStatus();
     }
 
-
-    connect(){
-        this.cloverConnection.connectToDevice(this.state.uriText, null);
-    }
-
-    choosePrinter(printer){
+    choosePrinter(printer){     // sets chosen printer
         console.log("printer chosen: ", printer);
-        this.setState({printer : printer, choosePrinter: false});
+        this.setState({ printer : printer, choosePrinter: false });
     }
 
-    QRClicked(){
-        this.setState({showQR: true});
+    QRClicked(){        // shows QR screen
+        this.setState({ showQR: true });
     }
 
-    handleScan(data){
+    handleScan(data){       // connects to device from qr scan
         if(data !== null && data !== undefined && this.state.result === 'No Result') {
             if(!this.state.connected) {
-                this.setState({result: data});
+                this.setState({ result: data });
                 let dataPieces = data.split('?');
                 let authToken = dataPieces[1].split('=')[1];
                 this.cloverConnection.connectToDevice(dataPieces[0], authToken);
@@ -274,88 +272,96 @@ export default class Layout extends Component {
         }
     }
 
-    handleError(err){
-        console.log(err);
+    handleError(err){       // handles qr code reader error
+        console.log("QR Reader Error", err);
+        this.setStatus('There was an error using the QR-Reader, please connect through Network Pay Display');
+        this.setState({ showQR : false , localhost: false });
     }
 
-    handleChange (e) {
+    handleChange (e) {      // handles network pay display uri text
         this.setState({ uriText: e.target.value });
     }
 
-    fadeBackground(){
-        this.setState({fadeBackground: true});
+    fadeBackground(){       // fades background for popup
+        this.setState({ fadeBackground: true });
     }
 
-    unfadeBackground(){
-        //console.log('unfade background called');
-        this.setState({fadeBackground: false});
+    unfadeBackground(){     // unfades background
+        this.setState({ fadeBackground: false });
     }
 
     componentWillMount() {
-        //console.log('componentWillMount', location);
-        if (location.hostname === "localhost" || location.protocol === "https:"){
-            console.log('it\'s localhost');
+        if (location.hostname === 'localhost' || location.protocol === 'https:'){
             this.setState({localhost: true});
         }
     }
 
+    componentDidMount() {
+        window.addEventListener('beforeunload', () => {
+            let cloverConnector = this.cloverConnection.cloverConnector;
+            if (cloverConnector) {
+                cloverConnector.dispose();
+            }
+        });
+    }
+
     render() {
-        let connectionState = "Disconnected";
+        let choosePrinter=this.state.choosePrinter;
+        let fadeBackground = this.state.fadeBackground;
+        let localhost = this.state.localhost;
+        let showBody = this.state.connected;
+        let showChallenge = this.state.challenge;
+        let showQR = this.state.showQR;
+        let showSignature = this.state.showSignature;
+        let showStatus = this.state.statusToggle;
+        let status = this.state.statusText;
+
+        let connectionState = 'Disconnected';
         if( this.state.connected) {
-            connectionState = "Connected";
+            connectionState = 'Connected';
             if(this.store.getStoreName()!== null){
-                connectionState = (connectionState + " to "+this.store.getStoreName());
+                connectionState = (connectionState + ' to ' + this.store.getStoreName());
             }
         }
-        let showBody = this.state.connected;
-        // let showBody = true;
-        let pairing = <div/>;
+
+        let pairing = <div></div>;
         if( this.state.pairingCode.length > 0){
             pairing = (<div className="popup popup_container">
                 <div className="close_popup" onClick={this.closePairingCode}>X</div>
                 <div className="pairing_code">Enter pairing code: <span>{this.state.pairingCode}</span> into your device</div>
             </div>);
         }
-        let showStatus = this.state.statusToggle;
-        let status = this.state.statusText;
+
         let listContainer = <div></div>;
-        let inputContainer = <div></div>;
         let showStatusArray = false;
         let statusArrayTitle = "";
-        let showInputOptions = false;
-        let fadeBackground = this.state.fadeBackground;
         if(this.state.statusArray !== null){
             showStatusArray = true;
             statusArrayTitle = this.state.statusArray.title;
             let listItems = this.state.statusArray.data.map((line, i) =>
-                <p key={'line-'+i}>{line}</p>
+                <p key={"line-" + i}>{line}</p>
             );
-            listContainer = (<div className="card_data_content">
-                {listItems}
-            </div>);
+            listContainer = (<div className="card_data_content">{listItems}</div>);
         }
+
+        let inputContainer = <div></div>;
+        let showInputOptions = false;
         if(this.state.inputOptions !== null){
             showInputOptions = true;
             let inputButtons = this.state.inputOptions.map((option, i) =>
-                <ButtonNormal key={'option-'+i} title={option.description} color="white" extra="input_options_button" onClick={() => {this.inputClick(option)}}/>
+                <ButtonNormal key={"option-" + i} title={option.description} color="white" extra="input_options_button" onClick={() => {this.inputClick(option)}}/>
             );
             inputContainer = (<div className="input_buttons">{inputButtons}</div>);
         }
-        let showChallenge = this.state.challenge;
-        let showSignature = this.state.showSignature;
-        let showQR = this.state.showQR;
+
         const previewStyle = {
             height: 240,
-            width: 320,
+            width: 320
         };
-        let choosePrinter=this.state.choosePrinter;
-        let localhost = this.state.localhost;
 
         return (
             <div className="app-content">
-                {fadeBackground &&
-                <div className="popup_opaque"></div>
-                }
+                {fadeBackground && <div className="popup_opaque"></div>}
                 <div className="page_header">
                     <Link to="/">
                         <img className="home_logo" src={'images/home.png'}/>
@@ -363,8 +369,9 @@ export default class Layout extends Component {
                     <div id="connection_status">
                         {connectionState}
                     </div>
-                    <div className="filler_space"/>
+                    <div className="filler_space"></div>
                 </div>
+
                 {showSignature &&
                 <div className="popup popup_container">
                     <div className="close_popup" onClick={this.closeSignature}>X</div>
@@ -375,23 +382,21 @@ export default class Layout extends Component {
                     </div>
                 </div>
                 }
+
                 {showStatusArray &&
                 <div className="card_data popup">
-                    <div className="close_popup" onClick={this.closeCardData}>X</div>
+                    <div className="close_popup" onClick={this.closeStatusArray}>X</div>
                     <h3>{statusArrayTitle}</h3>
                     {listContainer}
                 </div>}
+
                 {showStatus &&
                 <div className="popup_container popup">
                     <div className="close_popup" onClick={this.closeStatus}>X</div>
                     <div className="status">
                         {status}
                     </div>
-                    {showInputOptions &&
-                    <div>
-                        {inputContainer}
-                    </div>
-                    }
+                    {showInputOptions && <div>{inputContainer}</div>}
                     {showChallenge &&
                     <div className="reject_accept">
                         <ButtonNormal title="Reject" color="white" extra="left dialog_button" onClick={this.rejectPayment} />
@@ -400,10 +405,11 @@ export default class Layout extends Component {
                     }
                 </div>
                 }
+
                 {choosePrinter &&
                 <div className="popup popup_container choose_printer">
                     {this.state.printers.map((printer, i) => {
-                        return <div key={'printer-' + i} className="printer_row" onClick={() =>{this.choosePrinter(printer)}}>
+                        return <div key={"printer-" + i} className="printer_row" onClick={() =>{this.choosePrinter(printer)}}>
                             <div className="row">
                                 <div>ID:</div>
                                 <div>{printer.id}</div>
@@ -416,12 +422,11 @@ export default class Layout extends Component {
                                 <div>Type:</div>
                                 <div>{printer.type}</div>
                             </div>
-
                         </div>
                     })}
-
                 </div>
                 }
+
                 {showBody? (
                     <div className="body_content">{React.cloneElement(this.props.children,
                         {
@@ -439,11 +444,12 @@ export default class Layout extends Component {
                             responseFail: this.state.responseFail,
                             refundSuccess: this.state.refundSuccess,
                             printers: this.state.printers,
+                            tipAdjust: this.state.tipAdjust
                         })}
                     </div>
                 ):(
                     <div className="connect_container">
-                        <img className="clover_logo" src={'images/clover_logo.png'}/>
+                        <img className="clover_logo" src={"images/clover_logo.png"}/>
                         <p>Example POS</p>
 
                         {!showQR &&
@@ -454,7 +460,7 @@ export default class Layout extends Component {
                                 <input className="input_field" type="text" id="uri" value={this.state.uriText} onChange={this.handleChange}/>
                                 <ButtonNormal color="white" title="Connect" extra="connect_button" onClick={this.connect}/>
                             </div>
-                            { localhost &&
+                            {localhost &&
                             <div className="qr_box">
                                 <div className="row_padding">or</div>
                                 < div className="qr_button">

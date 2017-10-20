@@ -2,16 +2,16 @@ export default class CurrencyFormatter {
 
     formatCurrency(currency){
         if(currency === 0){
-            return "$0.00";
+            return '$0.00';
         }
         else {
             let number = currency.toString();
             let first = number.substr(0, number.length - 2);
             if(first.length < 1){
-                first = "0";
+                first = '0';
             }
             let last = number.substr(number.length - 2);
-            return "$" + first + "." + last;
+            return '$' + first + '.' + last;
         }
     }
 
@@ -32,9 +32,7 @@ export default class CurrencyFormatter {
     }
 
     convertFromFloat(currency){
-        //console.log("convertFromFloat", currency);
         let parts = currency.toString().split('.');
-        const newTotal = parts[0] + parts[1];
         return parts[0] + parts[1];
     }
 }

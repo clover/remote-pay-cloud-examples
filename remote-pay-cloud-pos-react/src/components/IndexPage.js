@@ -1,7 +1,8 @@
-import React from 'react';
 import HomeMenu from "./HomeMenu";
+import React from 'react';
 
 export default class IndexPage extends React.Component {
+
     constructor(props) {
         super(props);
     }

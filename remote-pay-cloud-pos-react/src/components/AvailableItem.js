@@ -1,6 +1,6 @@
-import React from 'react';
+import CurrencyFormatter from './../utils/CurrencyFormatter';
 import PropTypes from 'prop-types';
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
+import React from 'react';
 
 export default class AvailableItem extends React.Component {
 
@@ -24,9 +24,5 @@ export default class AvailableItem extends React.Component {
            </div>
         )
     }
-}
-
-AvailableItem.propTypes = {
-    title : PropTypes.string
 }
 
