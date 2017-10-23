@@ -2,7 +2,7 @@
   "name": "Clover Cloud Connector POS",
   "description": "Clover Cloud Connector - POS Example App",
   "keywords": [ "clover", "remote-pay", "example" ],
-  "repository": "https://github.com/mike-clover-com/remote-pay-cloud-examples/tree/master/remote-pay-cloud-pos-react",
+  "repository": "https://github.com/mike-clover-com/remote-pay-cloud-examples",
   "logo": "https://raw.githubusercontent.com/clover/example-server/6a21ff4161171c7ffebca85106fb46ecc0fe801c/src/application/static/img/clover-logo%402x.png",
   "success_url": "/"
 }
