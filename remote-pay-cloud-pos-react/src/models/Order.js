@@ -1,20 +1,21 @@
-import CurrencyFormatter from "../utils/CurrencyFormatter";
+import CurrencyFormatter from '../utils/CurrencyFormatter';
 import clover from 'remote-pay-cloud-api';
 import Item from './Item';
 
 export default class Order {
 
     constructor(id) {
+        this.cloverOrderId = '';
+        this.date = new Date();
+        this.discount = null;
+        this.displayItems = [];
+        this.formatter = new CurrencyFormatter();
         this.id = id;
         this.items = [];
-        this.displayItems = [];
-        this.status = "OPEN";
-        this.date = new Date();
         this.orderPayments = [];
-        this.refunds = [];
-        this.discount = null;
-        this.formatter = new CurrencyFormatter();
         this.pendingPaymentId = null;
+        this.refunds = [];
+        this.status = 'OPEN';
     }
 
     getId() {
@@ -109,7 +110,7 @@ export default class Order {
     getOrderPayments(){
         let _orderPayments = [];
         this.orderPayments.forEach(function (orderPayment) {
-            if(orderPayment.transactionType !== "VOIDED"){
+            if(orderPayment.transactionType !== 'VOIDED'){
                 _orderPayments.push(orderPayment);
             }
         },this);
@@ -175,6 +176,13 @@ export default class Order {
             tippableAmount = this.discount.appliedTo(tippableAmount);
         }
         return parseFloat(tippableAmount + parseFloat(this.getTaxAmount())).toFixed(2); // should match Total if there aren't any "non-tippable" items
+    }
 
+    getCloverOrderId(){
+        return this.cloverOrderId;
+    }
+
+    setCloverOrderId(id){
+        this.cloverOrderId = id;
     }
 }

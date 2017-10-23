@@ -1,16 +1,14 @@
-import React from 'react';
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
 import CardDataHelper from "./../utils/CardDataHelper";
+import CurrencyFormatter from "./../utils/CurrencyFormatter";
+import React from 'react';
 
 export default class VaultedCardRow extends React.Component {
 
     constructor(props) {
         super(props);
         this.card = this.props.card;
-        this.formatter = new CurrencyFormatter();
         this.cdh = new CardDataHelper();
-        console.log(this.card);
-
+        this.formatter = new CurrencyFormatter();
     }
 
     render(){
@@ -26,8 +24,5 @@ export default class VaultedCardRow extends React.Component {
                 </div>
             </div>
         )
-        //return(
-        //    <div></div>
-        //)
     }
 }

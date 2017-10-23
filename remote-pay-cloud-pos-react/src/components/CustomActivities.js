@@ -1,28 +1,31 @@
+import ConversationQuestionMessage from '../messages/ConversationQuestionMessage';
 import React from 'react';
 import sdk from 'remote-pay-cloud-api';
-import ConversationQuestionMessage from "../messages/ConversationQuestionMessage";
 
 export default class CustomActivities extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            selectedValue : 'BasicExample',
             activityPayload: '{name:Bob}',
+            selectedValue : 'BasicExample',
             showMessageButton : false
         };
-        console.log("CustomActivities: ", this.props);
-        this.startCustomActivity = this.startCustomActivity.bind(this);
+
+        this.cloverConnector = this.props.cloverConnection.cloverConnector;
+        this.CUSTOM_ACTIVITY_PACKAGE = "com.clover.cfp.examples.";
+        this.store = this.props.store;
+
         this.handleChange = this.handleChange.bind(this);
         this.payloadChange = this.payloadChange.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
-        this.cloverConnector = this.props.cloverConnection.cloverConnector;
-        this.store = this.props.store;
-        this.CUSTOM_ACTIVITY_PACKAGE = "com.clover.cfp.examples.";
+        this.startCustomActivity = this.startCustomActivity.bind(this);
     }
 
-    startCustomActivity(){
-        let activityId = this.CUSTOM_ACTIVITY_PACKAGE + this.state.selectedValue;
+    startCustomActivity(){      // starts custom activity
         this.store.setCustomActivity(this.state.selectedValue);
+
+        let activityId = this.CUSTOM_ACTIVITY_PACKAGE + this.state.selectedValue;
         let nonBlocking = this.refs.non_blocking.checked;
         let payload = this.state.activityPayload;
 
@@ -30,39 +33,35 @@ export default class CustomActivities extends React.Component {
         car.setAction(activityId);
         car.setPayload(payload);
         car.setNonBlocking(nonBlocking);
-        console.log(car);
 
-        if (activityId == "com.clover.cfp.examples.BasicConversationalExample") {
-            this.setState({showMessageButton: true});
-        }
-        else{
-            this.setState({showMessageButton: false});
-        }
+        this.setState({ showMessageButton: (activityId == 'com.clover.cfp.examples.BasicConversationalExample') });
         this.cloverConnector.startCustomActivity(car);
     }
 
-    sendMessage(){
+    sendMessage(){      // sends message to activity
         let activityId = this.CUSTOM_ACTIVITY_PACKAGE + this.state.selectedValue;
-        let message = new ConversationQuestionMessage("Why did the Storm Trooper buy an iPhone?");
+        let message = new ConversationQuestionMessage('Why did the Storm Trooper buy an iPhone?');
         let payload = JSON.stringify(message.getPayload());
+
         let messageRequest = new sdk.remotepay.MessageToActivity();
         messageRequest.setAction(activityId);
         messageRequest.setPayload(payload);
-        console.log(messageRequest);
+
         this.cloverConnector.sendMessageToActivity(messageRequest);
-        this.setState({showMessageButton : false});
+        this.setState({ showMessageButton : false });
     }
 
-    handleChange(e){
-        this.setState({selectedValue: e.target.value});
+    handleChange(e){    // handles change on custom activity type
+        this.setState({ selectedValue: e.target.value });
     }
 
-    payloadChange(e){
-        this.setState({activityPayload: e.target.value});
+    payloadChange(e){       // handles change on payload
+        this.setState({ activityPayload: e.target.value });
     }
 
     render(){
         const showMessage = this.state.showMessageButton;
+
         return(
             <div className="custom_activities">
                 <h2>Custom Activities</h2>
@@ -74,7 +73,7 @@ export default class CustomActivities extends React.Component {
                             <span className="slider round"/>
                         </label>
                     </div>
-                    <select className="custom_item" value={this.state.selectedValue} onChange={this.handleChange}>
+                    <select className="custom_item_select" value={this.state.selectedValue} onChange={this.handleChange}>
                         <option value="BasicExample">Basic Example</option>
                         <option value="BasicConversationalExample">Basic Conversational Example</option>
                         <option value="WebViewExample">Web View Example</option>
@@ -83,14 +82,10 @@ export default class CustomActivities extends React.Component {
                         <option value="NFCExample">NFC Example</option>
                     </select>
                     <input className="custom_item" type="text" value={this.state.activityPayload} onChange={this.payloadChange}/>
-                    {showMessage ? (
-                        <div>
-                            <input className="normal_button button_white custom_item" type="submit" value="Start" onClick={this.startCustomActivity}/>
-                            <input className="normal_button button_white custom_item" type="submit" value="Send Message" onClick={this.sendMessage}/>
+                        <div className="misc_row">
+                            <input className="normal_button button_white custom_activity_button left" type="submit" value="Start" onClick={this.startCustomActivity}/>
+                            {showMessage && <input className="normal_button button_white custom_activity_button max_width_half right" type="submit" value="Send Message" onClick={this.sendMessage}/>}
                         </div>
-                    ): (
-                        <input className="normal_button button_white custom_item" type="submit" value="Start" onClick={this.startCustomActivity}/>
-                    )}
                 </div>
             </div>
         );

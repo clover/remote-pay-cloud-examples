@@ -1,63 +1,48 @@
-import React from 'react';
+import Checkmark from './Checkmark';
 import CurrencyFormatter from "./../utils/CurrencyFormatter";
 import ImageHelper from "./../utils/ImageHelper";
-import Checkmark from './Checkmark';
+import React from 'react';
 
 export default class OrderPaymentRow extends React.Component {
 
     constructor(props) {
         super(props);
-        this.orderPayment = this.props.orderPayment;
-        this.order = this.props.order;
-        console.log("orderpayment" , this.props);
         this.formatter = new CurrencyFormatter();
         this.imageHelper = new ImageHelper();
+        this.order = this.props.order;
+        this.orderPayment = this.props.orderPayment;
     }
 
     render(){
-        const status = this.orderPayment.status;
-        let check = false;
-        if(status === "SUCCESS"){
-            check = true;
-        }
-        const date = this.orderPayment.date;
-        //const id = this.orderPayment.id;
-        const total = this.formatter.formatCurrency(this.orderPayment.amount);
-        //let tip = this.formatter.formatCurrency(this.orderPayment.tipAmount);
-        const onClick = this.props.onClick;
-        let image = this.imageHelper.getCardTypeImage(this.orderPayment.cardType);
-        const tender = this.orderPayment.tender;
         const cardDetails = this.orderPayment.cardDetails;
+        let check = (this.orderPayment.status === 'SUCCESS');
+        const date = this.orderPayment.date;
+        let image = this.imageHelper.getCardTypeImage(this.orderPayment.cardType);
+        const onClick = this.props.onClick;
+        const tender = this.orderPayment.tender;
+        const total = this.formatter.formatCurrency(this.orderPayment.amount);
+
         return (
             <div className="order_item_row" onClick={() => {onClick(this.orderPayment)}}>
-                {check && <Checkmark/> }
-                <div className="order_row_left">
-                    <div><strong>{date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></div>
-                    <div>{date.toLocaleDateString()}</div>
+                <div className="row">
+                    {check && <Checkmark/> }
+                    <div className="column_plain">
+                        <div><strong>{date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}</strong></div>
+                        <div className="grey_text">{date.toLocaleDateString()}</div>
+                    </div>
                 </div>
                 <div className="transaction_tender">
                     <img className="tender_logo" src={image}/>
                     <div className="transaction_tender_column">
-                        <div>{tender}</div>
-                        <div>{cardDetails}</div>
+                        <div><strong>{tender}</strong></div>
+                        <div className="grey_text">{cardDetails}</div>
                     </div>
                 </div>
                 <div className="order_row_right">
                     <div><strong>{total}</strong></div>
-                    <div>PAYMENT</div>
+                    <div className="grey_text">PAYMENT</div>
                 </div>
             </div>
-            //<div className="order_item_row" onClick={() => {onClick(this.orderPayment)}}>
-            //    <Checkmark/>
-            //    <div className="order_row_left">
-            //        <div>{status}</div>
-            //        <div>{id}</div>
-            //    </div>
-            //    <div className="order_row_right">
-            //        <div><strong>{total}</strong></div>
-            //        <div>Tip:   {tip}</div>
-            //    </div>
-            //</div>
         )
     }
 }

@@ -2,9 +2,9 @@
 export default class PreAuth {
 
     constructor(preAuth, payment){
-        this.preAuth = preAuth;
         this.name = '';
         this.payment = payment;
+        this.preAuth = preAuth;
     }
 
     getCard(){

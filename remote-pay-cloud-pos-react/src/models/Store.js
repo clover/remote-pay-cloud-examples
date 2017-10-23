@@ -1,45 +1,49 @@
 import clover from 'remote-pay-cloud';
+import CurrencyFormatter from './../utils/CurrencyFormatter';
 import sdk from 'remote-pay-cloud-api';
 import Transaction from "./Transaction";
 
 export default class Store {
 
     constructor() {
-        this.storeName = null;
-        this.cardEntryMethods = clover.CardEntryMethods.DEFAULT;
-        this.availableItems = [];
-        this.orders = [];
-        this.vaultedCards = [];
-        this.lastVaultedCard = null;
-        this.credits = [];
-        this.preAuth = null;
-        this.preAuthPaymentId = null;
-        this.transactions = [];
-        this.refunds = [];
-        this.paymentId = 0;
-        this.orderId = 0;
-        this.currentOrder = null;
-        this.discounts = [];
-        //this.forceOfflinePayments = undefined;
-        //this.allowOfflinePayments = undefined;
-        //this.approveOfflinePaymentWithoutPrompt = undefined;
-        this.forceOfflinePayments = true;
         this.allowOfflinePayments = true;
         this.approveOfflinePaymentWithoutPrompt = true;
-        //this.signatureEntryLocation = undefined;
-        this.signatureEntryLocation = sdk.payments.DataEntryLocation.NONE;
-        //this.tipMode = undefined;
-        this.tipMode = sdk.payments.TipMode.NO_TIP;
-        this.tipAmount = 0;
-        this.signatureThreshold = 0;
-        this.disableDuplicateChecking =true;
-        this.disableReceiptOptions = true;
-        this.disablePrinting = false;
         this.automaticSignatureConfirmation = true;
         this.automaticPaymentConfirmation = true;
-        this.getNextPaymentId = this.getNextPaymentId.bind(this);
+        this.availableItems = [];
+        this.cardEntryMethods = clover.CardEntryMethods.DEFAULT;
+        this.credits = [];
         this.customActivity = null;
+        this.deviceId = null;
+        this.disableDuplicateChecking =true;
+        this.disablePrinting = false;
+        this.disableReceiptOptions = true;
+        this.discounts = [];
+        this.forceOfflinePayments = true;
+        this.formatter = new CurrencyFormatter();
+        this.currentOrder = null;
+        this.lastVaultedCard = null;
+        this.orders = [];
+        this.orderId = 0;
+        this.paymentId = 0;
+        this.preAuth = null;
+        this.preAuthPaymentId = null;
+        this.printers = [];
+        this.refunds = [];
+        this.signatureEntryLocation = sdk.payments.DataEntryLocation.NONE;
+        this.signatureThreshold = 0;
+        this.storeName = null;
+        this.tipAmount = 0;
+        this.tipMode = sdk.payments.TipMode.NO_TIP;
+        this.transactions = [];
+        this.vaultedCards = [];
+        //this.forceOfflinePayments = undefined;
+        //this.allowOfflinePayments = undefined;
+        //this.approveOfflinePaymentWithoutPrompt = undefined;\
+        //this.signatureEntryLocation = undefined;
+        //this.tipMode = undefined;
 
+        this.getNextPaymentId = this.getNextPaymentId.bind(this);
     }
 
     setStoreName(name){
@@ -72,7 +76,7 @@ export default class Store {
         let order = null;
         if(this.orders.length > 0) {
             let lastOrder = this.orders[this.orders.length - 1];
-            if (lastOrder.status === "OPEN" && this.currentOrder.id !== lastOrder.id && lastOrder.items.length === 0) {
+            if (lastOrder.status === 'OPEN' && this.currentOrder.id !== lastOrder.id && lastOrder.items.length === 0) {
                 order = lastOrder;
             }
         }
@@ -82,7 +86,7 @@ export default class Store {
     getOrderById(id) {
         let order = null;
         this.orders.filter(function (obj) {
-            if (obj.id == id) {
+            if (obj.cloverOrderId == id) {
                 order = obj;
             }
         });
@@ -100,7 +104,7 @@ export default class Store {
     }
 
     getPaymentByCloverId(paymentId){
-        let payment= null;
+        let payment = null;
         this.orders.forEach(function (order) {
             order.orderPayments.forEach(function (orderPayment) {
                 if(orderPayment.cloverPaymentId === paymentId){
@@ -109,6 +113,16 @@ export default class Store {
             }, this);
         }, this);
         return payment;
+    }
+
+    getRefundByCloverId(refundId){
+        let refund = null;
+        this.refunds.forEach(function (refund_) {
+                if(refund_.id === refundId){
+                    refund = refund_;
+                }
+        }, this);
+        return refund;
     }
 
     getOrderByCloverPaymentId(paymentId){
@@ -133,6 +147,15 @@ export default class Store {
 
     addTransaction(transaction){
         this.transactions.push(transaction);
+    }
+
+    updateTransactionToRefund(transactionId){
+        this.transactions.filter(function (obj) {
+            if (obj.id == transactionId) {
+                obj.setRefund(true);
+                console.log('updatedTransaction', obj);
+            }
+        });
     }
 
     setCardEntryMethods(cardEntryMethods) {
@@ -183,16 +206,19 @@ export default class Store {
     }
 
     createTransactionFromRefund(refund){
-        console.log("createTransaction", refund);
         let transaction = new Transaction();
-        transaction.amount = refund.getTotal();
+        transaction.amount = this.formatter.convertToFloat(refund.amount);
         transaction.cardDetails = refund.getCardDetails();
         transaction.cardType = refund.getCardType();
         transaction.date = refund.getDate();
         transaction.id = refund.getId();
         transaction.tender = refund.getTender();
+        transaction.transactionTitle = refund.getTransactionTitle();
         transaction.transactionType = refund.getTransactionType();
-        console.log(transaction);
+        transaction.refund = true;
+        transaction.entryMethod = refund.getEntryMethod();
+        transaction.transactionState = refund.getTransactionState();
+        transaction.deviceId = this.getDeviceId();
         return transaction;
     }
 
@@ -331,6 +357,22 @@ export default class Store {
 
     getCustomActivity(){
         return this.customActivity;
+    }
+
+    getPrinters(){
+        return this.printers;
+    }
+
+    setPrinters(printers){
+        this.printers = printers;
+    }
+
+    getDeviceId(){
+        return this.deviceId;
+    }
+
+    setDeviceId(id){
+        this.deviceId = id;
     }
 
 }

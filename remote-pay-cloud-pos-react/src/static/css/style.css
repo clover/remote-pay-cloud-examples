@@ -10,6 +10,18 @@ html{
     background: transparent; /* make scrollbar transparent */
 }
 
+a:-webkit-any-link{
+    text-decoration: none !important;
+}
+
+a:visited{
+    text-decoration: none !important;
+}
+
+Link{
+    text-decoration: none !important;
+}
+
 body{
     display: flex;
     flex-direction: column;
@@ -52,6 +64,10 @@ h2 {
 h3{
     margin-top: 0px;
     font-weight: 600;
+}
+
+.font_15{
+    font-size: 15px;
 }
 
 .left_margin{
@@ -288,8 +304,11 @@ h3{
 .column_plain{
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow: auto;
+}
+
+.full_height{
+    height:100%;
 }
 
 .column_no_height{
@@ -372,6 +391,7 @@ h3{
     margin-top: 20px;
     flex-wrap: wrap;
     overflow-y: scroll;
+    max-height: 450px;
 }
 
 .settings_section > h3{
@@ -426,6 +446,14 @@ h3{
     justify-content: center;
     min-height: min-content;
     max-width: 910px;
+}
+
+.home_menu * {
+    text-decoration: none !important;
+}
+
+.home_title{
+    text-decoration: none;
 }
 
 .home_row{
@@ -495,10 +523,19 @@ h3{
     margin-bottom: 10px;
 }
 
+.custom_item_select{
+    padding-left: 5px;
+    height: 34px !important;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    -webkit-appearance: menulist-button !important;
+}
+
+
 .settings{
     display: flex;
     flex-direction: column;
-    padding: 10px 0px 20px 0px;
+    padding: 10px 0px 10px 0px;
     width: 65%;
     background: white;
     position: absolute;
@@ -509,7 +546,7 @@ h3{
     right: 0;
     box-shadow: 0 0 4px #000000;
     z-index: 2;
-    max-height: 550px;
+    max-height: 600px;
 }
 
 .settings > h3 {
@@ -550,6 +587,7 @@ h3{
     justify-content: flex-end;
     margin-right: 20px;
     padding: 10px 0px 0px 0px;
+    height:60px;
 }
 
 .radio_button{
@@ -560,6 +598,8 @@ h3{
 .setting_select{
     width: 170px;
     height: 30px;
+    -webkit-appearance: menulist-button !important;
+    line-height:24px !important;
 }
 
 .setting_input{
@@ -689,7 +729,7 @@ h3{
     display: flex;
     width: 380px;
     flex-direction: column;
-    padding: 20px;
+    padding: 10px 5px;
     word-wrap: break-word;
 }
 
@@ -808,6 +848,7 @@ h3{
 
 .payment_details_list{
     margin-left: 112px;
+    font-size: 15px;
 }
 
 .middle_grow{
@@ -845,12 +886,12 @@ h3{
     display: flex;
     flex-direction: column;
     width: 20%;
+    justify-content: center;
 }
 
 .transaction_tender {
     display: flex;
     flex-direction: row;
-    flex-grow: 1;
 }
 
 .transaction_tender_column{
@@ -889,6 +930,13 @@ h3{
     fill: #2FCB71;
     height: 24px;
     width: 24px;
+}
+
+.checkmark_small{
+    padding: 5px;
+    fill: #2FCB71;
+    height: 20px;
+    width: 20px;
 }
 
 .dollar_span_refund{
@@ -1127,6 +1175,7 @@ input:checked + .slider:before {
     height:24px;
     padding-left: 18px;
     font-size: 12px;
+    width: 126px;
 }
 
 .input_buttons{
@@ -1183,6 +1232,12 @@ input:checked + .slider:before {
     visibility: visible;
 }
 
+.qr_box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .qr_button{
     display: flex;
     flex-direction: row;
@@ -1220,13 +1275,11 @@ input:checked + .slider:before {
     padding: 10px;
 }
 
-.file_upload + label{
+.upload + label{
     background: white;
     width: 180px;
     height: 50px;
-    border-radius: 3px;
     font-size: 16px;
-    border: 1px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1240,3 +1293,118 @@ input:checked + .slider:before {
     border-bottom: 1px solid black;
     padding-bottom: 10px;
 }
+
+.printer_row{
+    border-bottom: 1px solid lightgrey;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    height: 65px;
+    align-items: center;
+    font-size: 12px;
+}
+
+.printer_row_no_border{
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    height: 65px;
+    align-items: center;
+    font-size: 12px;
+}
+
+.printer_row:hover{
+    background: lightgray;
+}
+
+.printer_image{
+    width: 45px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.print_row_small{
+    font-size: 10px;
+}
+
+.print_row_bold{
+    font-weight: bold;
+}
+
+.row_wrap{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.dropdown_container{
+    width: 180px;
+    min-height:50px;
+}
+
+.dropdown {
+    z-index: 1;
+    background: white;
+    position: absolute;
+    width: 180px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.button_dropdown{
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    height: 100%;
+    border: 1px solid black;
+}
+
+.button_dropdown_open{
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    height: 100%;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.dropdown_button{
+    border: none;
+    background: white;
+    flex-grow: 1;
+    border-right: 1px solid lightgrey;
+    font-size: 16px;
+}
+
+.dropdown_dropdown{
+    border: none;
+    background: white;
+}
+
+.border_top{
+    border-top: 1px solid lightgrey;
+}
+
+.checkmark_row{
+    display: flex;
+    flex-direction: row;
+    width: 20%;
+}
+
+.custom_activity_button{
+    padding: 10px;
+    flex-grow: 1;
+}
+
+.max_width_half{
+    max-width: 50%;
+}
+
+

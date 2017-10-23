@@ -1,10 +1,10 @@
-import React from 'react';
-import TitleBar from "./TitleBar";
-import OrderRow from "./OrderRow";
-import OrderItemRow from "./OrderItemRow";
-import OrderPaymentRow from "./OrderPaymentRow";
 import ButtonNormal from "./ButtonNormal";
 import { browserHistory } from 'react-router';
+import OrderItemRow from "./OrderItemRow";
+import OrderPaymentRow from "./OrderPaymentRow";
+import OrderRow from "./OrderRow";
+import React from 'react';
+import TitleBar from "./TitleBar";
 
 export default class Orders extends React.Component {
 
@@ -13,35 +13,36 @@ export default class Orders extends React.Component {
         this.state = {
             order: null,
             orderItems: [],
-            orderPayments: [],
             orderOpen: false,
-        }
+            orderPayments: []
+        };
+
         this.store = this.props.store;
         this.orders = this.store.getOrders();
-        this.showOrderDetails = this.showOrderDetails.bind(this);
+
         this.goToPayment = this.goToPayment.bind(this);
         this.goToRegister = this.goToRegister.bind(this);
-        //console.log("store",this.store);
-        //console.log("orders", this.orders);
+        this.showOrderDetails = this.showOrderDetails.bind(this);
     }
 
-    showOrderDetails(id){
+    showOrderDetails(id){       // displays details of order
         let order = this.store.getOrderById(id);
         if(order !== null){
             let orderOpen = false;
-            if(order.status === "OPEN"){
+            if(order.status === 'OPEN'){
                 orderOpen = true;
             }
-            this.setState({order: order, orderItems:order.getDisplayItems(), orderPayments:order.getOrderPayments(), orderOpen: orderOpen});
+            this.setState({ order: order, orderItems:order.getDisplayItems(), orderPayments:order.getOrderPayments(), orderOpen: orderOpen });
         }
+        console.log(order);
 
     }
 
-    goToPayment(orderPayment){
+    goToPayment(orderPayment){      // opens payment page for specified payment
         browserHistory.push({pathname: '/payment', state: {type: 'payment', id: orderPayment.cloverPaymentId}});
     }
 
-    goToRegister(order){
+    goToRegister(order){        // opens selected order in register
         this.store.setCurrentOrder(order);
         browserHistory.push({pathname: '/register'});
     }
@@ -49,6 +50,7 @@ export default class Orders extends React.Component {
     render(){
         let discounts = false;
         let discount = null;
+
         if(this.state.order != null && this.state.order.getDiscount() !== null){
             discounts = true;
             discount = this.state.order.getDiscount();
@@ -61,7 +63,7 @@ export default class Orders extends React.Component {
                     <div className="orders_list">
                         <TitleBar title="Orders"/>
                         {this.orders.map(function (order, i) {
-                            return <OrderRow key={'order-'+i} order={order} onClick={this.showOrderDetails}/>
+                            return <OrderRow key={"order-" + i} order={order} onClick={this.showOrderDetails}/>
                         }, this)}
                     </div>
                     <div className="order_items_and_payments">
@@ -69,7 +71,7 @@ export default class Orders extends React.Component {
                         <div className="order_items container_left">
                             <TitleBar title="Order Items"/>
                             {this.state.orderItems.map(function (orderItem, i) {
-                                return <OrderItemRow key={'order_orderItem-'+i} orderItem={orderItem}/>
+                                return <OrderItemRow key={"order_orderItem-" + i} orderItem={orderItem}/>
                             })}
                             {discounts &&
                             <div className="order_item_row"><strong>Discount: </strong>{discount.name}</div>
@@ -81,11 +83,11 @@ export default class Orders extends React.Component {
                                 <TitleBar title="Transactions"/>
                             </div>
                             {this.state.orderPayments.map(function (orderPayment, i) {
-                                return <OrderPaymentRow key={'order_orderPayment-'+i} order={this.state.order} orderPayment={orderPayment} onClick={this.goToPayment}/>
-                            },this)}
+                                return <OrderPaymentRow key={"order_orderPayment-" + i} order={this.state.order} orderPayment={orderPayment} onClick={this.goToPayment}/>
+                            }, this)}
                             {register &&
-                            <div className="column_plain flex_end margin_bottom">
-                                <div className="filler_space"/>
+                            <div className="column_plain full_height flex_end margin_bottom">
+                                <div className="filler_space"></div>
                                 <ButtonNormal title="Open in Register" color="white" extra="open_register_button" onClick={() => {this.goToRegister(this.state.order)}} />
                             </div>
                             }
