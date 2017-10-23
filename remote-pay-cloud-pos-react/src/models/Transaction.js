@@ -4,13 +4,18 @@ export default class Transaction {
     constructor(){
         this.amount = 0;
         this.cardDetails = null;
-        this.cardType = "Default";
+        this.cardType = 'Default';
         this.date = new Date();
-        this.employee = "Employee";
+        this.deviceId = null;
+        this.employee = 'Employee';
+        this.entryMethod = '';
         this.id = null;
-        this.tender = "Credit Card";
+        this.tender = 'Credit Card';
+        this.transactionState = 'OPEN';
         this.transactionTitle = null;
         this.transactionType = '';
+        this.refund = false;
+        this.result = 'Successful';
     }
 
     getAmount(){
@@ -83,5 +88,37 @@ export default class Transaction {
 
     setTransactionType(transactionType){
         this.transactionType = transactionType;
+    }
+
+    getRefund(){
+        return this.refund;
+    }
+
+    setRefund(refund){
+        this.refund = refund;
+    }
+
+    getEntryMethod(){
+        return this.entryMethod;
+    }
+
+    setEntryMethod(entryMethod){
+        this.entryMethod = entryMethod;
+    }
+
+    getTransactionState(){
+        return this.transactionState;
+    }
+
+    setTransactionState(state){
+        this.transactionState = state;
+    }
+
+    getDeviceId(){
+        return this.deviceId;
+    }
+
+    setDeviceId(id){
+        this.deviceId = id;
     }
 }

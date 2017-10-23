@@ -1,27 +1,35 @@
-import React from 'react';
-import PaymentRow from "./PaymentRow";
-import ButtonNormal from "./ButtonNormal";
-import Refund from "../models/Refund";
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
+import ButtonNormal from './ButtonNormal';
 import Checkmark from './Checkmark';
-import sdk from 'remote-pay-cloud-api';
 import clover from 'remote-pay-cloud';
+import CurrencyFormatter from './../utils/CurrencyFormatter';
+import PaymentRow from './PaymentRow';
+import React from 'react';
+import Refund from '../models/Refund';
+import sdk from 'remote-pay-cloud-api';
 
 export default class Payment extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            showTipAdjust: false,
+            isRefund: false,
+            refundDate: null,
+            refundDisabled: false,
+            refundId: null,
             showRefund: false,
-            tipAmount: 0.00,
-            refundDisabled: false
-        }
+            showTipAdjust: false,
+            tipAmount: 0.00
+        };
+
+        this.cloverConnector = this.props.cloverConnection.cloverConnector;
+        this.formatter = new CurrencyFormatter();
+        this.store = this.props.store;
+
         this.adjustTip = this.adjustTip.bind(this);
         this.finishAdjustTip = this.finishAdjustTip.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.makeRefund = this.makeRefund.bind(this);
         this.voidPayment = this.voidPayment.bind(this);
-        this.store = this.props.store;
+
         if(this.props.location.state != null) {
             this.type = this.props.location.state.type;
             if(this.type === 'payment'){
@@ -29,22 +37,25 @@ export default class Payment extends React.Component {
                 this.payment = this.store.getPaymentByCloverId(this.paymentId);
             }
             else if(this.type === 'refund'){
+                console.log('refund');
                 this.refundId = this.props.location.state.refund;
+                this.payment = this.store.getRefundByCloverId(this.refundId);
             }
-
         }
-        this.cloverConnector = this.props.cloverConnection.cloverConnector;
-        this.formatter = new CurrencyFormatter();
     }
 
     adjustTip(){
-        this.setState({showTipAdjust : true});
+        this.setState({ showTipAdjust : true });
     }
 
     finishAdjustTip(){
         this.setState({showTipAdjust: false});
         let tempTip = parseFloat(this.state.tipAmount).toFixed(2);
-        this.payment.setTipAmount(tempTip);
+        let taar = new sdk.remotepay.TipAdjustAuthRequest();
+        taar.setPaymentId(this.payment.cloverPaymentId);
+        taar.setOrderId(this.payment.cloverOrderId);
+        taar.setTipAmount(this.formatter.convertFromFloat(tempTip));
+        this.cloverConnector.tipAdjustAuth(taar);
     }
 
     handleChange (e) {
@@ -52,18 +63,17 @@ export default class Payment extends React.Component {
     }
 
     makeRefund(){
-        console.log(this.payment);
         let refund = new sdk.remotepay.RefundPaymentRequest();
         refund.setAmount(this.payment.amount);
         refund.setPaymentId(this.payment.cloverPaymentId);
         refund.setOrderId(this.payment.cloverOrderId);
         refund.setFullRefund(true);
-        console.log(refund);
+        console.log('RefundPaymentRequest', refund);
         this.cloverConnector.refundPayment(refund);
     }
 
     voidPayment(){
-     let vpr = new sdk.remotepay.VoidPaymentRequest();
+        let vpr = new sdk.remotepay.VoidPaymentRequest();
         vpr.setPaymentId(this.payment.cloverPaymentId);
         vpr.setOrderId(this.payment.cloverOrderId);
         vpr.setVoidReason(sdk.order.VoidReason.USER_CANCEL);
@@ -71,27 +81,39 @@ export default class Payment extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
+        this.payment = this.store.getPaymentByCloverId(this.payment.cloverPaymentId);
         if(newProps.refundSuccess){
-            this.payment = this.store.getPaymentByCloverId(this.payment.cloverPaymentId);
-            this.setState({ showRefund: true, refundDisabled: true});
+            this.setState({ showRefund: true, refundDisabled: true , refundId: this.payment.refunds[0].refundId, refundDate: this.payment.refunds[0].date});
+        }
+        if(this.payment.transactionType === 'VOIDED'){
+            this.setState({ refundDisabled: true});
+        }
+
+    }
+
+    componentWillMount(){
+        if(this.payment.refund){
+            console.log('setting isRefund');
+            this.setState({ isRefund: true, refundDisabled: true });
         }
     }
 
     componentDidMount(){
-            if(this.payment.refunds !== undefined){
-                this.setState({showRefund: true, refundDisabled: true});
-            }
+        console.log('componentDidMount', this.payment);
+        if(this.payment.refunds !== undefined){
+            this.setState({ showRefund: true, refundDisabled: true, refundId: this.payment.refunds[0].refundId, refundDate: this.payment.refunds[0].date });
+        }
     }
 
     render(){
+        const cardDetails = this.payment.cardDetails;
         const date = this.payment.date;
+        const deviceId = this.payment.deviceId;
+        const employee = this.payment.employee;
+        const entryMethod = this.payment.entryMethod;
+        const paymentId = this.payment.id;
         const total = this.formatter.formatCurrency(this.payment.amount);
         const tender = this.payment.tender;
-        const cardDetails = this.payment.cardDetails;
-        const employee = this.payment.employee;
-        const deviceId = this.payment.deviceId;
-        const paymentId = this.payment.id;
-        const entryMethod = this.payment.entryMethod;
         const transactionType = this.payment.transactionType;
         const transactionState = this.payment.transactionState;
         // let cashBack = this.payment.cashBackAmount;
@@ -99,28 +121,30 @@ export default class Payment extends React.Component {
         //     cashBack = "$0.00";
         // }
         let showTips = true;
-        let showTipButton = true;
-        if(this.payment.transactionTitle === "Payment"){
-            showTipButton = false;
+        let showTipButton = (this.payment.transactionTitle !== 'Payment');
+        let tipText = 'Adjust Tip';
+        let tipAmount = '';
+        let absTotal = parseFloat(parseFloat(this.formatter.convertToFloat(this.payment.amount))).toFixed(2);
+        if(!this.state.isRefund) {
+            tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount())).toFixed(2);
+            absTotal = parseFloat(parseFloat(this.formatter.convertToFloat(this.payment.amount)) + parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()))).toFixed(2);
         }
-        let tipText = "Adjust Tip";
-        let tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount())).toFixed(2);
-        if(tipAmount ===0 || tipAmount <= 0){
+        if(tipAmount === 0 || tipAmount <= 0){
             showTips = false;
-            tipAmount = "0.00";
-            tipText = "Add Tip";
+            tipAmount = '0.00';
+            tipText = 'Add Tip';
         }
         const showRefunds = this.state.showRefund;
         let showTipAdj = this.state.showTipAdjust;
-        let absTotal = parseFloat(parseFloat(this.formatter.convertToFloat(this.payment.amount)) + parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()))).toFixed(2);
+        let refundId = '';
+        let refundDate = '';
         if(this.state.showRefund){
-            absTotal = "$0.00";
+            absTotal = '0.00';
+            refundId = this.state.refundId;
+            refundDate = this.state.refundDate;
         }
-        let check = false;
         let status = this.payment.status;
-        if(status === "SUCCESS"){
-            check = true;
-        }
+        let check = (status === 'SUCCESS');
 
         return(
             <div className="payments">
@@ -130,11 +154,11 @@ export default class Payment extends React.Component {
                         <div className="payments_list">
                             <div className="paymentDetails">
                                 <div className="space_between_row space_under">
-                                    <div><strong>Payment</strong></div>
-                                    <div className="middle_grow"><strong>{date.toLocaleDateString()}  •  {date.toLocaleTimeString()}</strong></div>
+                                    <div><strong>{this.payment.transactionTitle}</strong></div>
+                                    <div className="middle_grow"><strong>{date.toLocaleDateString([], {month: 'long', day: 'numeric', year: 'numeric'})}  •  {date.toLocaleTimeString()}</strong></div>
                                     <div><strong>{total}</strong></div>
                                 </div>
-                                {check && <div className="row"><Checkmark/><div className="payment_successful">Payment successful</div></div>}
+                                {check && <div className="row font_15"><Checkmark class="checkmark_small"/><div className="payment_successful">Payment successful</div></div>}
                                 <div className="payment_details_list">
                                     <PaymentRow left="Tender:" right={tender}/>
                                     <PaymentRow left="Card Details:" right={cardDetails}/>
@@ -155,13 +179,23 @@ export default class Payment extends React.Component {
                                 </div>
                             </div>}
                             {showRefunds &&
+
                             <div className="payment_section">
                                 {this.payment.refunds.map(function (refund, i) {
                                     return(
-                                        <div key={'refund-'+i} className="space_between_row space_under">
-                                            <div><strong>Refund</strong></div>
-                                            <div className="middle_grow"/>
-                                            <div><strong>{this.formatter.formatCurrency(refund.amount)}</strong></div>
+                                        <div key={"refund-" + i} className="paymentDetails">
+                                            <div className="space_between_row space_under">
+                                                <div><strong>Refund</strong></div>
+                                                <div className="middle_grow"><strong>{refundDate.toLocaleDateString([], {month: 'long', day: 'numeric', year: 'numeric'})}  •  {refundDate.toLocaleTimeString()}</strong></div>
+                                                <div className="red_text"><strong>({this.formatter.formatCurrency(refund.amount)})</strong></div>
+                                            </div>
+                                            <div className="row font_15"><Checkmark class="checkmark_small"/><div className="payment_successful">Refund successful</div></div>
+                                            <div className="payment_details_list">
+                                                <PaymentRow left="Tender:" right={ `to ${tender}`}/>
+                                                <PaymentRow left="Employee:" right={employee}/>
+                                                <PaymentRow left="Device ID:" right={deviceId}/>
+                                                <PaymentRow left="Refund ID:" right={refundId}/>
+                                            </div>
                                         </div>)
                                 }, this)}
                             </div>

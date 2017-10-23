@@ -1,17 +1,17 @@
-import React from 'react';
 import clover from 'remote-pay-cloud';
-import POSCloverConnectorListener from "./POSCloverConnectorListener";
+import POSCloverConnectorListener from './POSCloverConnectorListener';
+import React from 'react';
 
 export default class CloverConnection {
 
     constructor(options){
-        this.connected = false;
         this.cloverConnector = null;
+        this.connected = false;
         Object.assign(this, options);
     }
 
     getConnected (){
-        console.log("getConnected called", this.connected);
+        console.log('getConnected called', this.connected);
         return this.connected;
     }
 
@@ -20,16 +20,16 @@ export default class CloverConnection {
     }
 
     connectToDevice(uriText, authToken) {
-        console.log("connecting.....", uriText, authToken);
+        console.log('connecting.....', uriText, authToken);
         // let saleCalled = false;
         let factoryConfig = {};
         factoryConfig[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
         let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(factoryConfig);
         let connector = cloverConnectorFactory.createICloverConnector(new ExampleWebsocketPairedCloverDeviceConfiguration({
             uri: uriText,
-            applicationId: "com.clover.cloud-pos-example-react",
-            posName: "pos.name",
-            serialNumber: "register_1",
+            applicationId: 'com.clover.cloud-pos-example-react',
+            posName: 'pos.name',
+            serialNumber: 'register_1',
             authToken: authToken,
             heartbeatInterval: 1000,
             reconnectDelay: 3000
@@ -76,12 +76,12 @@ export class ExampleWebsocketPairedCloverDeviceConfiguration extends clover.WebS
     }
 
     onPairingCode(pairingCode) {
-        console.log("Pairing code is " + pairingCode);
+        console.log('Pairing code is ' + pairingCode);
         this.setPairingCode(pairingCode);
     }
 
     onPairingSuccess(authToken) {
-        console.log("Pairing succeeded, authToken is " + authToken);
+        console.log('Pairing succeeded, authToken is ' + authToken);
         this.toggleConnectionState(true);
         this.setConnected(true);
     }

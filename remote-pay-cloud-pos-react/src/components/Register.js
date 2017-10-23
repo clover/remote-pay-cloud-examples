@@ -1,107 +1,112 @@
-import React from 'react';
-import ButtonNormal from "./ButtonNormal";
-import RegisterLine from "./RegisterLine";
-import AvailableItem from "./AvailableItem";
-import AvailableDiscount from "./AvailableDiscount";
-const data = require ("../../src/items.js");
-import Order from '../models/Order';
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
-import OrderPayment from "../models/OrderPayment";
-import RegisterLineItem from "./RegisterLineItem";
-import sdk from 'remote-pay-cloud-api';
+import AvailableDiscount from './AvailableDiscount';
+import AvailableItem from './AvailableItem';
+import ButtonNormal from './ButtonNormal';
 import clover from 'remote-pay-cloud';
-import ImageHelper from "../utils/ImageHelper";
+import CurrencyFormatter from './../utils/CurrencyFormatter';
+import ImageHelper from '../utils/ImageHelper';
+import Order from '../models/Order';
+import OrderPayment from '../models/OrderPayment';
+import React from 'react';
+import RegisterLine from './RegisterLine';
+import RegisterLineItem from './RegisterLineItem';
+import sdk from 'remote-pay-cloud-api';
+
+const data = require ('../../src/items.js');
 
 export default class Register extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            orderItems: [],
-            discount: "",
-            showSaleMethod: false,
-            areVaultedCards: false,
-            makingSale: false,
-            subtotal : 0,
-            preAuthChosen: false,
-            payNoItems: false,
-            saveNoItems: false,
-            showSettings: false,
-            showPaymentMethods: false,
-            tax: 0,
-            total: 0,
-            manualCardEntry : false,
-            swipeCardEntry : false,
-            chipCardEntry : false,
-            contactlessCardEntry : false,
-            forceOfflinePaymentSelection: 'default',
-            allowOfflinePaymentsSelection: 'default',
             acceptOfflineSelection: 'default',
-            signatureEntryLocation: 'DEFAULT',
-            tipMode: 'DEFAULT',
-            tipAmount: '0.00',
-            sigThreshold: '0.00',
-            disableDuplicate: false,
-            disableReceipt: false,
-            disablePrinting: false,
-            confirmSignature: true,
+            allowOfflinePaymentsSelection: 'default',
+            amountExceeded: false,
+            areVaultedCards: false,
+            chipCardEntry : false,
             confirmChallenges: false,
-            promptPreAuth: false,
-            preAuthName: '',
-            preAuthAmount: "50.00",
-            preAuth: null,
-            responseFail: false,
+            confirmSignature: true,
+            contactlessCardEntry : false,
+            disableDuplicate: false,
+            disablePrinting: false,
+            disableReceipt: false,
+            discount: "",
             fadeBackground: false,
-            amountExceeded: false
+            forceOfflinePaymentSelection: 'default',
+            makingSale: false,
+            manualCardEntry : false,
+            orderItems: [],
+            payNoItems: false,
+            preAuth: null,
+            preAuthAmount: '50.00',
+            preAuthChosen: false,
+            preAuthName: '',
+            promptPreAuth: false,
+            responseFail: false,
+            saveNoItems: false,
+            showPaymentMethods: false,
+            showSaleMethod: false,
+            showSettings: false,
+            signatureEntryLocation: 'DEFAULT',
+            sigThreshold: '0.00',
+            subtotal : 0,
+            swipeCardEntry : false,
+            tax: 0,
+            tipAmount: '0.00',
+            tipMode: 'DEFAULT',
+            total: 0
         };
-        this.imageHelper = new ImageHelper();
-        this.setStatus = this.props.setStatus;
+
+        this.cloverConnector = this.props.cloverConnection.cloverConnector;
         this.closeStatus = this.props.closeStatus;
-        this.promptPreAuth = this.promptPreAuth.bind(this);
-        this.doPreAuth = this.doPreAuth.bind(this);
-        this.changePreAuthName = this.changePreAuthName.bind(this);
-        this.changePreAuthAmount = this.changePreAuthAmount.bind(this);
-        this.addToOrder = this.addToOrder.bind(this);
+        this.displayOrder = new sdk.order.DisplayOrder();
+        this.formatter = new CurrencyFormatter;
+        this.imageHelper = new ImageHelper();
+        this.saleMethod = null;
+        this.setStatus = this.props.setStatus;
+        this.store = this.props.store;
+
         this.addDiscount = this.addDiscount.bind(this);
-        this.newOrder = this.newOrder.bind(this);
-        this.chooseSaleMethod = this.chooseSaleMethod.bind(this);
-        this.saleChosen = this.saleChosen.bind(this);
+        this.addToOrder = this.addToOrder.bind(this);
         this.authChosen = this.authChosen.bind(this);
         this.cardChosen = this.cardChosen.bind(this);
-        this.vaultedCardChosen = this.vaultedCardChosen.bind(this);
-        this.closePreAuth = this.closePreAuth.bind(this);
-        this.exitPreAuth = this.exitPreAuth.bind(this);
-        this.closeSettings = this.closeSettings.bind(this);
         this.choosePaymentMethod = this.choosePaymentMethod.bind(this);
-        this.closePaymentMethods = this.closePaymentMethods.bind(this);
+        this.changePreAuthAmount = this.changePreAuthAmount.bind(this);
+        this.changePreAuthName = this.changePreAuthName.bind(this);
+        this.changeSignatureThreshold = this.changeSignatureThreshold.bind(this);
+        this.changeTipAmount = this.changeTipAmount.bind(this);
+        this.chooseSaleMethod = this.chooseSaleMethod.bind(this);
+        this.closePreAuth = this.closePreAuth.bind(this);
         this.closeSaleMethod = this.closeSaleMethod.bind(this);
-        this.makeSale = this.makeSale.bind(this);
-        this.save = this.save.bind(this);
-        this.preAuth = this.preAuth.bind(this);
+        this.closeSettings = this.closeSettings.bind(this);
+        this.closePaymentMethods = this.closePaymentMethods.bind(this);
+        this.doPreAuth = this.doPreAuth.bind(this);
+        this.exitPreAuth = this.exitPreAuth.bind(this);
+        this.handleAcceptOfflineChange = this.handleAcceptOfflineChange.bind(this);
+        this.handleAllowOfflineChange = this.handleAllowOfflineChange.bind(this);
+        this.handleForceOfflineChange = this.handleForceOfflineChange.bind(this);
+        this.handleSignatureEntryChange = this.handleSignatureEntryChange.bind(this);
+        this.handleTipModeChange = this.handleTipModeChange.bind(this);
         this.initSettings = this.initSettings.bind(this);
-        this.toggleManual = this.toggleManual.bind(this);
-        this.toggleSwipe = this.toggleSwipe.bind(this);
+        this.makeSale = this.makeSale.bind(this);
+        this.newOrder = this.newOrder.bind(this);
+        this.preAuth = this.preAuth.bind(this);
+        this.preAuthContinue = this.preAuthContinue.bind(this);
+        this.promptPreAuth = this.promptPreAuth.bind(this);
+        this.saleChosen = this.saleChosen.bind(this);
+        this.save = this.save.bind(this);
+        this.saveSettings = this.saveSettings.bind(this);
+        this.vaultedCardChosen = this.vaultedCardChosen.bind(this);
         this.toggleChip = this.toggleChip.bind(this);
-        this.toggleDisableDuplicate = this.toggleDisableDuplicate.bind(this);
-        this.toggleDisableReceipt = this.toggleDisableReceipt.bind(this);
-        this.toggleDisablePrinting = this.toggleDisablePrinting.bind(this);
         this.toggleConfirmChallenges = this.toggleConfirmChallenges.bind(this);
         this.toggleConfirmSignature = this.toggleConfirmSignature.bind(this);
         this.toggleContactless = this.toggleContactless.bind(this);
-        this.saveSettings = this.saveSettings.bind(this);
-        this.handleForceOfflineChange = this.handleForceOfflineChange.bind(this);
-        this.handleAllowOfflineChange = this.handleAllowOfflineChange.bind(this);
-        this.handleAcceptOfflineChange = this.handleAcceptOfflineChange.bind(this);
-        this.handleSignatureEntryChange = this.handleSignatureEntryChange.bind(this);
-        this.handleTipModeChange = this.handleTipModeChange.bind(this);
-        this.changeTipAmount = this.changeTipAmount.bind(this);
-        this.changeSignatureThreshold = this.changeSignatureThreshold.bind(this);
-        this.preAuthContinue = this.preAuthContinue.bind(this);
-        this.store = this.props.store;
-        this.saleMethod = null;
-        this.formatter = new CurrencyFormatter;
-        this.displayOrder = new sdk.order.DisplayOrder();
-        this.cloverConnector = this.props.cloverConnection.cloverConnector;
-        if(this.store.getCurrentOrder() === null || this.store.getCurrentOrder().getStatus() !== "OPEN") {
+        this.toggleDisableDuplicate = this.toggleDisableDuplicate.bind(this);
+        this.toggleDisablePrinting = this.toggleDisablePrinting.bind(this);
+        this.toggleDisableReceipt = this.toggleDisableReceipt.bind(this);
+        this.toggleManual = this.toggleManual.bind(this);
+        this.toggleSwipe = this.toggleSwipe.bind(this);
+
+        if(this.store.getCurrentOrder() === null || this.store.getCurrentOrder().getStatus() !== 'OPEN') {
             let lastOrder = this.store.getLastOpenOrder();
             if(lastOrder === null) {
                 this.order = new Order(this.store.getNextOrderId());
@@ -123,7 +128,7 @@ export default class Register extends React.Component {
         }
     }
 
-    initSettings(){
+    initSettings(){     // initializes transaction settings
         let manual = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL) == clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL);
         let swipe = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE) == clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE);
         let chip = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT) == clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT);
@@ -155,8 +160,7 @@ export default class Register extends React.Component {
         });
     }
 
-    saveSettings(){
-        //card entry
+    saveSettings(){     // saves transaction settings
         let val = 0;
         val |= this.state.manualCardEntry ? clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL: 0;
         val |= this.state.swipeCardEntry ? clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE : 0;
@@ -181,7 +185,7 @@ export default class Register extends React.Component {
 
     }
 
-    getOfflineValueForStore(input){
+    getOfflineValueForStore(input){  // gets offline value formatted for store
         if(input === 'true'){
             return true;
         }
@@ -193,7 +197,7 @@ export default class Register extends React.Component {
         }
     }
 
-    getOfflineValueForState(input){
+    getOfflineValueForState(input){     // gets offline value formatted for state
         if(input === true){
             return 'true';
         }
@@ -205,7 +209,7 @@ export default class Register extends React.Component {
         }
     }
 
-    getSignatureValueForStore(input){
+    getSignatureValueForStore(input){       // gets signature value formatter for store
         if(input === 'DEFAULT'){
             return undefined;
         }
@@ -222,7 +226,7 @@ export default class Register extends React.Component {
         }
     }
 
-    getSignatureValueForState(input){
+    getSignatureValueForState(input){   // gets signature value formatted for state
         if(input === undefined){
             return 'DEFAULT';
         }
@@ -237,7 +241,7 @@ export default class Register extends React.Component {
         }
     }
 
-    getTipValueForStore(input){
+    getTipValueForStore(input){     // gets tip value formatted for store
         if(input === 'DEFAULT'){
             this.setState({tipAmount: '0.00'});
             return undefined;
@@ -255,7 +259,7 @@ export default class Register extends React.Component {
         }
     }
 
-    getTipValueForState(input){
+    getTipValueForState(input){     // gets tip value formatted for state
         if(input === undefined){
             return 'DEFAULT';
         }
@@ -271,81 +275,75 @@ export default class Register extends React.Component {
     }
 
 
-    toggleManual(){
-        this.setState({manualCardEntry : !this.state.manualCardEntry});
+    toggleManual(){     // toggles manual card entry
+        this.setState({ manualCardEntry : !this.state.manualCardEntry });
     }
 
-    toggleSwipe(){
-        this.setState({swipeCardEntry : !this.state.swipeCardEntry});
+    toggleSwipe(){     // toggles swipe card entry
+        this.setState({ swipeCardEntry : !this.state.swipeCardEntry });
     }
 
-    toggleChip(){
-        this.setState({chipCardEntry : !this.state.chipCardEntry});
+    toggleChip(){     // toggles chip card entry
+        this.setState({ chipCardEntry : !this.state.chipCardEntry });
     }
 
-    toggleContactless(){
-        this.setState({contactlessCardEntry : !this.state.contactlessCardEntry});
+    toggleContactless(){     // toggles contactless card entry
+        this.setState({ contactlessCardEntry : !this.state.contactlessCardEntry });
     }
 
-    toggleDisableDuplicate(){
-        this.setState({disableDuplicate : !this.state.disableDuplicate});
+    toggleDisableDuplicate(){      // toggles disable duplicates setting
+        this.setState({ disableDuplicate : !this.state.disableDuplicate });
     }
 
-    toggleDisableReceipt(){
-        this.setState({disableReceipt : !this.state.disableReceipt});
+    toggleDisableReceipt(){      // toggles disable receipt selection setting
+        this.setState({ disableReceipt : !this.state.disableReceipt });
     }
 
-    toggleDisablePrinting(){
-        this.setState({disablePrinting : !this.state.disablePrinting});
+    toggleDisablePrinting(){      // toggles disable printing setting
+        this.setState({ disablePrinting : !this.state.disablePrinting });
     }
 
-    toggleConfirmSignature(){
-        this.setState({confirmSignature : !this.state.confirmSignature});
+    toggleConfirmSignature(){      // toggles confrim signature setting
+        this.setState({ confirmSignature : !this.state.confirmSignature });
     }
 
-    toggleConfirmChallenges(){
-        this.setState({confirmChallenges : !this.state.confirmChallenges});
+    toggleConfirmChallenges(){       // toggles confirm challenges setting
+        this.setState({ confirmChallenges : !this.state.confirmChallenges });
     }
 
-    handleForceOfflineChange(changeEvent){
-        this.setState({
-            forceOfflinePaymentSelection: changeEvent.target.value
-        });
+    handleForceOfflineChange(changeEvent){       // handles force offline change
+        this.setState({ forceOfflinePaymentSelection: changeEvent.target.value });
     }
 
-    handleAllowOfflineChange(changeEvent){
-        this.setState({
-            allowOfflinePaymentsSelection: changeEvent.target.value
-        });
+    handleAllowOfflineChange(changeEvent){       // handles allow offline change
+        this.setState({ allowOfflinePaymentsSelection: changeEvent.target.value });
     }
 
-    handleAcceptOfflineChange(changeEvent){
-        this.setState({
-            acceptOfflineSelection: changeEvent.target.value
-        });
+    handleAcceptOfflineChange(changeEvent){       // handles accept offline change
+        this.setState({ acceptOfflineSelection: changeEvent.target.value });
     }
 
-    handleSignatureEntryChange(e){
-        this.setState({signatureEntryLocation: e.target.value});
+    handleSignatureEntryChange(e){       // handles signature entry change
+        this.setState({ signatureEntryLocation: e.target.value });
     }
 
-    handleTipModeChange(e){
-        this.setState({tipMode: e.target.value});
+    handleTipModeChange(e){     // handles tip mode change
+        this.setState({ tipMode: e.target.value });
     }
 
-    changeTipAmount(e){
-        this.setState({tipAmount: e.target.value});
+    changeTipAmount(e){     // handles tip amount change for tip provided
+        this.setState( {tipAmount: e.target.value });
     }
 
-    changeSignatureThreshold(e){
-        this.setState({sigThreshold: e.target.value});
+    changeSignatureThreshold(e){    // handles signature threshold change
+        this.setState({ sigThreshold: e.target.value });
     }
 
-    closePreAuth(){
-        this.setState({ preAuthChosen : false});
+    closePreAuth(){     // closes pre auth popup
+        this.setState({ preAuthChosen : false });
     }
 
-    addToOrder(id, title, price, tippable, taxable) {
+    addToOrder(id, title, price, tippable, taxable) {       // adds available item to order
         this.order.addItem(id, title, price, tippable, taxable);
         this.setState({
             orderItems:this.order.getDisplayItems(),
@@ -355,23 +353,23 @@ export default class Register extends React.Component {
             payNoItems: false,
             saveNoItems: false,
         });
-        if(this.saleMethod === "PreAuth") {
+        if(this.saleMethod === 'PreAuth') {
             if(parseFloat(this.order.getTotal()) > parseFloat(this.state.preAuthAmount)){
-                this.setState({amountExceeded: true});
+                this.setState({ amountExceeded: true });
             }
         }
         this.updateDisplayOrder();
     }
 
-    updateDisplayOrder(){
+    updateDisplayOrder(){       // updates display order on Clover device
         this.displayOrder.setLineItems(this.order.getDisplayItems());
-        this.displayOrder.setSubtotal("$"+parseFloat(this.order.getPreTaxSubTotal()).toFixed(2));
-        this.displayOrder.setTax("$"+parseFloat(this.order.getTaxAmount()).toFixed(2));
-        this.displayOrder.setTotal("$"+parseFloat(this.order.getTotal()).toFixed(2));
+        this.displayOrder.setSubtotal('$' + parseFloat(this.order.getPreTaxSubTotal()).toFixed(2));
+        this.displayOrder.setTax('$' + parseFloat(this.order.getTaxAmount()).toFixed(2));
+        this.displayOrder.setTotal('$' + parseFloat(this.order.getTotal()).toFixed(2));
         this.cloverConnector.showDisplayOrder(this.displayOrder);
     }
 
-    addDiscount(discount){
+    addDiscount(discount){      // adds discount to current order
         if(this.order.getDiscount() !== discount) {
             this.order.addDiscount(discount);
             this.setState({
@@ -386,7 +384,7 @@ export default class Register extends React.Component {
         else{
             this.order.addDiscount(null);
             this.setState({
-                discount: "",
+                discount: '',
                 subtotal: this.order.getPreTaxSubTotal(),
                 tax: this.order.getTaxAmount(),
                 total: this.order.getTotal(),
@@ -397,104 +395,89 @@ export default class Register extends React.Component {
         this.updateDisplayOrder()
     }
 
-    newOrder(){
+    newOrder(){     // start new order
         if(this.state.orderItems.length > 0 && !this.state.showSaleMethod && !this.state.showPaymentMethods && !this.state.showSettings) {
             let lastOrder = this.store.getLastOpenOrder();
             if(lastOrder === null) {
                 this.order = new Order(this.store.getNextOrderId());
                 this.store.addOrder(this.order);
                 this.saleMethod = null;
-                this.setState({
-                    orderItems: this.order.getItems(),
-                    subtotal: 0.00,
-                    tax: 0.00,
-                    total: 0.00,
-                    makingSale: false,
-                    preAuth: null
-                });
+                this.setState({ orderItems: this.order.getItems(), subtotal: 0.00, tax: 0.00, total: 0.00, makingSale: false, preAuth: null });
             }
             else{
                 this.order = lastOrder;
                 this.saleMethod = null;
-                this.setState({
-                    orderItems:this.order.getDisplayItems(),
-                    subtotal:this.order.getPreTaxSubTotal(),
-                    tax: this.order.getTaxAmount(),
-                    total: this.order.getTotal(),
-                    payNoItems: false,
-                    saveNoItems: false,
-                });
+                this.setState({ orderItems:this.order.getDisplayItems(), subtotal:this.order.getPreTaxSubTotal(), tax: this.order.getTaxAmount(), total: this.order.getTotal(), payNoItems: false, saveNoItems: false });
             }
             this.unfadeBackground();
             this.store.setCurrentOrder(this.order);
         }
     }
 
-    save(){
-        this.setState({payNoItems : false});
+    save(){     // saves current order
+        this.setState({ payNoItems : false });
         if(this.state.orderItems.length > 0){
             this.newOrder();
         }
         else{
-            this.setState({saveNoItems : true});
+            this.setState({ saveNoItems : true });
         };
     }
 
 
-    choosePaymentMethod(){
-        this.setState({showPaymentMethods: true, showSettings: false});
+    choosePaymentMethod(){     // displays popup to choose payment method
+        this.setState({ showPaymentMethods: true, showSettings: false });
     }
 
-    closePaymentMethods(){
-        this.setState({showPaymentMethods: false});
+    closePaymentMethods(){      // closes popup to choose payment method
+        this.setState({ showPaymentMethods: false });
     }
 
-    chooseSaleMethod(){
+    chooseSaleMethod(){     // display popup to choose a sale method
         //console.log(this.order);
         this.initSettings();
         if(this.state.orderItems.length > 0) {
-            if(this.saleMethod === "Vaulted") {
-                this.setState({showSettings: true, makingSale: true});
+            if(this.saleMethod === 'Vaulted') {
+                this.setState({ showSettings: true, makingSale: true });
             }
-            else if(this.saleMethod === "PreAuth"){
-                this.setState({makingSale: true});
-                console.log("PREAUTH");
+            else if(this.saleMethod === 'PreAuth'){
+                this.setState({ makingSale: true });
                 this.preAuth();
             }
             else{
-                this.setState({showSaleMethod: true, makingSale: true});
+                this.setState({ showSaleMethod: true, makingSale: true });
             }
             this.fadeBackground();
         }
         else{
-            this.setState({payNoItems : true, saveNoItems : false});
+            this.setState({ payNoItems : true, saveNoItems : false });
         }
     }
 
-    closeSaleMethod(){
-        this.setState({showSaleMethod: false, makingSale: false, fadeBackground: false});
+    closeSaleMethod(){      // closes popup to choose a sale method
+        this.setState({ showSaleMethod: false, makingSale: false, fadeBackground: false });
     }
 
-    closeSettings(){
-        this.setState({showSettings: false, makingSale: false, fadeBackground: false});
+    closeSettings(){        // closes transaction settings popup
+        this.setState({ showSettings: false, makingSale: false, fadeBackground: false });
     }
 
-    exitPreAuth(){
-        this.setState({promptPreAuth: false, fadeBackground: false});
+    exitPreAuth(){      // exits pre auth transaction
+        this.setState({ promptPreAuth: false, fadeBackground: false });
         this.saleMethod = null;
     }
 
-    saleChosen(){
+    saleChosen(){     // choose sale as sale method
         this.saleMethod = 'Sale';
-        this.setState({showSettings: true, showSaleMethod: false});
+        this.setState({ showSettings: true, showSaleMethod: false });
     }
 
-    authChosen(){
-        this.saleMethod = "Auth";
-        this.setState({showSettings: true, showSaleMethod: false});
+    authChosen(){       // choose auth as sale method
+        this.saleMethod = 'Auth';
+        this.setState({ showSettings: true, showSaleMethod: false });
     }
 
-    makeSale(){
+    makeSale(){     // make sake
         this.saveSettings();
         if(this.saleMethod === 'Sale' || this.saleMethod === 'Auth'){
             this.cardChosen();
@@ -503,32 +486,32 @@ export default class Register extends React.Component {
             this.vaultedCardChosen();
         }
         else if(this.saleMethod === 'PreAuth'){
-            this.setState({showSettings: false});
+            this.setState({ showSettings: false });
             this.doPreAuth();
         }
         this.unfadeBackground();
     }
 
-    preAuthContinue(){
+    preAuthContinue(){      // show transaction settings for preauth
         this.initSettings();
-        this.setState({showSettings: true, promptPreAuth: false});
+        this.setState({ showSettings: true, promptPreAuth: false });
     }
 
-    promptPreAuth(){
-        this.setState({promptPreAuth: true});
+    promptPreAuth(){       // show popup for preauth
+        this.setState({ promptPreAuth: true });
         this.fadeBackground();
     }
 
-    changePreAuthName(e){
-        this.setState({preAuthName : e.target.value});
+    changePreAuthName(e){      // handle pre auth name change
+        this.setState( {preAuthName : e.target.value });
     }
 
-    changePreAuthAmount(e){
-        this.setState({preAuthAmount : e.target.value});
+    changePreAuthAmount(e){     // handle pre auth amount change
+        this.setState({ preAuthAmount : e.target.value });
     }
 
 
-    doPreAuth(){
+    doPreAuth(){        // make preauth transaction
         this.unfadeBackground();
         this.setState({promptPreAuth : false});
         let externalPaymentID = clover.CloverID.getNewId();
@@ -547,17 +530,17 @@ export default class Register extends React.Component {
     }
 
 
-    preAuth(){
+    preAuth(){  // capture pre auth
         this.setState({showSettings: false, showPaymentMethods : false});
         let car = new sdk.remotepay.CapturePreAuthRequest();
-        let preAuth = this.store.getPreAuth();
         car.paymentId = this.store.getPreAuthPaymentId();
         car.amount = this.formatter.convertFromFloat(this.order.getTotal());
+        console.log('CapturePreAuthRequest', car);
         this.cloverConnector.capturePreAuth(car);
         this.saleMethod = null;
     }
 
-    makeSaleRequest(){
+    makeSaleRequest(){      //  returns transaction request for sale
         let externalPaymentID = clover.CloverID.getNewId();
         this.store.getCurrentOrder().setPendingPaymentId(externalPaymentID);
         let request = new sdk.remotepay.SaleRequest();
@@ -581,7 +564,7 @@ export default class Register extends React.Component {
         return request;
     }
 
-    makeAuthRequest(){
+    makeAuthRequest(){ //  returns transaction request for auth
         let externalPaymentID = clover.CloverID.getNewId();
         this.store.getCurrentOrder().setPendingPaymentId(externalPaymentID);
         let request = new sdk.remotepay.AuthRequest();
@@ -603,8 +586,8 @@ export default class Register extends React.Component {
         return request;
     }
 
-    cardChosen(){
-        this.setState({showSettings: false, showPaymentMethods : false});
+    cardChosen(){       // tells Clover device to make transaction
+        this.setState({ showSettings: false, showPaymentMethods : false });
         if(this.saleMethod === 'Sale') {
             let request = this.makeSaleRequest();
             console.log(request);
@@ -618,8 +601,8 @@ export default class Register extends React.Component {
         this.saleMethod = null;
     }
 
-    vaultedCardChosen(){
-        this.setState({showSettings: false, showPaymentMethods : false});
+    vaultedCardChosen(){        // make sale with vaulted card
+        this.setState({ showSettings: false, showPaymentMethods : false });
         this.store.setCurrentOrder(this.order);
         let request = this.makeSaleRequest();
         request.setVaultedCard(this.card.card);
@@ -627,12 +610,12 @@ export default class Register extends React.Component {
         this.saleMethod = null;
     }
 
-    fadeBackground(){
-        this.setState({fadeBackground: true});
+    fadeBackground(){       // fade background for popups
+        this.setState({ fadeBackground: true });
     }
 
-    unfadeBackground(){
-        this.setState({fadeBackground: false});
+    unfadeBackground(){    // unfade background
+        this.setState({ fadeBackground: false });
     }
 
     componentWillReceiveProps(newProps) {
@@ -640,7 +623,6 @@ export default class Register extends React.Component {
             this.setState({makingSale: false});
         }
         else if(newProps.saleFinished){
-            //console.log('received newProps: ',newProps, this.state);
             if(this.state.makingSale) {
                 this.setState({makingSale: false});
                 this.newOrder();
@@ -670,19 +652,20 @@ export default class Register extends React.Component {
     }
 
     render(){
-        let fadeBackground = this.state.fadeBackground;
-        const showSaleMethods = this.state.showSaleMethod;
-        const showPayMethods = this.state.showPaymentMethods;
+        let cardText = 'Card';
         const discount = this.state.discount.name;
-        let newOrder = 'New Order';
-        let cardText = "Card";
-        let showVaultedCard = this.state.areVaultedCards;
-        let showPreAuth = false;
-        let notPreAuth = true;
-        let showPreAuthHeader = false;
+        let fadeBackground = this.state.fadeBackground;
         let isSale = false;
-        let settingType = "Sale";
+        let newOrder = 'New Order';
+        let notPreAuth = true;
+        let settingType = 'Sale';
+        const showPayMethods = this.state.showPaymentMethods;
+        let showPreAuth = false;
+        let showPreAuthHeader = false;
+        const showSaleMethods = this.state.showSaleMethod;
+        let showVaultedCard = this.state.areVaultedCards;
         let vaultedCard = false;
+
         if(this.saleMethod !== null){
             if(this.saleMethod === 'Sale'){
                 newOrder = 'New Sale';
@@ -698,30 +681,26 @@ export default class Register extends React.Component {
                 vaultedCard = true;
             }
             else if(this.saleMethod === 'PreAuth'){
-                newOrder = "New Tab (PreAuth)";
+                newOrder = 'New Tab (PreAuth)';
                 notPreAuth = false;
-                settingType = "PreAuth";
+                settingType = 'PreAuth';
             }
         }
         let orderItems = this.state.orderItems;
         const promptPreAuth = this.state.promptPreAuth;
-        const subtotal = "$"+parseFloat(this.state.subtotal).toFixed(2);
-        const tax = "$"+parseFloat(this.state.tax).toFixed(2);
-        const total = "$"+parseFloat(this.state.total).toFixed(2);
+        const subtotal = '$'+parseFloat(this.state.subtotal).toFixed(2);
+        const tax = '$'+parseFloat(this.state.tax).toFixed(2);
+        const total = '$'+parseFloat(this.state.total).toFixed(2);
         const preAuthPopup = this.state.preAuthChosen;
-        let tipProvided = (this.state.tipMode === "TIP_PROVIDED");
+        let tipProvided = (this.state.tipMode === 'TIP_PROVIDED');
         let sigThreshold = (this.state.signatureEntryLocation !== 'NONE' && this.state.signatureEntryLocation !== 'ON_PAPER');
-        let preAuth = null;
-        let image = "images/tender_default.png";
+        let image = 'images/tender_default.png';
         if(this.state.preAuth !== null) {
             showPreAuthHeader = true;
             image = this.imageHelper.getCardTypeImage(this.state.preAuth.preAuth.payment.cardTransaction.cardType);
         }
-        let amountSpan = "";
         let amountExceeded = this.state.amountExceeded;
-        if(amountExceeded){
-            amountSpan = "red_text";
-        }
+        let amountSpan = amountExceeded ? 'red_text' : '';
 
         return(
             <div className="register">
@@ -1039,13 +1018,13 @@ export default class Register extends React.Component {
                 </div>
                 <div className="register_right">
                     {!this.state.makingSale &&
-                    <div className="column_plain">
+                    <div className="column_plain full_height">
                         <div className="register_items">
                             {data.map((item, i) => {
                                 return <AvailableItem key={'item-' + i} item={item} onClick={this.addToOrder}/>
                             })}
                         </div>
-                        <div className="filler_space"/>
+                        <div className="filler_space"></div>
                         <div className="discount_items">
                             <div className="discount_title"><strong>Discounts:</strong></div>
                             {this.store.discounts.map((discount, i) => {

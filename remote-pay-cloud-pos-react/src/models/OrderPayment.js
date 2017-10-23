@@ -1,29 +1,29 @@
-import CurrencyFormatter from "../utils/CurrencyFormatter";
+import CurrencyFormatter from '../utils/CurrencyFormatter';
 
 export default class OrderPayment {
 
     constructor(id) {
-        this.id = id;
-        this.cloverPaymentId = null;
-        this.status = "OPEN";
         this.amount = 0;
-        this.taxAmount = 0;
-        this.tipAmount = 0;
-        this.date = new Date();
-        this.tender="Credit Card";
-        this.transactionType = '';
-        this.cardDetails = "EBT 3453";
-        this.employee = "Employee";
-        this.deviceId = "C03458DF83458";
-        this.transactionState="CLOSED";
-        this.transactionTitle = null;
-        this.externalPaymentId = null;
-        this.refunds = [];
-        this.cashBackAmount = 0.00;
-        this.entryMethod = "SWIPED";
-        this.cloverOrderId = null;
+        this.cardDetails = 'EBT 3453';
         this.cardType = null;
+        this.cashBackAmount = 0.00;
+        this.cloverOrderId = null;
+        this.cloverPaymentId = null;
+        this.date = new Date();
+        this.deviceId = 'C03458DF83458';
+        this.employee = 'Employee';
+        this.entryMethod = 'SWIPED';
+        this.externalPaymentId = null;
         this.formatter = new CurrencyFormatter();
+        this.id = id;
+        this.refunds = [];
+        this.status = 'OPEN';
+        this.taxAmount = 0;
+        this.tender = 'Credit Card';
+        this.tipAmount = 0;
+        this.transactionState='CLOSED';
+        this.transactionTitle = null;
+        this.transactionType = '';
     }
 
     getId(){

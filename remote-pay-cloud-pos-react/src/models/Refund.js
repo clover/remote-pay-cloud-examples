@@ -1,19 +1,25 @@
+import CurrencyFormatter from './../utils/CurrencyFormatter';
+
 export default class Refund {
 
     constructor(){
         this.amount = 0;
         this.cardDetails = null;
-        this.cardType = "Default";
+        this.cardType = 'Default';
         this.date = new Date();
-        this.employee = "Employee";
+        this.employee = 'Employee';
+        this.entryMethod = '';
+        this.formatter = new CurrencyFormatter();
         this.id = null;
-        this.tender = "Credit Card";
+        this.refund = true;
+        this.tender = 'Credit Card';
+        this.transactionState = 'OPEN';
         this.transactionTitle = null;
         this.transactionType = '';
     }
 
     getAmount(){
-        return parseFloat(this.amount).toFixed(2);
+        return this.formatter.convertToFloat(this.amount);
     }
 
     setAmount(amount){
@@ -86,5 +92,21 @@ export default class Refund {
 
     setTransactionType(transactionType){
         this.transactionType = transactionType;
+    }
+
+    getEntryMethod(){
+        return this.entryMethod;
+    }
+
+    setEntryMethod(entryMethod){
+        this.entryMethod = entryMethod;
+    }
+
+    getTransactionState(){
+        return this.transactionState;
+    }
+
+    setTransactionState(state){
+        this.transactionState = state;
     }
 }

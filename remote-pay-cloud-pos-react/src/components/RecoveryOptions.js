@@ -1,87 +1,88 @@
-import React from 'react';
 import ButtonNormal from "./ButtonNormal";
+import React from 'react';
 import sdk from 'remote-pay-cloud-api';
 
 export default class RecoveryOptions extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            showPaymentPopup : false,
             keepPaymentPopupOpen: false,
-            showReset : false,
             queryPaymentText: 'JANRZXDFT3JF',
+            showPaymentPopup : false,
+            showReset : false,
         };
+        this.cloverConnector = this.props.cloverConnection.cloverConnector;
         this.fadeBackground = this.props.fadeBackground;
         this.unfadeBackground = this.props.unfadeBackground;
+
         this.addPaymentID = this.addPaymentID.bind(this);
         this.closePaymentID = this.closePaymentID.bind(this);
-        this.resetClicked = this.resetClicked.bind(this);
-        this.resetDevice = this.resetDevice.bind(this);
         this.dismissReset = this.dismissReset.bind(this);
-        this.queryPaymentChange = this.queryPaymentChange.bind(this);
-        this.queryPayment = this.queryPayment.bind(this);
         this.getDeviceStatus = this.getDeviceStatus.bind(this);
         this.getDeviceStatusResend = this.getDeviceStatusResend.bind(this);
         this.getPendingPayments = this.getPendingPayments.bind(this);
-        this.cloverConnector = this.props.cloverConnection.cloverConnector;
-        //console.log("Recovery Options: ", this.props);
+        this.queryPayment = this.queryPayment.bind(this);
+        this.queryPaymentChange = this.queryPaymentChange.bind(this);
+        this.resetClicked = this.resetClicked.bind(this);
+        this.resetDevice = this.resetDevice.bind(this);
     }
 
-    resetDevice(){
+    resetDevice(){      // tells Clover device to reset
         this.unfadeBackground();
         this.cloverConnector.resetDevice();
         this.dismissReset();
     }
 
-    resetClicked(){
+    resetClicked(){     // shows reset confirmation popup
         this.fadeBackground();
-        this.setState({showReset: true});
+        this.setState({ showReset: true });
     }
 
-    dismissReset(){
+    dismissReset(){     // dismisses reset confirmation popup
         this.unfadeBackground();
-        this.setState({showReset : false});
+        this.setState({ showReset : false });
     }
 
-    addPaymentID(){
+    addPaymentID(){     // shows query payment by id popup
         this.fadeBackground();
-        this.setState({ showPaymentPopup: true});
+        this.setState({ showPaymentPopup: true });
     }
 
-    queryPaymentChange(e){
-        this.setState({ queryPaymentText: e.target.value});
+    queryPaymentChange(e){      // handles query by payment id text (id) change
+        this.setState({ queryPaymentText: e.target.value });
     }
 
-    queryPayment(){
+    queryPayment(){     // queries payment by payment id
         this.unfadeBackground();
         let externalPaymentId = this.state.queryPaymentText;
-        console.log("queryPayment", externalPaymentId);
         this.closePaymentID();
         let request = new sdk.remotepay.RetrievePaymentRequest();
         request.setExternalPaymentId(externalPaymentId);
         this.cloverConnector.retrievePayment(request);
     }
 
-    closePaymentID(){
+    closePaymentID(){       // closes query by payment id popup
         this.unfadeBackground();
-        this.setState({ showPaymentPopup : false});
+        this.setState({ showPaymentPopup : false });
     }
 
-    getDeviceStatus(){
+    getDeviceStatus(){      // gets Clover device status
         this.cloverConnector.retrieveDeviceStatus(new sdk.remotepay.RetrieveDeviceStatusRequest(false));
     }
 
-    getDeviceStatusResend(){
+    getDeviceStatusResend(){        // gets Clover device status and resends last device activity
         this.cloverConnector.retrieveDeviceStatus(new sdk.remotepay.RetrieveDeviceStatusRequest(true));
     }
 
-    getPendingPayments(){
+    getPendingPayments(){       // gets pending payments
         this.cloverConnector.retrievePendingPayments();
     }
 
     render(){
-        let showPaymentId = this.state.showPaymentPopup;
         let reset = this.state.showReset;
+        let showPaymentId = this.state.showPaymentPopup;
+
         return(
 
             <div className="recovery_options">

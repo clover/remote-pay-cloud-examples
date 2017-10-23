@@ -1,38 +1,39 @@
-import React from 'react';
+import { browserHistory } from 'react-router';
 import ButtonNormal from "./ButtonNormal";
-import Refund from "../models/Refund";
-import TitleBar from "./TitleBar";
-import RefundRow from "./RefundRow";
-import TransactionRow from "./TransactionRow";
-import sdk from 'remote-pay-cloud-api';
 import clover from 'remote-pay-cloud';
 import CurrencyFormatter from "./../utils/CurrencyFormatter";
+import React from 'react';
+import Refund from "../models/Refund";
+import RefundRow from "./RefundRow";
+import sdk from 'remote-pay-cloud-api';
+import TitleBar from "./TitleBar";
+import TransactionRow from "./TransactionRow";
 
 export default class Refunds extends React.Component {
+
     constructor(props){
         super(props);
-        this.handleChange = this.handleChange.bind(this);
-        this.makeRefund = this.makeRefund.bind(this);
+        this.cloverConnector = this.props.cloverConnection.cloverConnector;
+        this.formatter = new CurrencyFormatter;
         this.store = this.props.store;
         this.state = {
             refundAmount: 0.00,
-            refunds : this.store.getRefunds(),
+            refunds : this.store.getRefunds()
         };
-        this.formatter = new CurrencyFormatter;
-        this.cloverConnector = this.props.cloverConnection.cloverConnector;
-        console.log(this.state.refunds);
+
+        this.goToRefund = this.goToRefund.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.makeRefund = this.makeRefund.bind(this);
     }
 
-    handleChange(e){
+    handleChange(e){    // handles refund amount change
         this.setState({ refundAmount: parseFloat(e.target.value).toFixed(2)});
     }
 
-    makeRefund(){
+    makeRefund(refund){       // makes manual refund
         let externalPaymentID = clover.CloverID.getNewId();
-        //let refund = new Refund(this.state.refundAmount);
-        //this.store.addRefund(refund);
-        //this.setState({refunds : this.store.getRefunds()});
-        document.getElementById("refund_input").value = "0.00";
+        document.getElementById('refund_input').value = '0.00';
+
         let request = new sdk.remotepay.ManualRefundRequest();
         request.setExternalId(externalPaymentID);
         request.setAmount(this.formatter.convertFromFloat(this.state.refundAmount));
@@ -40,8 +41,13 @@ export default class Refunds extends React.Component {
         this.cloverConnector.manualRefund(request);
     }
 
+    goToRefund(refund){
+            browserHistory.push({pathname: '/payment', state: {type: 'refund', refund: refund.id}});
+    }
+
     render(){
         let refunds = this.store.getRefunds();
+
         return(
             <div className="refunds">
                 <div className="make_refund">
@@ -54,7 +60,7 @@ export default class Refunds extends React.Component {
                 </div>
                 <TitleBar title="Refunds"/>
                 {refunds.map(function (refund, i) {
-                    return <TransactionRow key={'refund-'+i} transaction={refund}/>
+                    return <TransactionRow key={"refund-" + i} transaction={refund} onClick={this.goToRefund}/>
                 }, this)}
             </div>
         );
