@@ -8,6 +8,10 @@
     "install": "webpack",
     "start": "node_modules/.bin/babel-node --presets react,es2015 src/server.js"
   },
+  "engines": {
+    "node": "6.11.1",
+    "npm": "3.3.6"
+  },
   "author": "",
   "license": "ISC",
   "repository": {
