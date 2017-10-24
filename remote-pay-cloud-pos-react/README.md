@@ -1,4 +1,3 @@
-# remote-pay-cloud-examples
 ## Deployment
 
 ### Deploy immediately on Heroku
