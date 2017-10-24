@@ -1,9 +1,9 @@
-##Overview
+## Overview
 
 This example contains a simple Node.js application which demonstrates how to connect to a Clover Device using the Clover Javascript Cloud Connector, and communicating with it in order to display information, perform sales and other operations.
 
-##Requirements
-- Node.js - We recommend [v6.11.3 LTS]()https://nodejs.org/en/).  
+## Requirements
+- Node.js - We recommend [v6.11.3 LTS] (https://nodejs.org/en/).  
 
 ## Running the Example
 ```bash
@@ -34,3 +34,7 @@ The JavaScript Cloud Connector requires a WebSocket and XMLHttpRequest (cloud on
     ```
 - XMLHttpRequest    
    - Recommended - https://www.npmjs.com/package/xmlhttprequest-ssl (1.5.4) - This library works out of the box with the JavaScript Cloud Connector.
+
+- IImageUtil
+   - IImageUtil is part of the Clover API.
+   - An IImageUtil implementation is passed in the configuration object used when connecting to the device and is used for printing and retrieving images from a URL.  An example implementation is provided in this repository (./lib/support/ImageUtil.js)
