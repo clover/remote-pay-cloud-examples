@@ -108,13 +108,14 @@ export default class Order {
     }
 
     getOrderPayments(){
-        let _orderPayments = [];
-        this.orderPayments.forEach(function (orderPayment) {
-            if(orderPayment.transactionType !== 'VOIDED'){
-                _orderPayments.push(orderPayment);
-            }
-        },this);
-        return _orderPayments;
+        //let _orderPayments = [];
+        //this.orderPayments.forEach(function (orderPayment) {
+        //    if(orderPayment.transactionType !== 'VOIDED'){
+        //        _orderPayments.push(orderPayment);
+        //    }
+        //},this);
+        //return _orderPayments;
+        return this.orderPayments;
     }
 
     getRefunds(){

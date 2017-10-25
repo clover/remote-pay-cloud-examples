@@ -21,6 +21,7 @@ export default class OrderPaymentRow extends React.Component {
         const onClick = this.props.onClick;
         const tender = this.orderPayment.tender;
         const total = this.formatter.formatCurrency(this.orderPayment.amount);
+        const transactionType = this.orderPayment.transactionType.toUpperCase();
 
         return (
             <div className="order_item_row" onClick={() => {onClick(this.orderPayment)}}>
@@ -40,7 +41,7 @@ export default class OrderPaymentRow extends React.Component {
                 </div>
                 <div className="order_row_right">
                     <div><strong>{total}</strong></div>
-                    <div className="grey_text">PAYMENT</div>
+                    <div className="grey_text">{transactionType}</div>
                 </div>
             </div>
         )

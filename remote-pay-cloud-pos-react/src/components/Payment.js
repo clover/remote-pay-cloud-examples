@@ -96,6 +96,9 @@ export default class Payment extends React.Component {
             console.log('setting isRefund');
             this.setState({ isRefund: true, refundDisabled: true });
         }
+        if(this.payment.transactionType === 'VOIDED'){
+            this.setState({refundDisabled: true});
+        }
     }
 
     componentDidMount(){
@@ -212,7 +215,7 @@ export default class Payment extends React.Component {
                                     <span className="dollar_span">$</span>
                                     <input id="adjustTip" type="number" min="0.01" step="0.01" defaultValue={tipAmount} onChange={this.handleChange}/>
                                 </div>
-                                <ButtonNormal title="Save" color="white" onClick={this.finishAdjustTip}/>
+                                <ButtonNormal title="Save" color="white" extra="row_padding" onClick={this.finishAdjustTip}/>
 
                             </div>}
                         </div>

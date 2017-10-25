@@ -34,7 +34,7 @@ export default class Orders extends React.Component {
             }
             this.setState({ order: order, orderItems:order.getDisplayItems(), orderPayments:order.getOrderPayments(), orderOpen: orderOpen });
         }
-        console.log(order);
+        console.log('orderDetails',  order);
 
     }
 
@@ -86,7 +86,7 @@ export default class Orders extends React.Component {
                                 return <OrderPaymentRow key={"order_orderPayment-" + i} order={this.state.order} orderPayment={orderPayment} onClick={this.goToPayment}/>
                             }, this)}
                             {register &&
-                            <div className="column_plain full_height flex_end margin_bottom">
+                            <div className="column_plain flex_grow flex_end margin_bottom">
                                 <div className="filler_space"></div>
                                 <ButtonNormal title="Open in Register" color="white" extra="open_register_button" onClick={() => {this.goToRegister(this.state.order)}} />
                             </div>
