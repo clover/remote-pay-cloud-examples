@@ -1,6 +1,6 @@
-import ButtonNormal from "./ButtonNormal";
-import Connect from "./../utils/CloverConnection";
-const data = require ("../../src/items.js");
+import ButtonNormal from './ButtonNormal';
+import Connect from './../utils/CloverConnection';
+const data = require ('../../src/items.js');
 import Discount from '../models/Discount';
 import Item from '../models/Item';
 import { Link } from 'react-router';
@@ -16,7 +16,6 @@ export default class Layout extends Component {
         this.state = {
             challenge: false,
             challengeContent: null,
-            choosePrinter: false,
             connected : false,
             delay: 100,
             fadeBackground: false,
@@ -39,14 +38,13 @@ export default class Layout extends Component {
             statusToggle: false,
             tipAdjust: false,
             tipAmount: 0,
-            uriText : 'wss://192.168.0.35:12345/remote_pay',
+            uriText : 'wss://10.249.254.206:12345/remote_pay',
             vaultedCard : false
         };
 
         this.acceptPayment = this.acceptPayment.bind(this);
         this.acceptSignature = this.acceptSignature.bind(this);
         this.challenge = this.challenge.bind(this);
-        this.choosePrinter = this.choosePrinter.bind(this);
         this.closeStatusArray = this.closeStatusArray.bind(this);
         this.closePairingCode = this.closePairingCode.bind(this);
         this.closeStatus = this.closeStatus.bind(this);
@@ -142,7 +140,7 @@ export default class Layout extends Component {
     setStatus(message, reason) {        // decides how to display status
         //console.log(message, reason);
         if((typeof message === 'object') && (message !== null)){
-            this.setState({ statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false, choosePrinter: false , tipAdjust: false, vaultedCard: false });
+            this.setState({ statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false, tipAdjust: false, vaultedCard: false });
         }
         else if(message == 'Printers'){
             this.setState({ printers: reason })
@@ -151,10 +149,10 @@ export default class Layout extends Component {
             this.saleFinished(message);
         }
         else if(message === 'Response was not a sale'){
-            this.setState({ responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false, choosePrinter: false,  tipAdjust: false, vaultedCard: false });
-            setTimeout(function() {
+            this.setState({ responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false, tipAdjust: false, vaultedCard: false });
+            setTimeout(() => {
                 this.setState({ statusToggle: false, fadeBackground: false });
-            }.bind(this), 1200);
+            }, 1200);
         }
         else if(reason === 'Toggle'){
             this.statusToggle(message);
@@ -171,7 +169,6 @@ export default class Layout extends Component {
                 fadeBackground: true,
                 responseFail: false,
                 refundSuccess: false,
-                choosePrinter: false,
                 tipAdjust: false,
             });
         }
@@ -181,10 +178,10 @@ export default class Layout extends Component {
         if(message === 'PreAuth Successful'){
             this.setState({ preAuth: true });
         }
-        this.setState({ statusText: message, statusToggle: true, saleFinished: true, fadeBackground: true, responseFail: false, refundSuccess: false, response: true, choosePrinter: false,  tipAdjust: false, vaultedCard: false});
-        setTimeout(function() {
+        this.setState({ statusText: message, statusToggle: true, saleFinished: true, fadeBackground: true, responseFail: false, refundSuccess: false, response: true, tipAdjust: false, vaultedCard: false});
+        setTimeout(() => {
             this.setState({ statusToggle: false, fadeBackground: false, response: false });
-        }.bind(this), 1500);
+        }, 1500);
     }
 
     statusToggle(message){      // shows status for 1.5 seconds then closes
@@ -200,10 +197,10 @@ export default class Layout extends Component {
         else{
             this.setState({ refundSuccess: false, vaultedCard: false, tipAdjust: false });
         }
-        this.setState({ statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false, choosePrinter: false, inputOptions: null });
-        setTimeout(function() {
+        this.setState({ statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false, inputOptions: null });
+        setTimeout(() => {
             this.setState({ statusToggle: false, fadeBackground: false });
-        }.bind(this), 1500);
+        }, 1500);
     }
 
 
@@ -252,11 +249,6 @@ export default class Layout extends Component {
         this.closeStatus();
     }
 
-    choosePrinter(printer){     // sets chosen printer
-        console.log("printer chosen: ", printer);
-        this.setState({ printer : printer, choosePrinter: false });
-    }
-
     QRClicked(){        // shows QR screen
         this.setState({ showQR: true });
     }
@@ -273,7 +265,7 @@ export default class Layout extends Component {
     }
 
     handleError(err){       // handles qr code reader error
-        console.log("QR Reader Error", err);
+        console.log('QR Reader Error', err);
         this.setStatus('There was an error using the QR-Reader, please connect through Network Pay Display');
         this.setState({ showQR : false , localhost: false });
     }
@@ -306,7 +298,6 @@ export default class Layout extends Component {
     }
 
     render() {
-        let choosePrinter=this.state.choosePrinter;
         let fadeBackground = this.state.fadeBackground;
         let localhost = this.state.localhost;
         let showBody = this.state.connected;
@@ -320,7 +311,7 @@ export default class Layout extends Component {
         if( this.state.connected) {
             connectionState = 'Connected';
             if(this.store.getStoreName()!== null){
-                connectionState = (connectionState + ' to ' + this.store.getStoreName());
+                connectionState = (`${connectionState}: ${this.store.getDeviceId()} (${this.store.getStoreName()})`);
             }
         }
 
@@ -334,7 +325,7 @@ export default class Layout extends Component {
 
         let listContainer = <div></div>;
         let showStatusArray = false;
-        let statusArrayTitle = "";
+        let statusArrayTitle = '';
         if(this.state.statusArray !== null){
             showStatusArray = true;
             statusArrayTitle = this.state.statusArray.title;
@@ -403,27 +394,6 @@ export default class Layout extends Component {
                         <ButtonNormal title="Accept" color="white" extra="right dialog_button" onClick={this.acceptPayment}/>
                     </div>
                     }
-                </div>
-                }
-
-                {choosePrinter &&
-                <div className="popup popup_container choose_printer">
-                    {this.state.printers.map((printer, i) => {
-                        return <div key={"printer-" + i} className="printer_row" onClick={() =>{this.choosePrinter(printer)}}>
-                            <div className="row">
-                                <div>ID:</div>
-                                <div>{printer.id}</div>
-                            </div>
-                            <div className="row">
-                                <div>Name:</div>
-                                <div>{printer.name}</div>
-                            </div>
-                            <div className="row">
-                                <div>Type:</div>
-                                <div>{printer.type}</div>
-                            </div>
-                        </div>
-                    })}
                 </div>
                 }
 

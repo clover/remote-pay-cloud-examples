@@ -29,6 +29,10 @@ export default class TransactionRow extends React.Component {
             paymentType = 'Refund';
             displayTotal=(<span className="red_text">(${total})</span>);
         }
+        if(this.transaction.transactionType == 'VOIDED'){
+            paymentType = 'Voided';
+            displayTotal=(<span className="red_text">(${total})</span>);
+        }
 
         return (
             <div className="transaction_row" onClick={() => {_onClick(this.transaction)}}>

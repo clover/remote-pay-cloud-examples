@@ -27,8 +27,6 @@ export default class Store {
         this.orderId = 0;
         this.paymentId = 0;
         this.preAuth = null;
-        this.preAuthPaymentId = null;
-        this.printers = [];
         this.refunds = [];
         this.signatureEntryLocation = sdk.payments.DataEntryLocation.NONE;
         this.signatureThreshold = 0;
@@ -153,9 +151,21 @@ export default class Store {
         this.transactions.filter(function (obj) {
             if (obj.id == transactionId) {
                 obj.setRefund(true);
+            }
+        });
+    }
+
+    updateTransactionToVoided(transactionId){
+        this.transactions.filter(function (obj) {
+            if (obj.id == transactionId) {
+                obj.setTransactionType('VOIDED');
                 console.log('updatedTransaction', obj);
             }
         });
+        let payment = this.getPaymentByCloverId(transactionId);
+        payment.setTransactionType('VOIDED');
+        let order = this.getOrderByCloverPaymentId(transactionId);
+        order.setStatus('OPEN');
     }
 
     setCardEntryMethods(cardEntryMethods) {
@@ -230,21 +240,12 @@ export default class Store {
         this.preAuth = preauth;
     }
 
-    getPreAuthPaymentId(){
-        return this.preAuthPaymentId;
-    }
-
-    setPreAuthPaymentId(id){
-        this.preAuthPaymentId = id;
-    }
-
     getRefunds() {
         return this.refunds;
     }
 
-    addPaymentToOrder(payment, orderId) {
-        let order = this.getOrderById(orderId);
-        order.addOrderPayment(payment);
+    addPaymentToCurrentOrder(payment) {
+        this.currentOrder.addOrderPayment(payment);
     }
 
     addDiscount(discount) {
@@ -357,14 +358,6 @@ export default class Store {
 
     getCustomActivity(){
         return this.customActivity;
-    }
-
-    getPrinters(){
-        return this.printers;
-    }
-
-    setPrinters(printers){
-        this.printers = printers;
     }
 
     getDeviceId(){
