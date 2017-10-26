@@ -1,21 +1,21 @@
 import React from 'react';
-import Refund from "../models/Refund";
-import PaymentRefund from "../models/PaymentRefund";
+import Refund from '../models/Refund';
+import PaymentRefund from '../models/PaymentRefund';
 import clover from 'remote-pay-cloud-api';
-import OrderPayment from "../models/OrderPayment";
-import Transaction from "../models/Transaction";
-import VaultedCard from "../models/VaultedCard";
-import PreAuth from "../models/PreAuth";
-import CustomerInfo from "../models/CustomerInfo";
-import Rating from "../messages/Rating";
-import RatingsMessage from "../messages/RatingsMessage";
-import ConversationQuestionMessage from "../messages/ConversationQuestionMessage";
-import ConversationResponseMessage from "../messages/ConversationResponseMessage";
-import MessageToActivity from "../messages/MessageToActivity";
-import CustomerInfoMessage from "../messages/CustomerInfoMessage";
-import CurrencyFormatter from "./CurrencyFormatter";
-import CardDataHelper from "./CardDataHelper";
-import Layout from "../components/Layout";
+import OrderPayment from '../models/OrderPayment';
+import Transaction from '../models/Transaction';
+import VaultedCard from '../models/VaultedCard';
+import PreAuth from '../models/PreAuth';
+import CustomerInfo from '../models/CustomerInfo';
+import Rating from '../messages/Rating';
+import RatingsMessage from '../messages/RatingsMessage';
+import ConversationQuestionMessage from '../messages/ConversationQuestionMessage';
+import ConversationResponseMessage from '../messages/ConversationResponseMessage';
+import MessageToActivity from '../messages/MessageToActivity';
+import CustomerInfoMessage from '../messages/CustomerInfoMessage';
+import CurrencyFormatter from './CurrencyFormatter';
+import CardDataHelper from './CardDataHelper';
+import Layout from '../components/Layout';
 import sdk from 'remote-pay-cloud-api';
 
 export default class POSCloverConnectorListener extends clover.remotepay.ICloverConnectorListener{
@@ -85,7 +85,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
 
     onPrintJobStatusResponse(response){     // the response contains the print job identifier and status
         console.log('onPrintJobStatusResponse', response);
-        this.setStatus('Print Job Status: ' + response.status, 'Toggle');
+        this.setStatus(`Print Job Status: ${response.status}`, 'Toggle');
     }
 
     onRetrievePrintersResponse(response){       // the response contains an array of the printers being passed back
@@ -104,7 +104,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
             }
             else{
                 response.pendingPaymentEntries.forEach(function(payment){
-                    let line = payment.paymentId + " "+this.formatter.formatCurrency(payment.amount);
+                    let line = (`${payment.paymentId} ${this.formatter.formatCurrency(payment.amount)}`);
                     pending.push(line);
                 },this);
             }
@@ -118,10 +118,10 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     onRetrieveDeviceStatusResponse(response){       // called in response to retrieveDeviceState request
         console.log('onRetrieveDeviceStatusResponse', response);
         let status = [];
-        status.push('Result: '+ response.result);
-        status.push('State: '+ response.state);
-        status.push('ExternalActivityId: '+ response.data.customActivityId);
-        status.push('Reason: '+ response.reason);
+        status.push(`Result: ${response.result}`);
+        status.push(`State: ${response.state}`);
+        status.push(`ExternalActivityId: ${response.data.customActivityId}`);
+        status.push(`Reason: ${response.reason}`);
         this.setStatus({title: 'Device Status', data: status});
     }
 
@@ -131,7 +131,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
             this.setStatus('Reset Device Successful', 'Toggle');
         }
         else{
-            this.setStatus('Reset Device Failed, Reason: ' + response.reason);
+            this.setStatus(`Reset Device Failed, Reason: ${response.reason}`);
         }
     }
 
@@ -139,15 +139,15 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
         console.log('onRetrievePaymentResponse', response);
         let paymentLines = [];
         paymentLines.push('Retrieve Payment: ' + (response.success ? 'Success!' : 'Failed!'));
-        paymentLines.push('Query Status: '+ response.queryStatus);
-        paymentLines.push('Reason: '+ response.reason);
+        paymentLines.push(`Query Status: ${response.queryStatus}`);
+        paymentLines.push(`Reason: ${response.reason}`);
         if(response.payment !== null  && response.payment !== undefined) {
             paymentLines.push('**************************************************');
             paymentLines.push('PAYMENT');
-            paymentLines.push('Result: '+ response.payment.result);
-            paymentLines.push('    Amount: ' + this.formatter.formatCurrency(response.payment.amount));
+            paymentLines.push(`Result: ${response.payment.result}`);
+            paymentLines.push(`    Amount: ${this.formatter.formatCurrency(response.payment.amount)}`);
             let date = new Date(response.payment.createdTime);
-            paymentLines.push('    Date: ' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString());
+            paymentLines.push(`    Date: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`);
         }
         console.log(paymentLines);
         this.setStatus({title: 'Payment Details', data: paymentLines});
@@ -179,14 +179,14 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     onCustomActivityResponse(response) {        // called when a custom activity finishes
         console.log('onCustomActivityResponse', response);
         if (response.success) {
-            this.setStatus('Success! Got: ' + response.payload + ' from CustomActivity: ' + response.action, 'Toggle');
+            this.setStatus(`Success! Got: ${response.payload} from CustomActivity: ${response.action}`, 'Toggle');
         }
         else {
-            if (response.result  === "CANCEL"){
-                this.setStatus('Custom activity: ' + response.action + ' was canceled.  Reason: '+ response.reason, 'Toggle');
+            if (response.result  === 'CANCEL'){
+                this.setStatus(`Custom activity: ${response.action} was canceled. Reason: ${response.reason}`, 'Toggle');
             }
             else{
-                this.setStatus('Failure! Custom activity: ' + response.action + ' failed.  Reason: ' + response.reason, 'Toggle');
+                this.setStatus(`Failure! Custom activity: ${response.action} failed.  Reason: ${response.reason}`, 'Toggle');
             }
         }
     }
@@ -199,14 +199,14 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
 
     handleJokeResponse(payload) {       // handles response of joke for custom conversation activity
         let jokeResponseMessage = new ConversationResponseMessage(payload.message);
-        this.setStatus('Received response of: ' + jokeResponseMessage.message, 'Toggle');
+        this.setStatus(`Received response of: ${jokeResponseMessage.message}`, 'Toggle');
     }
 
     handleCustomerLookup(payload) {     // handles customer lookup for the custom ratings activity
         console.log('handleCustomerLookup', payload);
         let phoneNumber = payload.phoneNumber;
-        console.log('Just received phone number ' + phoneNumber + ' from the Ratings remote application.', 3000);
-        console.log('Sending customer name Ron Burgundy to the Ratings remote application for phone number ' + phoneNumber, 3000);
+        console.log(`Just received phone number ${phoneNumber} from the Ratings remote application.`, 3000);
+        console.log(`Sending customer name Ron Burgundy to the Ratings remote application for phone number ${phoneNumber}`, 3000);
         let customerInfo = new CustomerInfo();
         customerInfo.customerName = 'Ron Burgundy';
         customerInfo.phoneNumber = phoneNumber;
@@ -218,10 +218,10 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     }
 
     handleRatings(payload){     // handles ratings for custom ratings activity
-        console.log("handleRatings", payload);
+        console.log('handleRatings', payload);
         let ratingsMessage = new RatingsMessage(JSON.stringify(payload));
         let ratingsPayload = ratingsMessage.ratings;
-        this.setStatus(ratingsPayload, "toggle");
+        this.setStatus(ratingsPayload, 'toggle');
         //this.showRatingsDialog(ratingsPayload);
     }
 
@@ -264,7 +264,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
             this.setStatus({title: 'Card Data', data: cardDataString});
         }
         else{
-            this.setStatus('There was an Error Reading Card Data Reason: '+ response.reason);
+            this.setStatus(`There was an Error Reading Card Data Reason: ${response.reason}`);
         }
     }
 
@@ -299,7 +299,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
             }
         }
         else{
-            this.setStatus('PreAuth Capture Error: Payment failed with response code = ' + response.result + " and reason: " + response.reason);
+            this.setStatus(`PreAuth Capture Error: Payment failed with response code = ${response.result} and reason: ${response.reason}`);
         }
         this.cloverConnector.showWelcomeScreen();
     }
@@ -321,11 +321,11 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
                 this.setStatus('PreAuth Successful');
             }
             else {
-                this.setStatus('External Id\'s Do Not Match', 'Toggle');
+                this.setStatus(`External Id's Do Not Match`, 'Toggle');
             }
         }
         else{
-            this.setStatus('PreAuth Failed Reason: '+response.reason);
+            this.setStatus(`PreAuth Failed Reason: ${response.reason}`);
         }
     }
 
@@ -355,7 +355,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
                 }
             }
             else{
-                this.setStatus('Auth Failed Reason: '+response.reason);
+                this.setStatus(`Auth Failed Reason: ${response.reason}`);
             }
         }
     }
@@ -403,7 +403,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
                     }
                 }
                 else{
-                    this.setStatus('Sale Failed Reason: ' + response.reason);
+                    this.setStatus(`Sale Failed Reason: ${response.reason}`);
                 }
             }
         }
@@ -422,7 +422,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
             this.setStatus('Tip adjusted successfully', 'Toggle');
         }
         else{
-            this.setStatus('Tip adjust failed, Reason: ' + response.reason);
+            this.setStatus(`Tip adjust failed, Reason: ${response.reason}`);
         }
     }
 
@@ -447,7 +447,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
             this.store.addRefund(refund);
         }
         else {
-            this.setStatus('Manual Refund Failed, Reason: '+response.reason);
+            this.setStatus(`Manual Refund Failed, Reason: ${response.reason}`);
         }
     }
 
@@ -476,16 +476,16 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     // VAULTED CARDS
 
     onVaultCardResponse(response) {     // called in response to a vault card request
-        console.log("Vault Card Response", response);
+        console.log('Vault Card Response', response);
         if(response.success) {
             let card = response.getCard();
             if (card !== undefined) {
                 this.store.addCard(new VaultedCard(card));
-                this.setStatus('Card Successfully Vaulted', "Toggle");
+                this.setStatus('Card Successfully Vaulted', 'Toggle');
             }
         }
         else {
-            this.setStatus("Card Vaulting Failed");
+            this.setStatus('Card Vaulting Failed');
         }
     }
 
@@ -511,7 +511,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
         if (response.success) {
             this.setStatus('Closeout Successful', 'Toggle');
         } else {
-            this.setStatus('Closeout Failed, Reason: ' + response.reason);
+            this.setStatus(`Closeout Failed, Reason: ${response.reason}`);
         }
     }
 
@@ -522,7 +522,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
             this.setStatus('Payment Voided Successfully', 'Toggle');
         }
         else{
-            this.setStatus('Payment Void Failed, Reason: '+ response.reason);
+            this.setStatus(`Payment Void Failed, Reason: ${response.reason}`);
         }
     }
 
@@ -539,7 +539,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
         orderPayment.date = new Date(payment.createdTime);
         orderPayment.tender = payment.tender.label;
         orderPayment.transactionType = payment.cardTransaction.type;
-        orderPayment.cardDetails = (payment.cardTransaction.cardType + " " + payment.cardTransaction.last4);
+        orderPayment.cardDetails = (`${payment.cardTransaction.cardType} ${payment.cardTransaction.last4}`);
         orderPayment.cardType = payment.cardTransaction.cardType;
         orderPayment.externalPaymentId = payment.externalPaymentId;
         orderPayment.refunds = payment.refunds;
@@ -567,11 +567,11 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
 
     setPaymentStatus(payment, response) {       // sets the payment status based on the response
         if (response.isSale) {
-            payment.setStatus("PAID");
+            payment.setStatus('PAID');
         } else if (response.isAuth) {
-            payment.setStatus("AUTH");
+            payment.setStatus('AUTH');
         } else if (response.isPreAuth) {
-            payment.setStatus("PREAUTH");
+            payment.setStatus('PREAUTH');
         }
     }
 
@@ -579,12 +579,12 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
         console.log(response);
         let refund = new Refund();
         refund.setAmount(response.credit.amount);
-        refund.setCardDetails(response.credit.cardTransaction.cardType + " " + response.credit.cardTransaction.last4);
+        refund.setCardDetails(`${response.credit.cardTransaction.cardType} ${response.credit.cardTransaction.last4}`);
         refund.setCardType(response.credit.cardTransaction.cardType);
         refund.setDate(new Date(response.credit.createdTime));
         refund.setId(response.credit.id);
         refund.setTender(response.credit.tender.label);
-        refund.setTransactionTitle("Manual Refund");
+        refund.setTransactionTitle('Manual Refund');
         refund.setTransactionType(response.credit.cardTransaction.type);
         refund.setEntryMethod(response.credit.cardTransaction.entryType);
         refund.setTransactionState(response.credit.cardTransaction.state);

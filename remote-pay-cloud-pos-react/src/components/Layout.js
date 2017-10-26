@@ -1,6 +1,6 @@
-import ButtonNormal from "./ButtonNormal";
-import Connect from "./../utils/CloverConnection";
-const data = require ("../../src/items.js");
+import ButtonNormal from './ButtonNormal';
+import Connect from './../utils/CloverConnection';
+const data = require ('../../src/items.js');
 import Discount from '../models/Discount';
 import Item from '../models/Item';
 import { Link } from 'react-router';
@@ -38,7 +38,7 @@ export default class Layout extends Component {
             statusToggle: false,
             tipAdjust: false,
             tipAmount: 0,
-            uriText : 'wss://10.249.254.214:12345/remote_pay',
+            uriText : 'wss://10.249.254.206:12345/remote_pay',
             vaultedCard : false
         };
 
@@ -150,9 +150,9 @@ export default class Layout extends Component {
         }
         else if(message === 'Response was not a sale'){
             this.setState({ responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false, tipAdjust: false, vaultedCard: false });
-            setTimeout(function() {
+            setTimeout(() => {
                 this.setState({ statusToggle: false, fadeBackground: false });
-            }.bind(this), 1200);
+            }, 1200);
         }
         else if(reason === 'Toggle'){
             this.statusToggle(message);
@@ -265,7 +265,7 @@ export default class Layout extends Component {
     }
 
     handleError(err){       // handles qr code reader error
-        console.log("QR Reader Error", err);
+        console.log('QR Reader Error', err);
         this.setStatus('There was an error using the QR-Reader, please connect through Network Pay Display');
         this.setState({ showQR : false , localhost: false });
     }
@@ -311,7 +311,7 @@ export default class Layout extends Component {
         if( this.state.connected) {
             connectionState = 'Connected';
             if(this.store.getStoreName()!== null){
-                connectionState = (connectionState + ': ' + this.store.getDeviceId() + ' (' +this.store.getStoreName() + ')');
+                connectionState = (`${connectionState}: ${this.store.getDeviceId()} (${this.store.getStoreName()})`);
             }
         }
 
@@ -325,7 +325,7 @@ export default class Layout extends Component {
 
         let listContainer = <div></div>;
         let showStatusArray = false;
-        let statusArrayTitle = "";
+        let statusArrayTitle = '';
         if(this.state.statusArray !== null){
             showStatusArray = true;
             statusArrayTitle = this.state.statusArray.title;
