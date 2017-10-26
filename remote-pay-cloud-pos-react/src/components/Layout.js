@@ -179,9 +179,9 @@ export default class Layout extends Component {
             this.setState({ preAuth: true });
         }
         this.setState({ statusText: message, statusToggle: true, saleFinished: true, fadeBackground: true, responseFail: false, refundSuccess: false, response: true, tipAdjust: false, vaultedCard: false});
-        setTimeout(function() {
+        setTimeout(() => {
             this.setState({ statusToggle: false, fadeBackground: false, response: false });
-        }.bind(this), 1500);
+        }, 1500);
     }
 
     statusToggle(message){      // shows status for 1.5 seconds then closes
@@ -198,9 +198,9 @@ export default class Layout extends Component {
             this.setState({ refundSuccess: false, vaultedCard: false, tipAdjust: false });
         }
         this.setState({ statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false, inputOptions: null });
-        setTimeout(function() {
+        setTimeout(() => {
             this.setState({ statusToggle: false, fadeBackground: false });
-        }.bind(this), 1500);
+        }, 1500);
     }
 
 

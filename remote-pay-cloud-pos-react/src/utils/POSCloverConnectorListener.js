@@ -479,7 +479,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
         console.log('Vault Card Response', response);
         if(response.success) {
             let card = response.getCard();
-            if (card !== undefined) {
+            if (card) {
                 this.store.addCard(new VaultedCard(card));
                 this.setStatus('Card Successfully Vaulted', 'Toggle');
             }
