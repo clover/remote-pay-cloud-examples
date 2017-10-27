@@ -15,7 +15,7 @@
     "inquirer": "3.3.0",
     "nodejs-websocket": "1.7.1",
     "remote-pay-cloud": "1.4.0",
-    "xmlhttprequest-ssl ": "1.5.4",
+    "xmlhttprequest-ssl": "1.5.4",
     "base64-js": "1.2.1",
     "image-downloader": "3.3.0",
     "ws": "3.2.0"
