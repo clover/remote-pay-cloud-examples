@@ -7,6 +7,7 @@ This example contains a simple Node.js application which demonstrates how to con
 
 ## Running the Example
 ```bash
+$ npm install
 $ node ./lib/ExamplesCLI.js
 ```
 
