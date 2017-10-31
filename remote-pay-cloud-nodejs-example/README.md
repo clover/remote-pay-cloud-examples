@@ -15,7 +15,7 @@ $ node ./lib/ExamplesCLI.js
 ```
 
 ## Implementation notes
-The JavaScript Cloud Connector requires a WebSocket and XMLHttpRequest (cloud only) implementation. The browser provides these implementations when using the Cloud Connector in a web application, in a Node.js environment implementations must be provided. Implementations can be found on npm. Below is a list of libraries that have been tested and verified to work with the JavaScript Cloud Connector.
+The JavaScript Cloud Connector requires WebSocket and XMLHttpRequest (cloud only) implementations. The browser provides these implementations when using the Cloud Connector in a web application. However, implementations must be provided in a Node.js environment. Implementations can be found on npm. Below is a list of libraries Clover has tested and verified to work with the JavaScript Cloud Connector.
 
 - WebSocket
     - [ws 3.2.0](https://www.npmjs.com/package/ws) (recommended) - This library works out of the box with the JavaScript Cloud Connector.
