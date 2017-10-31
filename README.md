@@ -1,3 +1,5 @@
+![Clover logo](https://www.clover.com/assets/images/public-site/press/clover_primary_gray_rgb.png)
+
 # Remote Pay Cloud Examples
 
 Please see the [Getting Started with Clover Connector tutorial](https://docs.clover.com/build/getting-started-with-clover-connector/) for more information and a list of prerequisites.
