@@ -3,7 +3,7 @@
 This example contains a simple Node.js application which demonstrates how to connect to a Clover Device using the Clover Javascript Cloud Connector. It also shows how to communicate with it to display information, transact sales, and perform other operations.
 
 ## Requirements
-- Node.js. We recommend [v6.11.3 LTS] (https://nodejs.org/en/).  
+- Node.js. We recommend [v6.11.3 LTS](https://nodejs.org/en/).  
 
 ## Running the example
 
