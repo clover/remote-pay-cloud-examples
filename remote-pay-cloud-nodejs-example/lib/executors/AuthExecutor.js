@@ -58,9 +58,15 @@ var authExecutor = (function (module) {
                 }
             };
 
+            var onTipAdded = function (response) {
+                console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                console.log("On tip added: " + JSON.stringify(response));
+            };
+
             // Initialize the listeners for this executor.
             connectionListener.onAuthResponse = onAuthResponse;
             connectionListener.onTipAdjustAuthResponse = onTipAdjustAuthResponse;
+            connectionListener.onTipAdded = onTipAdded;
 
             var overrides = {
                 run: function () {
