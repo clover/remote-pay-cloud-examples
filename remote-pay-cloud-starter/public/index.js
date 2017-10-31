@@ -16,30 +16,37 @@ CloudStarter = function () {
  * The method we use to run the test
  */
 CloudStarter.prototype.run = function () {
-    // Configuration Note: Endpoint is required if you would like to use the Network Connector (Network Pay Display app).
-    // Configuration Note: Leave endpoint as an empty string if you would like to use the Cloud Connector (Cloud Pay Display app).
-    let endpoint = "wss://10.249.254.133:12345/remote_pay";
-    let cloverDeviceConnectionConfiguration = getDeviceConfigurationForNetwork({
-        "endpoint": endpoint, // Please update this if you would like to use the Network Connector.
-        "applicationId": "Cloud Starter",
+    // Shared by both Network and Cloud configurations.
+    // Configuration Note: Enter your app's Remote Application Id below!
+    const baseConfiguration = {
+        "applicationId": "yourRemoveApplicationId",
         "posName": "Cloud Starter POS",
         "serialNumber": "Register_1",
-        "authToken": getAuthToken(),
         "webSocketFactoryFunction": clover.BrowserWebSocketImpl.createInstance,
         "imageUtil": new clover.ImageUtil()
-    });
-    if (this.endpoint && this.endpoint.length > 0) {
-        // Configuration Note: If you would like to use the Cloud Connector accessToken, cloverServer, merchantId and deviceId must be set properly.
-        cloverDeviceConnectionConfiguration = getDeviceConfigurationForCloud(Object.assign({}, cloverDeviceConnectionConfiguration, {
-            "accessToken": "the OAuth access token that will be used when contacting the clover server. Tied to the merchant and the app",
-            "cloverServer": "https://sandboxdev.dev.clover.com/",
-            "httpSupport": new clover.HttpSupport(XMLHttpRequest),
-            "merchantId": "VKYQ0RVGMYHRR",
-            "deviceId": "the id (not uuid) of the device to connect to",
-            "friendlyId": "Cloud Starter"
+    };
+    let cloverDeviceConnectionConfiguration = null;
+    // Configuration Note: Set useCloudConfiguration to false to use the Clover's Network connector.
+    const useCloudConfiguration = true;
+    if (!useCloudConfiguration) {
+        // Configuration Note: Endpoint is required if you would like to use the Network Connector (Network Pay Display app).
+        // You can find the correct endpoint by opening the Network Pay Display app on your device.
+        let endpoint = "wss://10.249.254.133:12345/remote_pay";
+        cloverDeviceConnectionConfiguration = getDeviceConfigurationForNetwork(Object.assign({}, baseConfiguration, {
+            "endpoint": endpoint,
+            "authToken": getAuthToken()
         }));
     } else {
-        console.log(`Initializing connection to device at ${endpoint}`);
+        // Configuration Note: See: https://docs.clover.com/build/getting-started-with-clover-connector/?sdk=browser for more information
+        // on how to obtain the required connection parameter values.
+        cloverDeviceConnectionConfiguration = getDeviceConfigurationForCloud(Object.assign({}, baseConfiguration, {
+            "accessToken": "yourAccessTokenHere",
+            "cloverServer": "https://sandboxdev.dev.clover.com/",
+            "httpSupport": new clover.HttpSupport(XMLHttpRequest),
+            "merchantId": "yourMerchantIdhere",
+            "deviceId": "yourDeviceUUIDHere",
+            "friendlyId": "Cloud Starter"
+        }));
     }
 
     let builderConfiguration = {};
@@ -155,7 +162,7 @@ var buildCloverConnectionListener = function (cloverConnector) {
         },
 
         onDeviceDisconnected: function () {
-            console.log({message: "Disconnected", detailMessage: message});
+            console.log({message: "Disconnected"});
             toggleActions(false);
         },
 
