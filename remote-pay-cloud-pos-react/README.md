@@ -1,4 +1,4 @@
-# Remote Pay Cloud POS - React
+# Example Remote Pay Cloud POS in React
 
 This example is a full-featured, web-based point-of-sale system developed in [React](https://reactjs.org/) that uses the Clover Cloud Connector APIs to perform all POS actions.
 
