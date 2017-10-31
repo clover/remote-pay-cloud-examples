@@ -1,13 +1,13 @@
 ## Example Remote Pay Cloud POS in Node.js
 
-This example contains a simple Node.js application which demonstrates how to connect to a Clover Device using the Clover Javascript Cloud Connector. It also shows how to communicate with it to display information, transact sales, and perform other operations.
+This example contains a simple Node.js application that demonstrates how to connect to a Clover device using the Clover Javascript Cloud Connector. It also shows how to communicate with the device to display information, transact sales, and perform other operations.
 
 ## Requirements
 - Node.js. We recommend [v6.11.3 LTS](https://nodejs.org/en/).  
 
 ## Running the example
 
-To run the example app, enter the following commands on the command line:
+To run the example app, enter the following on the command line:
 
 ```bash
 $ npm install
@@ -15,11 +15,11 @@ $ node ./lib/ExamplesCLI.js
 ```
 
 ## Implementation notes
-The JavaScript Cloud Connector requires WebSocket and XMLHttpRequest (cloud only) implementations. The browser provides these implementations when using the Cloud Connector in a web application. However, implementations must be provided in a Node.js environment. Implementations can be found on npm. Below is a list of libraries Clover has tested and verified to work with the JavaScript Cloud Connector.
+The JavaScript Cloud Connector requires WebSocket and XMLHttpRequest (cloud only) implementations. The browser provides these implementations when using the Cloud Connector in a web application. However, implementations must be provided in a Node.js environment. Implementations can be found on npm. We've included a list of libraries that work with the JavaScript Cloud Connector below.
 
 - WebSocket
     - [ws 3.2.0](https://www.npmjs.com/package/ws) (recommended) - This library works out of the box with the JavaScript Cloud Connector.
-    - [nodejs-websocket 1.7.1](https://www.npmjs.com/package/nodejs-websocket) (alternative) - While this library works with the JavaScript Cloud Connector, the CloverWebSocketInterface.connect method must be overridden, due to API differences. From ./lib/support/ExampleWebSocketFactory.js):
+    - [nodejs-websocket 1.7.1](https://www.npmjs.com/package/nodejs-websocket) (alternative) - While this library works with the JavaScript Cloud Connector, the `CloverWebSocketInterface.connect` method must be overridden, due to API differences. From `./lib/support/ExampleWebSocketFactory.js`:
     
     ```javascript
       webSocketOverrides["connect"] = function () {
@@ -40,5 +40,5 @@ The JavaScript Cloud Connector requires WebSocket and XMLHttpRequest (cloud only
    - [xmlhttprequest-ssl 1.5.4](https://www.npmjs.com/package/xmlhttprequest-ssl) (recommended) - This library works out of the box with the JavaScript Cloud Connector.
 
 - IImageUtil
-   - IImageUtil is part of the Clover API.
-   - An IImageUtil implementation is passed into the configuration object used when connecting to the device. It is used to print and retrieve images from a URL.  An example implementation is provided in this repository (./lib/support/ImageUtil.js).
+   - `IImageUtil` is part of the Clover API.
+   - An `IImageUtil` implementation is passed into the configuration object used when connecting to the device. It is used to print and retrieve images from a URL.  An example implementation is provided in this repository (see ./lib/support/ImageUtil.js).
