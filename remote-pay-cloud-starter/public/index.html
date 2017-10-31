@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+  <link rel="stylesheet" href="built/bootstrap.css">
+  <script src="built/common.js"></script>
+  <script src="built/index_js-bundle.js"></script>
+  <style>
+    .top-buffer { margin-top: 10px }
+  </style>
+</head>
+<body>
+<script>
+    var example = new CloudStarter();
+</script>
+<div class="container">
+  <div class="row top-buffer">
+    <img src="clover_logo.png" width="400"/>
+  </div>
+  <div class="row top-buffer">
+    <button type="button" onclick="example.run()" class="btn btn-success">Connect to device ...</button>
+  </div>
+  <div class="row top-buffer">
+    <div id="status" class="alert alert-success">Not connected to your Clover device.  Please connect to perform an action.</div>
+  </div>
+  <div class="row top-buffer" id="actions" style="display:none;">
+    <div class="col-lg-12">
+      <div class="btn-group">
+        <button type="button" onclick="example.showMessage()" class="btn btn-success">Show a message on your Clover device</button>
+        <button type="button" onclick="example.performSale()" class="btn btn-success">Perform a sale on your Clover device</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

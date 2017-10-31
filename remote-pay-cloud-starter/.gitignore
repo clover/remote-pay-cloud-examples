@@ -1,0 +1,5 @@
+/.idea
+/ideaConfig
+/node_modules
+/public/built
+/npm-debug.log
