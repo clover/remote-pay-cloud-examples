@@ -29,7 +29,7 @@ export default class Register extends React.Component {
             disableDuplicate: false,
             disablePrinting: false,
             disableReceipt: false,
-            discount: "",
+            discount: '',
             fadeBackground: false,
             forceOfflinePaymentSelection: 'default',
             makingSale: false,
@@ -363,9 +363,9 @@ export default class Register extends React.Component {
 
     updateDisplayOrder(){       // updates display order on Clover device
         this.displayOrder.setLineItems(this.order.getDisplayItems());
-        this.displayOrder.setSubtotal('$' + parseFloat(this.order.getPreTaxSubTotal()).toFixed(2));
-        this.displayOrder.setTax('$' + parseFloat(this.order.getTaxAmount()).toFixed(2));
-        this.displayOrder.setTotal('$' + parseFloat(this.order.getTotal()).toFixed(2));
+        this.displayOrder.setSubtotal(`$${parseFloat(this.order.getPreTaxSubTotal()).toFixed(2)}`);
+        this.displayOrder.setTax(`$${parseFloat(this.order.getTaxAmount()).toFixed(2)}`);
+        this.displayOrder.setTotal(`$${parseFloat(this.order.getTotal()).toFixed(2)}`);
         this.cloverConnector.showDisplayOrder(this.displayOrder);
     }
 
@@ -688,9 +688,9 @@ export default class Register extends React.Component {
         }
         let orderItems = this.state.orderItems;
         const promptPreAuth = this.state.promptPreAuth;
-        const subtotal = '$'+parseFloat(this.state.subtotal).toFixed(2);
-        const tax = '$'+parseFloat(this.state.tax).toFixed(2);
-        const total = '$'+parseFloat(this.state.total).toFixed(2);
+        const subtotal = `$${parseFloat(this.state.subtotal).toFixed(2)}`;
+        const tax = `$${parseFloat(this.state.tax).toFixed(2)}`;
+        const total = `$${parseFloat(this.state.total).toFixed(2)}`;
         const preAuthPopup = this.state.preAuthChosen;
         let tipProvided = (this.state.tipMode === 'TIP_PROVIDED');
         let sigThreshold = (this.state.signatureEntryLocation !== 'NONE' && this.state.signatureEntryLocation !== 'ON_PAPER');

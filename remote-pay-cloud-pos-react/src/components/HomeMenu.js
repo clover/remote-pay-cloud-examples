@@ -1,7 +1,7 @@
 import { browserHistory, Link } from 'react-router';
-import ButtonNormal from "./ButtonNormal";
+import ButtonNormal from './ButtonNormal';
 import clover from 'remote-pay-cloud';
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
+import CurrencyFormatter from './../utils/CurrencyFormatter';
 import React from 'react';
 import sdk from 'remote-pay-cloud-api';
 

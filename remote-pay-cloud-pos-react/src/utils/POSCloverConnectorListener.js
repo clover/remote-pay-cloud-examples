@@ -77,7 +77,12 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
         console.log('onDeviceReady', merchantInfo);
         this.store.setStoreName(merchantInfo.merchantName);
         this.store.setDeviceId(merchantInfo.deviceInfo.serial);
+        this.toggleConnection(true);
         //this.cloverConnector.retrieveDeviceStatus(new sdk.remotepay.RetrieveDeviceStatusRequest(false));
+    }
+
+    onReady(merchantInfo){
+        this.onDeviceReady(merchantInfo);
     }
     //</editor-fold>
 
@@ -318,6 +323,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
                 let transaction = this.createTransactionFromOrderPayment(payment, true);
                 this.store.addTransaction(transaction);
                 this.store.setPreAuth(new PreAuth(response, payment));
+                this.store.setPreAuthPaymentId(_payment.id);
                 this.setStatus('PreAuth Successful');
             }
             else {
@@ -391,9 +397,9 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
                         this.cloverConnector.showWelcomeScreen();
                         let currentOrder = this.store.getCurrentOrder();
                         currentOrder.setCloverOrderId(response.payment.order.id);
+                        let orderPayment = this.createOrderPayment(response.payment, 'Payment');
                         currentOrder.addOrderPayment(orderPayment);
                         currentOrder.setStatus('PAID');
-                        let orderPayment = this.createOrderPayment(response.payment, 'Payment');
                         let transaction = this.createTransactionFromOrderPayment(orderPayment, true);
                         this.store.addTransaction(transaction);
                         this.setStatus('Sale Processed Successfully');

@@ -23,7 +23,21 @@ export default class ImageHelper {
     getPrinterTypeImage(printerType){
         let image = 'images/star.png';
         if(printerType === 'Mini'){
+            image = 'images/mini_printer.png';
+        }
+        return image;
+    }
+
+    getDeviceImage(deviceTypeName){
+        let image = '';
+        if(deviceTypeName === 'BAYLEAF'){
+            image = 'images/flex.png';
+        }
+        else if(deviceTypeName === 'MAPLECUTTER'){
             image = 'images/mini.png';
+        }
+        else if(deviceTypeName === 'LEAFCUTTER'){
+            image = 'images/mobile.png';
         }
         return image;
     }

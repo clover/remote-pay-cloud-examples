@@ -1,5 +1,5 @@
 import Checkmark from './Checkmark';
-import ImageHelper from "../utils/ImageHelper";
+import ImageHelper from '../utils/ImageHelper';
 import React from 'react';
 
 export default class TransactionRow extends React.Component {
@@ -22,7 +22,7 @@ export default class TransactionRow extends React.Component {
         const tender = this.transaction.tender;
         const time = this.transaction.date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
         let total = this.transaction.getAmount();
-        let displayTotal = '$' +total;
+        let displayTotal = `$${total}`;
 
         let paymentType = this.transaction.transactionTitle;
         if (this.transaction.refund || paymentType === 'Manual Refund'){

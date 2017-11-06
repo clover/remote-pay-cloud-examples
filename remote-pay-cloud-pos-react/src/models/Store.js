@@ -27,6 +27,7 @@ export default class Store {
         this.orderId = 0;
         this.paymentId = 0;
         this.preAuth = null;
+        this.preAuthPaymentId = null;
         this.refunds = [];
         this.signatureEntryLocation = sdk.payments.DataEntryLocation.NONE;
         this.signatureThreshold = 0;
@@ -150,6 +151,7 @@ export default class Store {
     updateTransactionToRefund(transactionId){
         this.transactions.filter(function (obj) {
             if (obj.id == transactionId) {
+                let refundTransaction = obj;
                 obj.setRefund(true);
             }
         });
@@ -159,7 +161,6 @@ export default class Store {
         this.transactions.filter(function (obj) {
             if (obj.id == transactionId) {
                 obj.setTransactionType('VOIDED');
-                console.log('updatedTransaction', obj);
             }
         });
         let payment = this.getPaymentByCloverId(transactionId);
@@ -238,6 +239,14 @@ export default class Store {
 
     setPreAuth(preauth) {
         this.preAuth = preauth;
+    }
+
+    getPreAuthPaymentId(){
+        return this.preAuthPaymentId;
+    }
+
+    setPreAuthPaymentId(id){
+        this.preAuthPaymentId = id;
     }
 
     getRefunds() {

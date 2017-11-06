@@ -1,4 +1,4 @@
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
+import CurrencyFormatter from './../utils/CurrencyFormatter';
 import React from 'react';
 
 export default class OrderItemRow extends React.Component {

@@ -1,10 +1,10 @@
-import ButtonNormal from "./ButtonNormal";
+import ButtonNormal from './ButtonNormal';
 import { browserHistory } from 'react-router';
-import OrderItemRow from "./OrderItemRow";
-import OrderPaymentRow from "./OrderPaymentRow";
-import OrderRow from "./OrderRow";
+import OrderItemRow from './OrderItemRow';
+import OrderPaymentRow from './OrderPaymentRow';
+import OrderRow from './OrderRow';
 import React from 'react';
-import TitleBar from "./TitleBar";
+import TitleBar from './TitleBar';
 
 export default class Orders extends React.Component {
 

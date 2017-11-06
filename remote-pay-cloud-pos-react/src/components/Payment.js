@@ -34,6 +34,7 @@ export default class Payment extends React.Component {
             this.type = this.props.location.state.type;
             if(this.type === 'payment'){
                 this.paymentId = this.props.location.state.id;
+                console.log(this.paymentId);
                 this.payment = this.store.getPaymentByCloverId(this.paymentId);
             }
             else if(this.type === 'refund'){
@@ -119,10 +120,6 @@ export default class Payment extends React.Component {
         const tender = this.payment.tender;
         const transactionType = this.payment.transactionType;
         const transactionState = this.payment.transactionState;
-        // let cashBack = this.payment.cashBackAmount;
-        // if(cashBack === 0) {
-        //     cashBack = "$0.00";
-        // }
         let showTips = true;
         let showTipButton = (this.payment.transactionTitle !== 'Payment');
         let tipText = 'Adjust Tip';
@@ -171,7 +168,6 @@ export default class Payment extends React.Component {
                                     <PaymentRow left="Entry Method:" right={entryMethod}/>
                                     <PaymentRow left="Transaction Type:" right={transactionType}/>
                                     <PaymentRow left="Transaction State:" right={transactionState}/>
-                                    {/*<PaymentRow left="Cashback:" right={cashBack}/>*/}
                                 </div>
                             </div>
                             {showTips &&
@@ -182,7 +178,6 @@ export default class Payment extends React.Component {
                                 </div>
                             </div>}
                             {showRefunds &&
-
                             <div className="payment_section">
                                 {this.payment.refunds.map(function (refund, i) {
                                     return(

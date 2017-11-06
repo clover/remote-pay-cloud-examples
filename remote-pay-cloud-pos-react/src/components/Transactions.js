@@ -1,7 +1,7 @@
 import { browserHistory } from 'react-router';
 import React from 'react';
-import TitleBar from "./TitleBar";
-import TransactionRow from "./TransactionRow";
+import TitleBar from './TitleBar';
+import TransactionRow from './TransactionRow';
 
 export default class Transactions extends React.Component {
 
@@ -14,6 +14,7 @@ export default class Transactions extends React.Component {
     }
 
     goToPayment(transaction){
+        console.log('goToPayment', transaction);
         if(transaction.transactionTitle !== 'Manual Refund') {
             browserHistory.push({pathname: '/payment', state: {type: 'payment', id: transaction.id}});
         }

@@ -11,7 +11,7 @@ export default class CurrencyFormatter {
                 first = '0';
             }
             let last = number.substr(number.length - 2);
-            return '$' + first + '.' + last;
+            return `$${first}.${last}`;
         }
     }
 

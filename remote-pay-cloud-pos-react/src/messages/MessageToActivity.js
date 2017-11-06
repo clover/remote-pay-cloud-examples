@@ -1,4 +1,4 @@
-import ActivityMessage from "./ActivityMessage";
+import ActivityMessage from './ActivityMessage';
 
 export default class MessageToActivity extends ActivityMessage {
 

@@ -1,9 +1,13 @@
 import ButtonNormal from './ButtonNormal';
+import Cloud from './Cloud';
 import Connect from './../utils/CloverConnection';
+import ConnectionHelper from './../utils/ConnectionHelper';
+import DeviceRow from './DeviceRow';
 const data = require ('../../src/items.js');
 import Discount from '../models/Discount';
 import Item from '../models/Item';
 import { Link } from 'react-router';
+import Network from './Network';
 import QrReader from 'react-qr-reader';
 import React, { Component } from 'react'
 import Store from '../models/Store';
@@ -14,6 +18,7 @@ export default class Layout extends Component {
     constructor(props){
         super(props);
         this.state = {
+            cloudConnect: false,
             challenge: false,
             challengeContent: null,
             connected : false,
@@ -31,6 +36,9 @@ export default class Layout extends Component {
             request: null,
             saleFinished: false,
             signatureRequest: null,
+            showCloudOptions: false,
+            showConnectionOptions: true,
+            showNetworkOptions: false,
             showSignature: false,
             showQR: false,
             statusArray: null,
@@ -38,7 +46,7 @@ export default class Layout extends Component {
             statusToggle: false,
             tipAdjust: false,
             tipAmount: 0,
-            uriText : 'wss://10.249.254.206:12345/remote_pay',
+            uriText : 'wss://10.249.254.214:12345/remote_pay',
             vaultedCard : false
         };
 
@@ -48,6 +56,7 @@ export default class Layout extends Component {
         this.closeStatusArray = this.closeStatusArray.bind(this);
         this.closePairingCode = this.closePairingCode.bind(this);
         this.closeStatus = this.closeStatus.bind(this);
+        this.cloudConnect = this.cloudConnect.bind(this);
         this.confirmSignature = this.confirmSignature.bind(this);
         this.connect = this.connect.bind(this);
         this.fadeBackground = this.fadeBackground.bind(this);
@@ -58,13 +67,17 @@ export default class Layout extends Component {
         this.QRClicked = this.QRClicked.bind(this);
         this.rejectPayment = this.rejectPayment.bind(this);
         this.rejectSignature = this.rejectSignature.bind(this);
+        this.selectDevice = this.selectDevice.bind(this);
         this.setPairingCode = this.setPairingCode.bind(this);
         this.setStatus = this.setStatus.bind(this);
+        this.showNetworkOptions = this.showNetworkOptions.bind(this);
         this.tipAdded = this.tipAdded.bind(this);
         this.toggleConnectionState = this.toggleConnectionState.bind(this);
         this.unfadeBackground = this.unfadeBackground.bind(this);
 
+        this.connectionHelper = new ConnectionHelper();
         this.store = new Store();
+        this.test = 'before';
 
         this.cloverConnection = new Connect({
             toggleConnectionState: this.toggleConnectionState,
@@ -79,6 +92,43 @@ export default class Layout extends Component {
         });
 
         this.initStore();
+        this.url = window.location.href;
+        console.log('url', this.url);
+        if(this.url.includes('merchant')){
+
+            console.log('redirected', this.test);
+            this.merchant_regex = new RegExp('merchant_id=(.*)&em.*');
+            this.token_regex = new RegExp('access_token=(.*)');
+
+            this.merchant_array = this.merchant_regex.exec(window.location.search);
+            this.token_array = this.token_regex.exec(window.location.hash);
+
+            this.merchantId = this.merchant_array[1];
+            this.access_code = this.token_array[1];
+            this.devicesUrl = `https://apidev1.dev.clover.com/v3/merchants/${this.merchantId}/devices?access_token=${this.access_code}`;
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState != 4) return; // Not there yet
+                if (xhttp.status != 200) {
+                    console.log(`There has been an error) status: ${xhttp.status} readyState: ${xhttp.readyState}`);
+                    return;
+                }
+                // Request successful, read the response
+                this.devices = JSON.parse(xhttp.responseText);
+                console.log(this.devices);
+                this.connectToCloud();
+                // ... and use it as needed by your app.
+            }.bind(this);
+            xhttp.open("GET", this.devicesUrl, true);
+            //xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send();
+
+        }
+    }
+
+    connectToCloud(){
+        this.setState({ cloudConnect: true});
     }
 
     initStore(){        // initializes store
@@ -92,7 +142,7 @@ export default class Layout extends Component {
     }
 
     connect(){      // connects to Clover device
-        this.cloverConnection.connectToDevice(this.state.uriText, null);
+        this.cloverConnection.connectToDevicePairing(this.state.uriText, null);
     }
 
     toggleConnectionState(connected){       // toggles Clover device connection state
@@ -102,6 +152,18 @@ export default class Layout extends Component {
         }
     }
 
+    cloudConnect(){
+        let finalRedirect = window.location.href.replace(window.location.hash, '');
+        console.log(finalRedirect);
+        let oAuthRedirectUrl = this.connectionHelper.getOAuthUrl(`https://dev1.dev.clover.com`, `HBK8YZG9EQNJG`, null, finalRedirect);
+        console.log(oAuthRedirectUrl);
+        window.location.href = oAuthRedirectUrl;
+        this.test = 'after';
+    }
+
+    showNetworkOptions(){
+        this.setState({ showNetworkOptions: true, showConnectionOptions: false });
+    }
     setPairingCode(pairingCode){        // sets pairing code
         console.log('setPairingCode', pairingCode);
         this.setState({ pairingCode: pairingCode, fadeBackground: true });
@@ -249,6 +311,12 @@ export default class Layout extends Component {
         this.closeStatus();
     }
 
+    selectDevice(device){
+        console.log('device selected: ', device);
+        this.cloverConnection.connectToDeviceCloud(this.access_code, this.merchantId, device.id);
+        this.setState({ cloudConnect: false, showCloudOptions: true });
+    }
+
     QRClicked(){        // shows QR screen
         this.setState({ showQR: true });
     }
@@ -298,11 +366,15 @@ export default class Layout extends Component {
     }
 
     render() {
+        let cloudConnect = this.state.cloudConnect;
         let fadeBackground = this.state.fadeBackground;
         let localhost = this.state.localhost;
         let showBody = this.state.connected;
         let showChallenge = this.state.challenge;
         let showQR = this.state.showQR;
+        let showCloudOptions = this.state.showCloudOptions;
+        let showConnectionOptions = this.state.showConnectionOptions;
+        let showNetworkOptions = this.state.showNetworkOptions;
         let showSignature = this.state.showSignature;
         let showStatus = this.state.statusToggle;
         let status = this.state.statusText;
@@ -344,6 +416,15 @@ export default class Layout extends Component {
             );
             inputContainer = (<div className="input_buttons">{inputButtons}</div>);
         }
+        let devices = <div></div>;
+        if(cloudConnect){
+            let _devices = Object.keys(this.devices.elements).map((device, i) => {
+                    if(this.devices.elements[device].deviceTypeName !== 'GOLDENOAK' && this.devices.elements[device].deviceTypeName !== 'GOLDLEAF')
+                        return <DeviceRow key={"device-" + i} device={this.devices.elements[device]} onClick={() => {this.selectDevice(this.devices.elements[device])}}/>
+                }
+            );
+            devices = (<div>{_devices}</div>);
+        }
 
         const previewStyle = {
             height: 240,
@@ -353,6 +434,9 @@ export default class Layout extends Component {
         return (
             <div className="app-content">
                 {fadeBackground && <div className="popup_opaque"></div>}
+                {cloudConnect && <div className="popup_full_opaque">
+                    <div className="popup devices_popup">{devices}</div>
+                </div>}
                 <div className="page_header">
                     <Link to="/">
                         <img className="home_logo" src={'images/home.png'}/>
@@ -397,7 +481,7 @@ export default class Layout extends Component {
                 </div>
                 }
 
-                {showBody? (
+                {showBody ? (
                     <div className="body_content">{React.cloneElement(this.props.children,
                         {
                             toggleConnectionState: this.toggleConnectionState,
@@ -419,16 +503,30 @@ export default class Layout extends Component {
                     </div>
                 ):(
                     <div className="connect_container">
+                        {showCloudOptions&& <div className="popup_full_opaque_white">
+                            <img src="images/progress.gif"/>
+                        </div>}
                         <img className="clover_logo" src={"images/clover_logo.png"}/>
                         <p>Example POS</p>
-
-                        {!showQR &&
-                        <div className="column_plain center">
+                        {showConnectionOptions &&
+                        <div className="row connect_row">
+                            <div onClick={this.showNetworkOptions}>
+                                <Network/>
+                                <p>Connect with Network</p>
+                            </div>
+                            <div onClick={this.cloudConnect}>
+                                <Cloud/>
+                                <p>Connect with Cloud</p>
+                            </div>
+                        </div>
+                        }
+                        {(showNetworkOptions&&!showQR) &&
+                            <div className="column_plain center">
                             <h3>Enter the URI of your device</h3>
                             <p> This can be found in the Network Pay Display app</p>
                             <div className="connect_box">
-                                <input className="input_field" type="text" id="uri" value={this.state.uriText} onChange={this.handleChange}/>
-                                <ButtonNormal color="white" title="Connect" extra="connect_button" onClick={this.connect}/>
+                            <input className="input_field" type="text" id="uri" value={this.state.uriText} onChange={this.handleChange}/>
+                            <ButtonNormal color="white" title="Connect" extra="connect_button" onClick={this.connect}/>
                             </div>
                             {localhost &&
                             <div className="qr_box">
@@ -439,20 +537,22 @@ export default class Layout extends Component {
                                 </div>
                             </div>
                             }
-                        </div>
+                            </div>
                         }
                         {pairing}
                         {showQR &&
-                        <div className="column_plain center">
+                            <div className="column_plain center">
                             <QrReader
-                                delay={this.state.delay}
-                                style={previewStyle}
-                                onError={this.handleError}
-                                onScan={this.handleScan}
+                            delay={this.state.delay}
+                            style={previewStyle}
+                            onError={this.handleError}
+                            onScan={this.handleScan}
                             />
                             <p>{this.state.result}</p>
-                        </div>
+                            </div>
                         }
+
+
                     </div>
                 )}
             </div>

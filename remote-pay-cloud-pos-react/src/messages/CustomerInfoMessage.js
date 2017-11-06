@@ -1,9 +1,9 @@
-import PayloadMessage from "./PayloadMessage";
+import PayloadMessage from './PayloadMessage';
 
 export default class CustomerInfoMessage extends PayloadMessage {
 
     constructor(customerInfo) {
-        super("CustomerInfoMessage", "CUSTOMER_INFO");
+        super('CustomerInfoMessage', 'CUSTOMER_INFO');
         this.customerInfo = customerInfo;
     }
 
