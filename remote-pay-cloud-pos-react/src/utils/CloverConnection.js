@@ -9,19 +9,8 @@ export default class CloverConnection {
         this.connected = false;
         Object.assign(this, options);
     }
-
-    getConnected (){
-        console.log('getConnected called', this.connected);
-        return this.connected;
-    }
-
-    setConnected(connected){
-        this.connected = connected;
-    }
-
-    connectToDevice(uriText, authToken) {
+    connectToDevicePairing(uriText, authToken) {
         console.log('connecting.....', uriText, authToken);
-        // let saleCalled = false;
         let factoryConfig = {};
         factoryConfig[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
         let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(factoryConfig);
@@ -33,7 +22,7 @@ export default class CloverConnection {
             authToken: authToken,
             heartbeatInterval: 1000,
             reconnectDelay: 3000
-        }, this.toggleConnectionState, this.setConnected.bind(this), this.setPairingCode));
+        }, this.toggleConnectionState, this.setPairingCode));
         this.cloverConnector = connector;
 
         let connectorListener = new POSCloverConnectorListener({
@@ -44,7 +33,43 @@ export default class CloverConnection {
             store: this.store,
             closeStatus: this.closeStatus,
             inputOptions: this.inputOptions,
-            confirmSignature: this.confirmSignature
+            confirmSignature: this.confirmSignature,
+            toggleConnection: this.toggleConnectionState
+        });
+
+        connector.addCloverConnectorListener(connectorListener);
+        connector.initializeConnection();
+    }
+
+    connectToDeviceCloud(accessToken, merchantId, deviceId) {
+        console.log('connecting.....', accessToken, merchantId, deviceId);
+        let factoryConfig = {};
+        factoryConfig[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
+        let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(factoryConfig);
+        let connector = cloverConnectorFactory.createICloverConnector(new ExampleWebsocketCloudCloverDeviceConfiguration({
+            appId: 'com.clover.cloud-pos-example-react',
+            cloverServer: 'https://dev1.dev.clover.com/',
+            serialNumber: 'register_1',
+            accessToken: accessToken,
+            merchantId: merchantId,
+            deviceId: deviceId,
+            friendlyId: '',
+            forceConnect: false,
+            heartbeatInterval: 1000,
+            reconnectDelay: 3000
+        }, this.toggleConnectionState));
+        this.cloverConnector = connector;
+
+        let connectorListener = new POSCloverConnectorListener({
+            cloverConnector: this.cloverConnector,
+            setStatus: this.setStatus,
+            challenge: this.challenge,
+            tipAdded: this.tipAdded,
+            store: this.store,
+            closeStatus: this.closeStatus,
+            inputOptions: this.inputOptions,
+            confirmSignature: this.confirmSignature,
+            toggleConnection: this.toggleConnectionState
         });
 
         connector.addCloverConnectorListener(connectorListener);
@@ -57,8 +82,7 @@ export class ExampleWebsocketPairedCloverDeviceConfiguration extends clover.WebS
     /**
      * @param rawConfiguration - a raw json object for initialization.
      */
-    constructor(
-        rawConfiguration, toggleConnectionState, setConnected, setPairingCode, cloverConnector) {
+    constructor(rawConfiguration, toggleConnectionState, setPairingCode, cloverConnector) {
         super(
             rawConfiguration.uri,
             rawConfiguration.applicationId,
@@ -70,20 +94,40 @@ export class ExampleWebsocketPairedCloverDeviceConfiguration extends clover.WebS
             rawConfiguration.heartbeatInterval,
             rawConfiguration.reconnectDelay);
         this.toggleConnectionState = toggleConnectionState;
-        this.setConnected = setConnected;
         this.setPairingCode = setPairingCode;
         this.cloverConnector = cloverConnector;
     }
 
     onPairingCode(pairingCode) {
-        console.log('Pairing code is ' + pairingCode);
+        console.log(`Pairing code is ${pairingCode}`);
         this.setPairingCode(pairingCode);
     }
 
     onPairingSuccess(authToken) {
-        console.log('Pairing succeeded, authToken is ' + authToken);
-        this.toggleConnectionState(true);
-        this.setConnected(true);
+        console.log(`Pairing succeeded, authToken is ${authToken}`);
     }
 }
 
+export class ExampleWebsocketCloudCloverDeviceConfiguration extends clover.WebSocketCloudCloverDeviceConfiguration {
+    /**
+     * @param rawConfiguration - a raw json object for initialization.
+     */
+    constructor(rawConfiguration, toggleConnectionState, setConnected, cloverConnector) {
+        super(
+            rawConfiguration.appId,
+            clover.BrowserWebSocketImpl.createInstance,
+            new clover.ImageUtil(),
+            rawConfiguration.cloverServer,
+            rawConfiguration.accessToken,
+            new clover.HttpSupport(XMLHttpRequest),
+            rawConfiguration.merchantId,
+            rawConfiguration.deviceId,
+            rawConfiguration.friendlyId,
+            rawConfiguration.forceConnect,
+            rawConfiguration.heartbeatInterval,
+            rawConfiguration.reconnectDelay);
+        this.toggleConnectionState = toggleConnectionState;
+        this.setConnected = setConnected;
+        this.cloverConnector = cloverConnector;
+    }
+}

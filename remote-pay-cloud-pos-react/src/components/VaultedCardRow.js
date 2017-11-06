@@ -1,5 +1,5 @@
-import CardDataHelper from "./../utils/CardDataHelper";
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
+import CardDataHelper from './../utils/CardDataHelper';
+import CurrencyFormatter from './../utils/CurrencyFormatter';
 import React from 'react';
 
 export default class VaultedCardRow extends React.Component {

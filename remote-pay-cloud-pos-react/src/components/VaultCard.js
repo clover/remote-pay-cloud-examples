@@ -1,7 +1,7 @@
 import { browserHistory, Link } from 'react-router';
-import ButtonNormal from "./ButtonNormal";
+import ButtonNormal from './ButtonNormal';
 import React from 'react';
-import TitleBar from "./TitleBar";
+import TitleBar from './TitleBar';
 import VaultedCardRow from './VaultedCardRow';
 
 export default class VaultCard extends React.Component {

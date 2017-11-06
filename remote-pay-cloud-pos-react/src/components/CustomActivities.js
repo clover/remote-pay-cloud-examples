@@ -13,7 +13,7 @@ export default class CustomActivities extends React.Component {
         };
 
         this.cloverConnector = this.props.cloverConnection.cloverConnector;
-        this.CUSTOM_ACTIVITY_PACKAGE = "com.clover.cfp.examples.";
+        this.CUSTOM_ACTIVITY_PACKAGE = 'com.clover.cfp.examples.';
         this.store = this.props.store;
 
         this.handleChange = this.handleChange.bind(this);

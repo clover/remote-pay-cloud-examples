@@ -1,13 +1,13 @@
 import { browserHistory } from 'react-router';
-import ButtonNormal from "./ButtonNormal";
+import ButtonNormal from './ButtonNormal';
 import clover from 'remote-pay-cloud';
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
+import CurrencyFormatter from './../utils/CurrencyFormatter';
 import React from 'react';
-import Refund from "../models/Refund";
-import RefundRow from "./RefundRow";
+import Refund from '../models/Refund';
+import RefundRow from './RefundRow';
 import sdk from 'remote-pay-cloud-api';
-import TitleBar from "./TitleBar";
-import TransactionRow from "./TransactionRow";
+import TitleBar from './TitleBar';
+import TransactionRow from './TransactionRow';
 
 export default class Refunds extends React.Component {
 

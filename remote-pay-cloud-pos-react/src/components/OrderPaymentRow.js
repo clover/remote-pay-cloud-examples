@@ -1,6 +1,6 @@
 import Checkmark from './Checkmark';
-import CurrencyFormatter from "./../utils/CurrencyFormatter";
-import ImageHelper from "./../utils/ImageHelper";
+import CurrencyFormatter from './../utils/CurrencyFormatter';
+import ImageHelper from './../utils/ImageHelper';
 import React from 'react';
 
 export default class OrderPaymentRow extends React.Component {

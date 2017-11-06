@@ -1,4 +1,4 @@
-import ButtonNormal from "./ButtonNormal";
+import ButtonNormal from './ButtonNormal';
 import React from 'react';
 import sdk from 'remote-pay-cloud-api';
 

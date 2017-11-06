@@ -1,6 +1,6 @@
-import ButtonNormal from "./ButtonNormal";
+import ButtonNormal from './ButtonNormal';
 import React from 'react';
-import TitleBar from "./TitleBar";
+import TitleBar from './TitleBar';
 
 export default class PreAuth extends React.Component {
 

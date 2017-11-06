@@ -127,6 +127,30 @@ h3{
     z-index: 1;
 }
 
+.popup_full_opaque{
+    position: absolute;
+    background-color: #e6e6e6;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.popup_full_opaque_white{
+    position: absolute;
+    background-color: white;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 .row{
     display: flex;
     flex-direction: row;
@@ -401,6 +425,12 @@ h3{
 .settings_section > h3{
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+.connect_row{
+    margin-top: 40px;
+    width: 400px;
+    justify-content: space-between;
 }
 
 .connect_box{
@@ -935,6 +965,16 @@ h3{
     width: 24px;
 }
 
+.network{
+    fill: #3ba626;
+    height: 155px;
+}
+
+.cloud{
+    fill: #3ba626;
+    height: 155px;
+}
+
 .checkmark_small{
     padding: 5px;
     fill: #2FCB71;
@@ -1408,6 +1448,31 @@ input:checked + .slider:before {
 
 .max_width_half{
     max-width: 50%;
+}
+
+.device_image_box{
+    width: 75px;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.device_image{
+    height: 40px;
+}
+
+.device_row{
+    height: 60px;
+    border-bottom: 1px solid lightgray;
+}
+
+.devices_popup{
+    display: flex;
+    width: 380px;
+    flex-direction: column;
+    word-wrap: break-word;
 }
 
 
