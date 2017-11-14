@@ -170,6 +170,10 @@ h3{
     padding: 5px;
 }
 
+.container_padding{
+    padding: 15px;
+}
+
 .margin_top{
     margin-top: 10px;
 }

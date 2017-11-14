@@ -7,6 +7,7 @@ const data = require ('../../src/items.js');
 import Discount from '../models/Discount';
 import Item from '../models/Item';
 import { Link } from 'react-router';
+import { myConfig } from '../config.js';
 import Network from './Network';
 import QrReader from 'react-qr-reader';
 import React, { Component } from 'react'
@@ -46,13 +47,14 @@ export default class Layout extends Component {
             statusToggle: false,
             tipAdjust: false,
             tipAmount: 0,
-            uriText : 'wss://10.249.254.214:12345/remote_pay',
+            uriText : myConfig.uriText,
             vaultedCard : false
         };
 
         this.acceptPayment = this.acceptPayment.bind(this);
         this.acceptSignature = this.acceptSignature.bind(this);
         this.challenge = this.challenge.bind(this);
+        this.closeCloudConnect = this.closeCloudConnect.bind(this);
         this.closeStatusArray = this.closeStatusArray.bind(this);
         this.closePairingCode = this.closePairingCode.bind(this);
         this.closeStatus = this.closeStatus.bind(this);
@@ -105,7 +107,7 @@ export default class Layout extends Component {
 
             this.merchantId = this.merchant_array[1];
             this.access_code = this.token_array[1];
-            this.devicesUrl = `https://apidev1.dev.clover.com/v3/merchants/${this.merchantId}/devices?access_token=${this.access_code}`;
+            this.devicesUrl = `${myConfig.devicesDomain}${this.merchantId}/devices?access_token=${this.access_code}`;
 
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
@@ -155,7 +157,7 @@ export default class Layout extends Component {
     cloudConnect(){
         let finalRedirect = window.location.href.replace(window.location.hash, '');
         console.log(finalRedirect);
-        let oAuthRedirectUrl = this.connectionHelper.getOAuthUrl(`https://dev1.dev.clover.com`, `HBK8YZG9EQNJG`, null, finalRedirect);
+        let oAuthRedirectUrl = this.connectionHelper.getOAuthUrl(myConfig.oAuthDomain, myConfig.clientId, null, finalRedirect);
         console.log(oAuthRedirectUrl);
         window.location.href = oAuthRedirectUrl;
         this.test = 'after';
@@ -272,6 +274,10 @@ export default class Layout extends Component {
 
     closeSignature(){       // closes signature verification popup
         this.setState({ showSignature: false, fadeBackground: false });
+    }
+
+    closeCloudConnect(){       // closes cloud connect popup which displays devices or an error message
+        this.setState({ cloudConnect: false, fadeBackground: false });
     }
 
 
@@ -417,14 +423,24 @@ export default class Layout extends Component {
             inputContainer = (<div className="input_buttons">{inputButtons}</div>);
         }
         let devices = <div></div>;
-        if(cloudConnect){
+        let numDevices = 0;
+        if(cloudConnect && this.devices.elements.length > 0){
             let _devices = Object.keys(this.devices.elements).map((device, i) => {
-                    if(this.devices.elements[device].deviceTypeName !== 'GOLDENOAK' && this.devices.elements[device].deviceTypeName !== 'GOLDLEAF')
-                        return <DeviceRow key={"device-" + i} device={this.devices.elements[device]} onClick={() => {this.selectDevice(this.devices.elements[device])}}/>
+                    if(this.devices.elements[device].deviceTypeName !== 'GOLDENOAK' && this.devices.elements[device].deviceTypeName !== 'GOLDLEAF') {
+                        numDevices++;
+                        return <DeviceRow key={"device-" + i} device={this.devices.elements[device]}
+                                          onClick={() => {this.selectDevice(this.devices.elements[device])}}/>
+                    }
                 }
             );
             devices = (<div>{_devices}</div>);
         }
+        if(parseInt(numDevices) < 3) {
+            devices = (<div className="container_padding">
+                <div className="close_popup" onClick={this.closeCloudConnect}>X</div>
+                <div>I'm sorry, there are no available devices for this merchant.</div>
+            </div>)
+        };
 
         const previewStyle = {
             height: 240,
@@ -435,7 +451,9 @@ export default class Layout extends Component {
             <div className="app-content">
                 {fadeBackground && <div className="popup_opaque"></div>}
                 {cloudConnect && <div className="popup_full_opaque">
-                    <div className="popup devices_popup">{devices}</div>
+                    <div className="popup devices_popup">
+                        {devices}
+                    </div>
                 </div>}
                 <div className="page_header">
                     <Link to="/">
@@ -521,12 +539,12 @@ export default class Layout extends Component {
                         </div>
                         }
                         {(showNetworkOptions&&!showQR) &&
-                            <div className="column_plain center">
+                        <div className="column_plain center">
                             <h3>Enter the URI of your device</h3>
                             <p> This can be found in the Network Pay Display app</p>
                             <div className="connect_box">
-                            <input className="input_field" type="text" id="uri" value={this.state.uriText} onChange={this.handleChange}/>
-                            <ButtonNormal color="white" title="Connect" extra="connect_button" onClick={this.connect}/>
+                                <input className="input_field" type="text" id="uri" value={this.state.uriText} onChange={this.handleChange}/>
+                                <ButtonNormal color="white" title="Connect" extra="connect_button" onClick={this.connect}/>
                             </div>
                             {localhost &&
                             <div className="qr_box">
@@ -537,19 +555,19 @@ export default class Layout extends Component {
                                 </div>
                             </div>
                             }
-                            </div>
+                        </div>
                         }
                         {pairing}
                         {showQR &&
-                            <div className="column_plain center">
+                        <div className="column_plain center">
                             <QrReader
-                            delay={this.state.delay}
-                            style={previewStyle}
-                            onError={this.handleError}
-                            onScan={this.handleScan}
+                                delay={this.state.delay}
+                                style={previewStyle}
+                                onError={this.handleError}
+                                onScan={this.handleScan}
                             />
                             <p>{this.state.result}</p>
-                            </div>
+                        </div>
                         }
 
 
@@ -559,4 +577,4 @@ export default class Layout extends Component {
         );
     }
 
-}
+    }
