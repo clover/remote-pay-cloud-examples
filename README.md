@@ -1,5 +1,7 @@
 ![Clover logo](https://www.clover.com/assets/images/public-site/press/clover_primary_gray_rgb.png)
 
+**Please Note**: Secure Network Pay Display is in beta and has not yet been published to the Clover App Market. In order to develop with this app, please email your [sandbox test merchant UUID](https://docs.clover.com/build/merchant-id-and-api-token-for-development/#get-your-test-merchants-uuid-mid) to semi-integrations@clover.com.
+
 # Remote Pay Cloud Examples
 
 Please see the [Getting Started with Clover Connector tutorial](https://docs.clover.com/build/getting-started-with-clover-connector/) for more information and a list of prerequisites.

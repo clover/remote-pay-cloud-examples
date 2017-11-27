@@ -73,8 +73,8 @@
             type: "list",
             name: "connectorType",
             message: "Which connector would you like to use?",
-            choices: ["Network", "Cloud"],
-            default: "Network"
+            choices: ["Cloud", "Network"],
+            default: "Cloud"
         }
     ];
 

@@ -28,15 +28,8 @@ CloudStarter.prototype.run = function () {
     let cloverDeviceConnectionConfiguration = null;
     // Configuration Note: Set useCloudConfiguration to false to use the Clover's Network connector.
     const useCloudConfiguration = true;
-    if (!useCloudConfiguration) {
-        // Configuration Note: Endpoint is required if you would like to use the Network Connector (Network Pay Display app).
-        // You can find the correct endpoint by opening the Network Pay Display app on your device.
-        let endpoint = "wss://10.249.254.133:12345/remote_pay";
-        cloverDeviceConnectionConfiguration = getDeviceConfigurationForNetwork(Object.assign({}, baseConfiguration, {
-            "endpoint": endpoint,
-            "authToken": getAuthToken()
-        }));
-    } else {
+    if (useCloudConfiguration) {
+        // Requires Cloud Pay Display to be installed on your Clover device.
         // Configuration Note: See: https://docs.clover.com/build/getting-started-with-clover-connector/?sdk=browser for more information
         // on how to obtain the required connection parameter values.
         cloverDeviceConnectionConfiguration = getDeviceConfigurationForCloud(Object.assign({}, baseConfiguration, {
@@ -46,6 +39,20 @@ CloudStarter.prototype.run = function () {
             "merchantId": "yourMerchantIdhere",
             "deviceId": "yourDeviceUUIDHere",
             "friendlyId": "Cloud Starter"
+        }));
+    } else {
+        // Requires Network Pay Display to be installed on your Clover device.
+        // Please Note: Secure Network Pay Display is in beta and has not yet been published to the Clover App Market.
+        // In order to develop with this app, please email your
+        // [sandbox test merchant UUID](https://docs.clover.com/build/merchant-id-and-api-token-for-development/#get-your-test-merchants-uuid-mid)
+        // to semi-integrations@clover.com.
+
+        // Configuration Note: Endpoint is required if you would like to use the Network Connector (Network Pay Display app).
+        // You can find the correct endpoint by opening the Network Pay Display app on your device.
+        let endpoint = "wss://10.249.254.133:12345/remote_pay";
+        cloverDeviceConnectionConfiguration = getDeviceConfigurationForNetwork(Object.assign({}, baseConfiguration, {
+            "endpoint": endpoint,
+            "authToken": getAuthToken()
         }));
     }
 
