@@ -20,6 +20,6 @@ Once you have completed the above steps you will need to modify this example app
 
 ```javascript
     clientId: 'HBK8YZG9EQNJG', // Update this to match your "App ID".  From the Clover Developer Dashboard find your app, select "settings" and your "App ID" will be displayed.
-    devicesDomain: 'https://apidev1.dev.clover.com/v3/merchants/', // Update apidev1 to match the environment you are hitting, e.g. apisandbox
-    oAuthDomain: 'https://dev1.dev.clover.com' // Update dev1.dev to match the environment you are hitting, e.g. sandbox
+    devicesDomain: 'https://apidev1.dev.clover.com/v3/merchants/', // Update this to match the environment you are hitting, e.g. https://apisandbox.dev.clover.com/v3/merchants/
+    oAuthDomain: 'https://dev1.dev.clover.com' // Update this to match the environment you are hitting, e.g. https://sandbox.dev.clover.com
 ```
