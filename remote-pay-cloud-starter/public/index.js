@@ -41,7 +41,7 @@ CloudStarter.prototype.run = function () {
         // on how to obtain the required connection parameter values.
         cloverDeviceConnectionConfiguration = getDeviceConfigurationForCloud(Object.assign({}, baseConfiguration, {
             "accessToken": "yourAccessTokenHere",
-            "cloverServer": "https://sandboxdev.dev.clover.com/",
+            "cloverServer": "https://sandbox.dev.clover.com/",
             "httpSupport": new clover.HttpSupport(XMLHttpRequest),
             "merchantId": "yourMerchantIdhere",
             "deviceId": "yourDeviceUUIDHere",
