@@ -410,6 +410,7 @@ export default class Register extends React.Component {
                 this.setState({ orderItems:this.order.getDisplayItems(), subtotal:this.order.getPreTaxSubTotal(), tax: this.order.getTaxAmount(), total: this.order.getTotal(), payNoItems: false, saveNoItems: false });
             }
             this.unfadeBackground();
+            this.cloverConnector.showWelcomeScreen();
             this.store.setCurrentOrder(this.order);
         }
     }
