@@ -10,7 +10,7 @@ export default class OrderRow extends React.Component {
     render(){
         const onClick = this.props.onClick;
         const orderDate = this.order.date;
-        const orderId = this.order.cloverOrderId;
+        const orderId = this.order.id;
         const orderStatus = this.order.status;
         const totalWTax = this.order.getTotal();
 

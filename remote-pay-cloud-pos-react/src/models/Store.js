@@ -85,7 +85,7 @@ export default class Store {
     getOrderById(id) {
         let order = null;
         this.orders.filter(function (obj) {
-            if (obj.cloverOrderId == id) {
+            if (obj.id == id) {
                 order = obj;
             }
         });

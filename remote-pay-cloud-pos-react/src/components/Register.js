@@ -414,7 +414,7 @@ export default class Register extends React.Component {
         }
     }
 
-    save(){     // saves current order
+     save(){     // saves current order
         this.setState({ payNoItems : false });
         if(this.state.orderItems.length > 0){
             this.newOrder();
