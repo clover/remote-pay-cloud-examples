@@ -333,7 +333,7 @@ export default class Layout extends Component {
                 this.setState({ result: data });
                 let dataPieces = data.split('?');
                 let authToken = dataPieces[1].split('=')[1];
-                this.cloverConnection.connectToDevice(dataPieces[0], authToken);
+                this.cloverConnection.connectToDevicePairing(dataPieces[0], authToken);
             }
         }
     }
