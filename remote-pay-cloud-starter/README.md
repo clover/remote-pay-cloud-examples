@@ -11,6 +11,7 @@ Next, you will need to modify the Clover Connector configuration in `index.js`. 
   
 Once the Clover Connector configuration has been set, you can build and run the application locally with the following commands:
   
+    npm install
     npm run build
     npm start 
     
