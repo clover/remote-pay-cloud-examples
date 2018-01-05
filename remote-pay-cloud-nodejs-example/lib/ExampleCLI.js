@@ -1,4 +1,6 @@
 var exampleCLI = (function (module) {
+    let deviceReady = false;
+
     const clover = require("remote-pay-cloud");
     const inquirer = require('inquirer');
     const XMLHttpRequest = require("xmlhttprequest-ssl").XMLHttpRequest;
@@ -114,7 +116,16 @@ var exampleCLI = (function (module) {
         return Object.assign(defaultConnectorListener, {
             onDeviceReady: function (merchantInfo) {
                 cloverConnector.resetDevice();
-                executeAction(answers);
+                // onDeviceReady may be called multiple times. We are protecting against multiple executions
+                // of executeAction via the deviceReady flag!
+                if (!deviceReady) {
+                    executeAction(answers);
+                }
+                deviceReady = true;
+            },
+
+            onDeviceDisconnected: function() {
+                deviceReady = false;
             }
         });
     };
