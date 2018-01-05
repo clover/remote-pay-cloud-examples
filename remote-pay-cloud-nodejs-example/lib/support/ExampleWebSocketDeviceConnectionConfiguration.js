@@ -46,6 +46,6 @@
             });
         }
         return Object.create(deviceConfiguration);
-    }
+    };
 })(module);
 

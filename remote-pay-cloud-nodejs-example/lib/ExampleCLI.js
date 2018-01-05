@@ -38,7 +38,7 @@ var exampleCLI = (function (module) {
 
     var setConnectionConfigAnswers = function (connectionConfigAnswersIn) {
         connectionConfigAnswers = connectionConfigAnswersIn;
-    }
+    };
 
     MenuLauncher.getLaunchSubject().subscribe(() => {
         showMenu();
@@ -159,7 +159,7 @@ var exampleCLI = (function (module) {
                 },
                 "Exit": () => disposeAndExit(cloverConnector)
 
-            }
+            };
             otherActions[answers.action]();
         }
     };
@@ -179,7 +179,7 @@ var exampleCLI = (function (module) {
         showMenu: function () {
             showMenu();
         }
-    }
+    };
 
 })(module);
 

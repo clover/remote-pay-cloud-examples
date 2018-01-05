@@ -59,7 +59,7 @@
         {
             type: "input",
             name: "applicationId",
-            message: "Enter your Application Id:",
+            message: "Enter your Remote Application Id:",
             default: "com.mybus.myapp"
         },
         {
@@ -118,7 +118,7 @@
         {
             type: "input",
             name: "deviceId",
-            message: "Enter your device id (e.g. c368b68c4175f5971af6d0359054d109):",
+            message: "Enter your device id, with or without hyphens (e.g. c368b68c4175f5971af6d0359054d109):",
             validate: required
         },
         {
@@ -130,7 +130,7 @@
         {
             type: "input",
             name: "friendlyId",
-            message: "Enter your friendly id:",
+            message: "Enter your friendly id (an identifier for the specific POS connected to this device):",
             default: "friendly_id"
         }
     ];
