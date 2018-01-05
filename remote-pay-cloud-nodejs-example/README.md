@@ -11,7 +11,7 @@ To run the example app, enter the following on the command line:
 
 ```bash
 $ npm install
-$ node ./lib/ExamplesCLI.js
+$ node ./lib/ExampleCLI.js
 ```
 
 ## Implementation notes
