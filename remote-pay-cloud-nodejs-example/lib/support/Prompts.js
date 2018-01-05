@@ -58,7 +58,7 @@
     prompts.configuration = [
         {
             type: "input",
-            name: "applicationId",
+            name: "remoteApplicationId",
             message: "Enter your Remote Application Id:",
             default: "com.mybus.myapp"
         },
