@@ -18,6 +18,8 @@ CloudStarter = function () {
 CloudStarter.prototype.run = function () {
     // Shared by both Network and Cloud configurations.
     // Configuration Note: Enter your app's Remote Application Id below!
+    // See: https://docs.clover.com/build/create-your-remote-app-id/ for more
+    // information on how to obtain your remote application id.
     const baseConfiguration = {
         "applicationId": "yourRemoteApplicationId",
         "posName": "Cloud Starter POS",
