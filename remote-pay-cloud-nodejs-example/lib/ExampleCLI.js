@@ -72,7 +72,7 @@ var exampleCLI = (function (module) {
             // Default to network configuration.
             let connectionConfiguration = {
                 "endpoint": endpoint,
-                "applicationId": answers.applicationId,
+                "remoteApplicationId": answers.remoteApplicationId,
                 "posName": "Clover Remote Pay Cloud Tutorial",
                 "serialNumber": "Register_1",
                 "authToken": null,

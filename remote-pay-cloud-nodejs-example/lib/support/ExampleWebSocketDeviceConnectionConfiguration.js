@@ -15,7 +15,7 @@
         if (useCloud) {
             // Cloud Configuration.
             deviceConfiguration = new clover.WebSocketCloudCloverDeviceConfiguration(
-                connectionConfiguration.applicationId,
+                connectionConfiguration.remoteApplicationId,
                 connectionConfiguration.webSocketFactoryFunction,
                 connectionConfiguration.imageUtil,
                 connectionConfiguration.cloverServer,
@@ -29,7 +29,7 @@
             // Network Configuration.
             deviceConfiguration = new clover.WebSocketPairedCloverDeviceConfiguration(
                 connectionConfiguration.endpoint,
-                connectionConfiguration.applicationId,
+                connectionConfiguration.remoteApplicationId,
                 connectionConfiguration.posName,
                 connectionConfiguration.serialNumber,
                 connectionConfiguration.authToken,
