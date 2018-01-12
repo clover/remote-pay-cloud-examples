@@ -37,7 +37,7 @@ The JavaScript Cloud Connector requires WebSocket and XMLHttpRequest (cloud only
   
     ```
 - XMLHttpRequest    
-   - [xmlhttprequest-ssl 1.5.4](https://www.npmjs.com/package/xmlhttprequest-ssl) (recommended) - This library works out of the box with the JavaScript Cloud Connector.
+   - [xmlhttprequest-ssl 1.5.5](https://www.npmjs.com/package/xmlhttprequest-ssl) (recommended) - This library works out of the box with the JavaScript Cloud Connector.
 
 - IImageUtil
    - `IImageUtil` is part of the Clover API.
