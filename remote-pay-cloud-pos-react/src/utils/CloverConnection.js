@@ -47,8 +47,8 @@ export default class CloverConnection {
         factoryConfig[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
         let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(factoryConfig);
         let connector = cloverConnectorFactory.createICloverConnector(new ExampleWebsocketCloudCloverDeviceConfiguration({
-            appId: 'com.clover.cloud-pos-example-react',
-            cloverServer: 'https://dev1.dev.clover.com/',
+            appId: 'yourRemoteAppId',
+            cloverServer: 'https://sandbox.dev.clover.com/',
             serialNumber: 'register_1',
             accessToken: accessToken,
             merchantId: merchantId,
