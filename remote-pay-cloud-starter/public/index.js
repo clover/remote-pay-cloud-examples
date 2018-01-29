@@ -28,6 +28,7 @@ CloudStarter.prototype.run = function () {
         "imageUtil": new clover.ImageUtil()
     };
     let cloverDeviceConnectionConfiguration = null;
+
     // Configuration Note: Set useCloudConfiguration to false to use the Clover's Network connector.
     const useCloudConfiguration = true;
     if (!useCloudConfiguration) {
@@ -42,12 +43,13 @@ CloudStarter.prototype.run = function () {
         // Configuration Note: See: https://docs.clover.com/build/getting-started-with-clover-connector/?sdk=browser for more information
         // on how to obtain the required connection parameter values.
         cloverDeviceConnectionConfiguration = getDeviceConfigurationForCloud(Object.assign({}, baseConfiguration, {
-            "accessToken": "yourAccessTokenHere",
-            "cloverServer": "https://sandbox.dev.clover.com/",
+            "accessToken": "ccac08fe-7897-55dd-808f-d2468574db0f",
+            "cloverServer": "https://dev1.dev.clover.com/",
             "httpSupport": new clover.HttpSupport(XMLHttpRequest),
-            "merchantId": "yourMerchantIdhere",
-            "deviceId": "yourDeviceUUIDHere",
-            "friendlyId": "Cloud Starter"
+            "merchantId": "59RECDKBW11G6",
+            "deviceId": "c368b68c4175f5971af6d0359054d109",
+            "friendlyId": "Another Test Cloud Starter 1",
+            "forceConnect": true
         }));
     }
 
@@ -55,6 +57,7 @@ CloudStarter.prototype.run = function () {
     builderConfiguration[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
     let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(builderConfiguration);
     let cloverConnector = cloverConnectorFactory.createICloverConnector(cloverDeviceConnectionConfiguration);
+  
     setCloverConnector(cloverConnector);
     cloverConnector.addCloverConnectorListener(buildCloverConnectionListener(cloverConnector));
     cloverConnector.initializeConnection();
@@ -118,7 +121,7 @@ var getDeviceConfigurationForCloud = function (connectionConfiguration) {
         connectionConfiguration.merchantId,
         connectionConfiguration.deviceId,
         connectionConfiguration.friendlyId,
-        connectionConfiguration.forceReconnect);
+        true);
 };
 
 var getDeviceConfigurationForNetwork = function (connectionConfiguration) {
@@ -141,6 +144,7 @@ var getDeviceConfigurationForNetwork = function (connectionConfiguration) {
             console.log(`    > Got Pairing Auth Token: ${authToken}`);
             setAuthToken(authToken);
         }
+
     });
     return deviceConfiguration;
 };
@@ -171,7 +175,16 @@ var buildCloverConnectionListener = function (cloverConnector) {
         onDeviceConnected: function () {
             console.log({message: "Connected, but not available to process requests"});
             toggleActions(false);
-        }
+        },
+
+        onDeviceError: function(deviceError) {
+          if (deviceError && deviceError.message) {
+   	    const message = JSON.parse(deviceError.message);
+            if (message.method === clover.sdk.remotemessage.Method.FORCECONNECT) { 
+              console.log(`Lost Connection: this connection has been taken by ${message.friendlyId}`);  
+            }
+	  }   
+	}
 
     });
 };
