@@ -435,7 +435,7 @@ export default class Layout extends Component {
             );
             devices = (<div>{_devices}</div>);
         }
-        if(parseInt(numDevices) < 3) {
+        if(parseInt(numDevices) < 1) {
             devices = (<div className="container_padding">
                 <div className="close_popup" onClick={this.closeCloudConnect}>X</div>
                 <div>I'm sorry, there are no available devices for this merchant.</div>
