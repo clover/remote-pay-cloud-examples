@@ -582,7 +582,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     }
 
     createRefund(response){     // creates a Refund object based on the response
-        console.log(response);
+        console.log('createRefund', response);
         let refund = new Refund();
         refund.setAmount(response.credit.amount);
         refund.setCardDetails(`${response.credit.cardTransaction.cardType} ${response.credit.cardTransaction.last4}`);
