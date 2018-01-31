@@ -1,6 +1,7 @@
 import clover from 'remote-pay-cloud';
 import POSCloverConnectorListener from './POSCloverConnectorListener';
 import React from 'react';
+import { myConfig } from '../config.js';
 
 export default class CloverConnection {
 
@@ -48,7 +49,7 @@ export default class CloverConnection {
         let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(factoryConfig);
         let connector = cloverConnectorFactory.createICloverConnector(new ExampleWebsocketCloudCloverDeviceConfiguration({
             appId: 'com.clover.cloud-pos-example-react',
-            cloverServer: 'https://dev1.dev.clover.com/',
+            cloverServer: myConfig.cloverServer,
             serialNumber: 'register_1',
             accessToken: accessToken,
             merchantId: merchantId,

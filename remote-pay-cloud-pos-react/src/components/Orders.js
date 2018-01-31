@@ -42,7 +42,7 @@ export default class Orders extends React.Component {
         browserHistory.push({pathname: '/payment', state: {type: 'payment', id: orderPayment.cloverPaymentId}});
     }
 
-    goToRegister(order){        // opens selected order in register
+    vnpgoToRegister(order){        // opens selected order in register
         this.store.setCurrentOrder(order);
         browserHistory.push({pathname: '/register'});
     }
