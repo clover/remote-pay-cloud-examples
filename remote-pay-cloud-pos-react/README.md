@@ -6,6 +6,7 @@ You can clone this repository and run the application locally.
 
     git clone git@github.com:clover/remote-pay-cloud-tutorial.git
     cd remote-pay-cloud-pos-react
+    npm install
     npm run build
     npm start 
     
