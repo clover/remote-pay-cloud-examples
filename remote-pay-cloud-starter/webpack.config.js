@@ -1,24 +1,34 @@
-"use strict";
-
 var path = require('path');
 var webpack = require('webpack');
 
 var commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
-        name: 'commons',  // Just name it
-        filename: 'common.js' // Name of the output file
+        name: 'commons',
+        filename: 'common.js'
     }
 );
 
 module.exports = {
-    entry: {
-        index_js: "./public/index.js"
-    },
+    entry: ["babel-polyfill", "./public/index.js"],
     resolve: {
         extensions: ['.js']
     },
     output: {
         path: path.resolve(__dirname, './public/built'),
-        filename: "[name]-bundle.js"
+        filename: "bundle.js"
+    },
+    module: {
+      rules: [
+        {
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['es2015'],
+              plugins: ["transform-remove-strict-mode"]
+            }
+          }
+        }
+      ]
     },
     plugins: [commonsPlugin]
 };
