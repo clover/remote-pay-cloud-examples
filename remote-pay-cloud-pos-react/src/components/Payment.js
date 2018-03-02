@@ -11,10 +11,13 @@ export default class Payment extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            fullRefundDisabled: false,
             isRefund: false,
+            partialRefundAmount: '0.00',
             refundDate: null,
             refundDisabled: false,
             refundId: null,
+            showPartialRefunds: false,
             showRefund: false,
             showTipAdjust: false,
             tipAmount: 0.00
@@ -29,6 +32,9 @@ export default class Payment extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.makeRefund = this.makeRefund.bind(this);
         this.voidPayment = this.voidPayment.bind(this);
+        this.changePartialRefundAmount = this.changePartialRefundAmount.bind(this);
+        this.handleRefund = this.handleRefund.bind(this);
+        this.makePartialRefund = this.makePartialRefund.bind(this);
 
         if(this.props.location.state != null) {
             this.type = this.props.location.state.type;
@@ -63,12 +69,37 @@ export default class Payment extends React.Component {
         this.setState({ tipAmount: e.target.value });
     }
 
+    changePartialRefundAmount(e){      // handle partial refund amount change
+        this.setState( {partialRefundAmount : e.target.value });
+    }
+
+    handleRefund(){
+        if(this.payment.transactionTitle == 'Payment'){
+            this.setState({ showPartialRefunds : true});
+        }
+        else{
+            this.makeRefund();
+        }
+    }
+
     makeRefund(){
+        this.setState({showPartialRefunds: false});
         let refund = new sdk.remotepay.RefundPaymentRequest();
         refund.setAmount(this.payment.amount);
         refund.setPaymentId(this.payment.cloverPaymentId);
         refund.setOrderId(this.payment.cloverOrderId);
         refund.setFullRefund(true);
+        console.log('RefundPaymentRequest', refund);
+        this.cloverConnector.refundPayment(refund);
+    }
+
+    makePartialRefund(){
+        this.setState({showPartialRefunds: false});
+        let refund = new sdk.remotepay.RefundPaymentRequest();
+        refund.setAmount(this.formatter.convertFromFloat(parseFloat(this.state.partialRefundAmount).toFixed(2)));
+        refund.setPaymentId(this.payment.cloverPaymentId);
+        refund.setOrderId(this.payment.cloverOrderId);
+        refund.setFullRefund(false);
         console.log('RefundPaymentRequest', refund);
         this.cloverConnector.refundPayment(refund);
     }
@@ -84,7 +115,14 @@ export default class Payment extends React.Component {
     componentWillReceiveProps(newProps) {
         this.payment = this.store.getPaymentByCloverId(this.payment.cloverPaymentId);
         if(newProps.refundSuccess){
-            this.setState({ showRefund: true, refundDisabled: true , refundId: this.payment.refunds[0].refundId, refundDate: this.payment.refunds[0].date});
+            let _amount = parseFloat(this.formatter.convertToFloat(this.payment.amount));
+            let _tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()));
+            let _refundAmount = parseFloat(this.formatter.convertToFloat(this.payment.getRefundsAmount()));
+
+            let absTotal = parseFloat(( _amount + _tipAmount ) - _refundAmount).toFixed(2);
+            let refundDisabled = absTotal <= 0;
+            let fullDisabled = absTotal < this.payment.amount;
+            this.setState({ showRefund: true, refundDisabled: refundDisabled , refundId: this.payment.refunds[0].refundId, refundDate: this.payment.refunds[0].date, fullRefundDisabled: fullDisabled});
         }
         if(this.payment.transactionType === 'VOIDED'){
             this.setState({ refundDisabled: true});
@@ -94,8 +132,15 @@ export default class Payment extends React.Component {
 
     componentWillMount(){
         if(this.payment.refund){
+            let _amount = parseFloat(this.formatter.convertToFloat(this.payment.amount));
+            let _tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()));
+            let _refundAmount = parseFloat(this.formatter.convertToFloat(this.payment.getRefundsAmount()));
+
+            let absTotal = parseFloat(( _amount + _tipAmount ) - _refundAmount).toFixed(2);
+            let refundDisabled = absTotal <= 0;
+            let fullDisabled = absTotal < this.payment.amount;
             console.log('setting isRefund');
-            this.setState({ isRefund: true, refundDisabled: true });
+            this.setState({ isRefund: true, refundDisabled: refundDisabled , fullRefundDisabled: fullDisabled});
         }
         if(this.payment.transactionType === 'VOIDED'){
             this.setState({refundDisabled: true});
@@ -105,7 +150,14 @@ export default class Payment extends React.Component {
     componentDidMount(){
         console.log('componentDidMount', this.payment);
         if(this.payment.refunds !== undefined){
-            this.setState({ showRefund: true, refundDisabled: true, refundId: this.payment.refunds[0].refundId, refundDate: this.payment.refunds[0].date });
+            let _amount = parseFloat(this.formatter.convertToFloat(this.payment.amount));
+            let _tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()));
+            let _refundAmount = parseFloat(this.formatter.convertToFloat(this.payment.getRefundsAmount()));
+
+            let absTotal = parseFloat(( _amount + _tipAmount ) - _refundAmount).toFixed(2);
+            let refundDisabled = absTotal <= 0;
+            let fullDisabled = absTotal < this.payment.amount;
+            this.setState({ showRefund: true, refundDisabled: refundDisabled, refundId: this.payment.refunds[0].refundId, refundDate: this.payment.refunds[0].date , fullRefundDisabled: fullDisabled});
         }
     }
 
@@ -134,12 +186,17 @@ export default class Payment extends React.Component {
             tipAmount = '0.00';
             tipText = 'Add Tip';
         }
+        const showPartialRefunds = this.state.showPartialRefunds;
         const showRefunds = this.state.showRefund;
         let showTipAdj = this.state.showTipAdjust;
         let refundId = '';
         let refundDate = '';
         if(this.state.showRefund){
-            absTotal = '0.00';
+            let _amount = parseFloat(this.formatter.convertToFloat(this.payment.amount));
+            let _tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()));
+            let _refundAmount = parseFloat(this.formatter.convertToFloat(this.payment.getRefundsAmount()));
+
+            absTotal = parseFloat(( _amount + _tipAmount ) - _refundAmount).toFixed(2);
             refundId = this.state.refundId;
             refundDate = this.state.refundDate;
         }
@@ -150,6 +207,22 @@ export default class Payment extends React.Component {
             <div className="payments">
                 <h2>Payment Details</h2>
                 <div className="payments_container">
+                    {showPartialRefunds &&
+                    <div className="popup popup_container">
+                        <div className="row center row_padding"><strong>Payment Refund</strong></div>
+                        <div className="row center row_padding">
+                            <div className="input_title">Enter Refund Amount:</div>
+                            <div className="span_container">
+                                <span className="input_span">$</span>
+                                <input className="input_dollar_sign" type="text" value={this.state.partialRefundAmount} onChange={this.changePartialRefundAmount}/>
+                            </div>
+                        </div>
+                        <div className="row center row_padding">
+                            <ButtonNormal title="Make Full Refund" extra="partial_refund_button" color="white" onClick={this.makeRefund} disabled={this.state.fullRefundDisabled}/>
+                            <ButtonNormal title="Make Partial Refund" extra="partial_refund_button" color="white" onClick={this.makePartialRefund} />
+                        </div>
+                    </div>
+                    }
                     <div className="payments_all_details">
                         <div className="payments_list">
                             <div className="paymentDetails">
@@ -216,7 +289,7 @@ export default class Payment extends React.Component {
                         </div>
                     </div>
                     <div className="column">
-                        <ButtonNormal title="Refund" color="red" extra="add_tip" onClick={this.makeRefund} disabled={this.state.refundDisabled}/>
+                        <ButtonNormal title="Refund" color="red" extra="add_tip" onClick={this.handleRefund} disabled={this.state.refundDisabled}/>
                         <ButtonNormal title="Void Payment" color="white" extra="add_tip" onClick={this.voidPayment} disabled={this.state.refundDisabled}/>
                         {showTipButton && <ButtonNormal title={tipText} color="white" extra="add_tip" onClick={this.adjustTip} disabled={this.state.refundDisabled}/>}
                     </div>

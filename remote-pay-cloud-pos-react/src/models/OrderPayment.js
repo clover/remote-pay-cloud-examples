@@ -90,6 +90,14 @@ export default class OrderPayment {
         this.refunds.push(refund);
     }
 
+    getRefundsAmount(){
+        let totalAmount = 0;
+        this.refunds.forEach(function (refund) {
+            totalAmount = totalAmount + refund.amount;
+        });
+        return totalAmount;
+    }
+
     setOrderId(id){
         this.orderId = id;
     }

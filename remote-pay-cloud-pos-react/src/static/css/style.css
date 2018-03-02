@@ -797,6 +797,13 @@ h3{
     padding: 5px;
 }
 
+.partial_refund_button{
+    width: 175px;
+    padding: 8px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 .order_row{
     padding: 10px;
     display: flex;
