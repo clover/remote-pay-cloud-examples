@@ -1124,6 +1124,10 @@ input:checked + .slider:before {
     border-radius: 50%;
 }
 
+.home_link{
+    padding-left: 20px;
+}
+
 .home_button{
     border: 1px solid black;
     border-radius: 10px;

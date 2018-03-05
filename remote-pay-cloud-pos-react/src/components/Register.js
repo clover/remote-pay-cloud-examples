@@ -976,10 +976,9 @@ export default class Register extends React.Component {
                     <h3>{newOrder}</h3>
                     {vaultedCard &&
                     <div className="row sale_header">
-                        <img className="order_detail_icon" src="images/user.png"/>
                         <div className="order_detail_column">
-                            <div>{this.card.name}</div>
-                            <div>{this.card.card.first6}xxxxxx{this.card.card.last4}</div>
+                            <div>Name: {this.card.name}</div>
+                            <div>Card: {this.card.card.first6}xxxxxx{this.card.card.last4}</div>
                         </div>
                     </div>
                     }

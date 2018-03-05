@@ -1,5 +1,4 @@
 import ButtonNormal from './ButtonNormal';
-import Cloud from './Cloud';
 import Connect from './../utils/CloverConnection';
 import ConnectionHelper from './../utils/ConnectionHelper';
 import DeviceRow from './DeviceRow';
@@ -8,7 +7,6 @@ import Discount from '../models/Discount';
 import Item from '../models/Item';
 import { Link } from 'react-router';
 import { myConfig } from '../config.js';
-import Network from './Network';
 import QrReader from 'react-qr-reader';
 import React, { Component } from 'react'
 import Store from '../models/Store';
@@ -457,7 +455,7 @@ export default class Layout extends Component {
                 </div>}
                 <div className="page_header">
                     <Link to="/">
-                        <img className="home_logo" src={'images/home.png'}/>
+                        <div className="home_link">HOME</div>
                     </Link>
                     <div id="connection_status">
                         {connectionState}
@@ -529,11 +527,9 @@ export default class Layout extends Component {
                         {showConnectionOptions &&
                         <div className="row connect_row">
                             <div onClick={this.showNetworkOptions}>
-                                <Network/>
                                 <p>Connect with Network</p>
                             </div>
                             <div onClick={this.cloudConnect}>
-                                <Cloud/>
                                 <p>Connect with Cloud</p>
                             </div>
                         </div>
