@@ -475,7 +475,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
             this.setStatus('Refund Processed Successfully', 'Toggle');
         }
         else{
-            this.setStatus('Refund Failed', 'Toggle');
+            this.setStatus('Refund Failed: '+ response.message, 'Toggle');
         }
     }
 
