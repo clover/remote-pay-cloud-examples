@@ -520,7 +520,6 @@ export default class Layout extends Component {
                 ):(
                     <div className="connect_container">
                         {showCloudOptions&& <div className="popup_full_opaque_white">
-                            <img src="images/progress.gif"/>
                         </div>}
                         <img className="clover_logo" src={"images/clover_logo.png"}/>
                         <p>Example POS</p>
