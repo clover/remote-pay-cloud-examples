@@ -33,5 +33,6 @@ module.exports = {
             beautify: true,
             dead_code: true
         })*/
-    ]
+    ],
+    devtool: 'eval-source-map'
 };
