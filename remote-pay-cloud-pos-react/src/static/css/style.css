@@ -74,6 +74,10 @@ h3{
     margin: 0px 0px 0px 20px;
 }
 
+.no_margin{
+    margin: 0px;
+}
+
 .page_header{
     display: flex;
     flex-direction: row;
@@ -90,6 +94,19 @@ h3{
 
 .filler_space{
     flex-grow: 1;
+}
+
+.padding{
+    padding: 10px;
+}
+
+.padding_right_15{
+    padding-right: 15px;
+}
+
+.padding_top_bottom{
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .normal_button {
@@ -176,6 +193,10 @@ h3{
 
 .margin_top{
     margin-top: 10px;
+}
+
+.margin_top_30{
+    margin-top: 30px;
 }
 
 .margin_bottom{
@@ -1488,6 +1509,95 @@ input:checked + .slider:before {
     width: 380px;
     flex-direction: column;
     word-wrap: break-word;
+}
+
+.custom_container{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.custom_left{
+    width: 30%;
+    padding-right: 10px;
+    border-right: 1px solid lightgrey;
+}
+
+.custom_right{
+    width: 70%;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom_section{
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom_section_row{
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.custom_input{
+    height:24px;
+    padding-left: 5px;
+    font-size: 12px;
+    flex-grow: 1;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.custom_final{
+    padding: 10px;
+    border-top: 1px solid lightgray;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.custom_button{
+    height: 36px;
+    padding: 5px 20px;
+    margin-left: 20px;
+}
+
+.grow{
+    flex-grow: 1;
+}
+
+.disabled{
+    opacity: 0.65;
+}
+
+.custom_messages_container{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow-y: scroll;
+}
+
+.payload_message{
+    display: flex;
+    flex-direction: row;
+    padding: 5px 10px;
+}
+
+.from_custom_activity{
+    background: #F4F5F5;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.to_custom_activity{
+    background: #DEE0E1;
+    border-radius: 10px;
+    padding: 10px;
 }
 
 

@@ -9,14 +9,11 @@ import PreAuth from '../models/PreAuth';
 import CustomerInfo from '../models/CustomerInfo';
 import Rating from '../messages/Rating';
 import RatingsMessage from '../messages/RatingsMessage';
-import ConversationQuestionMessage from '../messages/ConversationQuestionMessage';
 import ConversationResponseMessage from '../messages/ConversationResponseMessage';
 import MessageToActivity from '../messages/MessageToActivity';
 import CustomerInfoMessage from '../messages/CustomerInfoMessage';
 import CurrencyFormatter from './CurrencyFormatter';
 import CardDataHelper from './CardDataHelper';
-import Layout from '../components/Layout';
-import sdk from 'remote-pay-cloud-api';
 
 export default class POSCloverConnectorListener extends clover.remotepay.ICloverConnectorListener{
 
@@ -42,11 +39,14 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     // COMMUNICATION
 
     onDeviceActivityStart(deviceEvent) {     // called when a Clover device activity starts
-        //console.log("onDeviceActivityStart", deviceEvent);
+        // console.log("onDeviceActivityStart", deviceEvent);
         this.lastDeviceEvent = deviceEvent.getEventState();
         let message = deviceEvent.getMessage();
         if(message !== undefined && this.notCustomActivity(message) && message !== null) {
             this.setStatus(deviceEvent.getMessage());
+        }
+        if(!this.notCustomActivity(message)){
+            this.customSuccess(true);
         }
         if(deviceEvent.inputOptions.length > 0){
             this.inputOptions(deviceEvent.inputOptions);
@@ -54,7 +54,7 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     }
 
     onDeviceActivityEnd(deviceEvent) {      // called when a Clover device activity ends
-        //console.log("onDeviceActivityEnd", deviceEvent);
+        // console.log("onDeviceActivityEnd", deviceEvent);
         if(deviceEvent.getEventState() !== undefined){
             this.closeStatus();
         }
@@ -162,44 +162,45 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
 
     onMessageFromActivity(message){     // called when a message is sent from a custom activity
         console.log('onMessageFromActivity', message);
-        let payload = JSON.parse(message.payload);
-        switch (payload.messageType) {
-            case 'REQUEST_RATINGS':
-                this.handleRequestRatings();
-                break;
-            case 'RATINGS':
-                this.handleRatings(payload);
-                break;
-            case 'PHONE_NUMBER':
-                this.handleCustomerLookup(payload);
-                break;
-            case 'CONVERSATION_RESPONSE':
-                this.handleJokeResponse(payload);
-                break;
-            default:
-                console.log(payload.payloadClassName);
-        }
+        this.newCustomMessage(message.payload);
+        // let payload = JSON.parse(message.payload);
+        // switch (payload.messageType) {
+        //     case 'REQUEST_RATINGS':
+        //         this.handleRequestRatings();
+        //         break;
+        //     case 'RATINGS':
+        //         this.handleRatings(payload);
+        //         break;
+        //     case 'PHONE_NUMBER':
+        //         this.handleCustomerLookup(payload);
+        //         break;
+        //     case 'CONVERSATION_RESPONSE':
+        //         this.handleJokeResponse(payload);
+        //         break;
+        //     default:
+        //         console.log(payload.payloadClassName);
+        // }
     }
 
     onCustomActivityResponse(response) {        // called when a custom activity finishes
         console.log('onCustomActivityResponse', response);
-        if (response.success) {
-            this.setStatus(`Success! Got: ${response.payload} from CustomActivity: ${response.action}`, 'Toggle');
-        }
-        else {
-            if (response.result  === 'CANCEL'){
-                this.setStatus(`Custom activity: ${response.action} was canceled. Reason: ${response.reason}`, 'Toggle');
-            }
-            else{
-                this.setStatus(`Failure! Custom activity: ${response.action} failed.  Reason: ${response.reason}`, 'Toggle');
-            }
-        }
+         if (response.success) {
+             this.finalCustomMessage(response.payload);
+         }
+         else {
+             if (response.result  === 'CANCEL'){
+                 this.setStatus(`Custom activity: ${response.action} was canceled. Reason: ${response.reason}`, 'Toggle');
+             }
+             else{
+                 this.setStatus(`Failure! Custom activity: ${response.action} failed.  Reason: ${response.reason}`, 'Toggle');
+             }
+         }
     }
 
     //HELPERS
 
     notCustomActivity(message) {        // returns if message is custom activity or not
-        return (message.indexOf('com.clover.cfp.examples') === -1);
+        return !message.includes('com.');
     }
 
     handleJokeResponse(payload) {       // handles response of joke for custom conversation activity
