@@ -21,10 +21,15 @@ export default class Layout extends Component {
             challenge: false,
             challengeContent: null,
             connected : false,
+            customSuccess: false,
             delay: 100,
             fadeBackground: false,
+            finalCustomMessage: false,
+            finalMessageFromCustomActivity: '',
             inputOptions: null,
             localhost: false,
+            messageFromCustomActivity: '',
+            newCustomMessage: false,
             pairingCode: '',
             preAuth: false,
             printers: [],
@@ -59,11 +64,14 @@ export default class Layout extends Component {
         this.cloudConnect = this.cloudConnect.bind(this);
         this.confirmSignature = this.confirmSignature.bind(this);
         this.connect = this.connect.bind(this);
+        this.customSuccess = this.customSuccess.bind(this);
         this.fadeBackground = this.fadeBackground.bind(this);
+        this.finalCustomMessage = this.finalCustomMessage.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleError = this.handleError.bind(this);
         this.handleScan = this.handleScan.bind(this);
         this.inputOptions = this.inputOptions.bind(this);
+        this.newCustomMessage = this.newCustomMessage.bind(this);
         this.QRClicked = this.QRClicked.bind(this);
         this.rejectPayment = this.rejectPayment.bind(this);
         this.rejectSignature = this.rejectSignature.bind(this);
@@ -88,7 +96,10 @@ export default class Layout extends Component {
             store: this.store,
             closeStatus: this.closeStatus,
             inputOptions: this.inputOptions,
-            confirmSignature: this.confirmSignature
+            confirmSignature: this.confirmSignature,
+            customSuccess: this.customSuccess,
+            newCustomMessage: this.newCustomMessage,
+            finalCustomMessage: this.finalCustomMessage
         });
 
         this.initStore();
@@ -202,16 +213,16 @@ export default class Layout extends Component {
     setStatus(message, reason) {        // decides how to display status
         //console.log(message, reason);
         if((typeof message === 'object') && (message !== null)){
-            this.setState({ statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false, tipAdjust: false, vaultedCard: false });
+            this.setState({ statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false, tipAdjust: false, vaultedCard: false, newCustomMessage: false, finalCustomMessage : false });
         }
         else if(message == 'Printers'){
-            this.setState({ printers: reason })
+            this.setState({ printers: reason, newCustomMessage: false, finalCustomMessage: false })
         }
         else if (message == 'Sale Processed Successfully' || message == 'Auth Processed Successfully' || message === 'PreAuth Successful' || message === 'PreAuth Processed Successfully') {
             this.saleFinished(message);
         }
         else if(message === 'Response was not a sale'){
-            this.setState({ responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false, tipAdjust: false, vaultedCard: false });
+            this.setState({ responseFail : true, statusText: reason, fadeBackground: true, statusToggle: true, inputOptions: null, refundSuccess: false, tipAdjust: false, vaultedCard: false, newCustomMessage: false, finalCustomMessage: false });
             setTimeout(() => {
                 this.setState({ statusToggle: false, fadeBackground: false });
             }, 1200);
@@ -232,6 +243,8 @@ export default class Layout extends Component {
                 responseFail: false,
                 refundSuccess: false,
                 tipAdjust: false,
+                newCustomMessage: false,
+                finalCustomMessage: false
             });
         }
     }
@@ -259,7 +272,7 @@ export default class Layout extends Component {
         else{
             this.setState({ refundSuccess: false, vaultedCard: false, tipAdjust: false });
         }
-        this.setState({ statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false, inputOptions: null });
+        this.setState({ statusToggle: true, statusText: message, challenge: false, saleFinished: false, fadeBackground: true, responseFail: false, inputOptions: null, newCustomMessage: false, finalCustomMessage: false });
         setTimeout(() => {
             this.setState({ statusToggle: false, fadeBackground: false });
         }, 1500);
@@ -286,6 +299,10 @@ export default class Layout extends Component {
                 this.setState({ fadeBackground: false })
             }
         }
+    }
+
+    customSuccess(success){
+        this.setState({ customSuccess : success , newCustomMessage: false, finalCustomMessage: false});
     }
 
     tipAdded(tipAmount){     // sets tip amount
@@ -319,6 +336,14 @@ export default class Layout extends Component {
         console.log('device selected: ', device);
         this.cloverConnection.connectToDeviceCloud(this.access_code, this.merchantId, device.id);
         this.setState({ cloudConnect: false, showCloudOptions: true });
+    }
+
+    newCustomMessage(message){
+        this.setState({ newCustomMessage: true, messageFromCustomActivity: message, customSuccess: false, finalCustomMessage: false});
+    }
+
+    finalCustomMessage(message){
+        this.setState({finalCustomMessage: true, finalMessageFromCustomActivity: message, newCustomMessage: false, customSuccess: false})
     }
 
     QRClicked(){        // shows QR screen
@@ -514,7 +539,12 @@ export default class Layout extends Component {
                             responseFail: this.state.responseFail,
                             refundSuccess: this.state.refundSuccess,
                             printers: this.state.printers,
-                            tipAdjust: this.state.tipAdjust
+                            tipAdjust: this.state.tipAdjust,
+                            customSuccess: this.state.customSuccess,
+                            newCustomMessage: this.state.newCustomMessage,
+                            messageFromCustomActivity: this.state.messageFromCustomActivity,
+                            finalCustomMessage: this.state.finalCustomMessage,
+                            finalMessageFromCustomActivity: this.state.finalMessageFromCustomActivity
                         })}
                     </div>
                 ):(

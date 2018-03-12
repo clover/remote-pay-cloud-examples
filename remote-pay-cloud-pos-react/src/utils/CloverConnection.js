@@ -35,7 +35,10 @@ export default class CloverConnection {
             closeStatus: this.closeStatus,
             inputOptions: this.inputOptions,
             confirmSignature: this.confirmSignature,
-            toggleConnection: this.toggleConnectionState
+            toggleConnection: this.toggleConnectionState,
+            customSuccess: this.customSuccess,
+            newCustomMessage: this.newCustomMessage,
+            finalCustomMessage: this.finalCustomMessage
         });
 
         connector.addCloverConnectorListener(connectorListener);
@@ -70,7 +73,10 @@ export default class CloverConnection {
             closeStatus: this.closeStatus,
             inputOptions: this.inputOptions,
             confirmSignature: this.confirmSignature,
-            toggleConnection: this.toggleConnectionState
+            toggleConnection: this.toggleConnectionState,
+            customSuccess: this.customSuccess,
+            newCustomMessage: this.newCustomMessage,
+            finalCustomMessage: this.finalCustomMessage
         });
 
         connector.addCloverConnectorListener(connectorListener);
