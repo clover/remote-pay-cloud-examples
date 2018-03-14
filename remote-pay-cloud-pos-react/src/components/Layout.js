@@ -10,6 +10,9 @@ import { myConfig } from '../config.js';
 import QrReader from 'react-qr-reader';
 import React, { Component } from 'react'
 import Store from '../models/Store';
+import Cloud from './SVGs/Cloud';
+import Network from './SVGs/Network';
+import Home from './SVGs/Home';
 
 
 export default class Layout extends Component {
@@ -480,7 +483,7 @@ export default class Layout extends Component {
                 </div>}
                 <div className="page_header">
                     <Link to="/">
-                        <div className="home_link">HOME</div>
+                       <Home/>
                     </Link>
                     <div id="connection_status">
                         {connectionState}
@@ -556,9 +559,11 @@ export default class Layout extends Component {
                         {showConnectionOptions &&
                         <div className="row connect_row">
                             <div onClick={this.showNetworkOptions}>
+                                <Network/>
                                 <p>Connect with Network</p>
                             </div>
                             <div onClick={this.cloudConnect}>
+                                <Cloud/>
                                 <p>Connect with Cloud</p>
                             </div>
                         </div>

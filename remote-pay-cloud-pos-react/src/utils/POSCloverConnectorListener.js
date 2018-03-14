@@ -163,23 +163,6 @@ export default class POSCloverConnectorListener extends clover.remotepay.IClover
     onMessageFromActivity(message){     // called when a message is sent from a custom activity
         console.log('onMessageFromActivity', message);
         this.newCustomMessage(message.payload);
-        // let payload = JSON.parse(message.payload);
-        // switch (payload.messageType) {
-        //     case 'REQUEST_RATINGS':
-        //         this.handleRequestRatings();
-        //         break;
-        //     case 'RATINGS':
-        //         this.handleRatings(payload);
-        //         break;
-        //     case 'PHONE_NUMBER':
-        //         this.handleCustomerLookup(payload);
-        //         break;
-        //     case 'CONVERSATION_RESPONSE':
-        //         this.handleJokeResponse(payload);
-        //         break;
-        //     default:
-        //         console.log(payload.payloadClassName);
-        // }
     }
 
     onCustomActivityResponse(response) {        // called when a custom activity finishes

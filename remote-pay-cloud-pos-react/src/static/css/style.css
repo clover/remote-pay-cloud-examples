@@ -547,6 +547,8 @@ h3{
     height: 30px;
     margin-left: 20px;
     margin-left: 20px;
+    fill: #43B02A;
+    enable-background: 0 0 80 80;
 }
 
 .orders {
@@ -998,13 +1000,20 @@ h3{
 }
 
 .network{
-    fill: #3ba626;
+    fill: #43B02A;
     height: 155px;
+    enable-background:new 0 0 80 80;
 }
 
 .cloud{
-    fill: #3ba626;
     height: 155px;
+    enable-background:new 0 0 80 80;
+    fill: #43B02A;
+}
+
+.register_icon{
+    fill: #43B02A;
+    enable-background:new 0 0 80 80;
 }
 
 .checkmark_small{
@@ -1168,6 +1177,16 @@ input:checked + .slider:before {
 .home_icon{
     height: 130px;
     padding: 30px;
+    fill: #43B02A;
+    enable-background:new 0 0 80 80;
+}
+
+.st1{fill:none;
+    stroke:#43B02A;
+    stroke-width:3.8876;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-miterlimit:10;
 }
 
 .home_row > a{

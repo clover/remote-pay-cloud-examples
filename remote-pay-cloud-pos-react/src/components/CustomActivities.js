@@ -30,8 +30,6 @@ export default class CustomActivities extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.initialPayloadChange = this.initialPayloadChange.bind(this);
         this.payloadChange = this.payloadChange.bind(this);
-        // this.sendMessage = this.sendMessage.bind(this);
-        // this.startCustomActivity = this.startCustomActivity.bind(this);
         this.toggleNonBlocking = this.toggleNonBlocking.bind(this);
         this.startActivity = this.startActivity.bind(this);
         this.sendMessageToActivity = this.sendMessageToActivity.bind(this);
@@ -44,11 +42,6 @@ export default class CustomActivities extends React.Component {
         car.setNonBlocking(this.state.nonBlocking);
 
         this.cloverConnector.startCustomActivity(car);
-
-        // messages = new ArrayList<PayloadMessage>();
-        // updateMessages();
-        // initialPayloadContent.setText("");
-        // finalPayload.setText("");
     }
 
     sendMessageToActivity() {
@@ -64,35 +57,6 @@ export default class CustomActivities extends React.Component {
     finalPayload(finalMessageFromCustomActivity){
         this.setState({finalPayload: finalMessageFromCustomActivity, startActivityDisabled: false, sendPayloadDisabled: true});
     }
-
-    // startCustomActivity(){      // starts custom activity
-    //     this.store.setCustomActivity(this.state.selectedValue);
-    //
-    //     let activityId = this.CUSTOM_ACTIVITY_PACKAGE + this.state.selectedValue;
-    //     let nonBlocking = this.refs.non_blocking.checked;
-    //     let payload = this.state.activityPayload;
-    //
-    //     let car = new sdk.remotepay.CustomActivityRequest();
-    //     car.setAction(activityId);
-    //     car.setPayload(payload);
-    //     car.setNonBlocking(nonBlocking);
-    //
-    //     this.setState({ showMessageButton: (activityId == 'com.clover.cfp.examples.BasicConversationalExample') });
-    //     this.cloverConnector.startCustomActivity(car);
-    // }
-    //
-    // sendMessage(){      // sends message to activity
-    //     let activityId = this.CUSTOM_ACTIVITY_PACKAGE + this.state.selectedValue;
-    //     let message = new ConversationQuestionMessage('Why did the Storm Trooper buy an iPhone?');
-    //     let payload = JSON.stringify(message.getPayload());
-    //
-    //     let messageRequest = new sdk.remotepay.MessageToActivity();
-    //     messageRequest.setAction(activityId);
-    //     messageRequest.setPayload(payload);
-    //
-    //     this.cloverConnector.sendMessageToActivity(messageRequest);
-    //     this.setState({ showMessageButton : false });
-    // }
 
     changeCustomActionName(e){      // handle custom activity action name change
         this.setState( {customActivityAction : e.target.value });
@@ -129,7 +93,6 @@ export default class CustomActivities extends React.Component {
     }
 
     render(){
-        // const showMessage = this.state.showMessageButton;
         const initialPayload = this.state.initialPayload;
         const finalPayload = this.state.finalPayload;
         let customPayloadClasses = "custom_payload_send";
@@ -191,33 +154,5 @@ export default class CustomActivities extends React.Component {
                 </div>
             </div>
         );
-
-        // return(
-        //     <div className="custom_activities">
-        //         <h2>Custom Activities</h2>
-        //         <div className="custom_options">
-        //             <div className="misc_row">
-        //                 <div>Non-Blocking</div>
-        //                 <label className="switch">
-        //                     <input type="checkbox" ref="non_blocking" defaultChecked/>
-        //                     <span className="slider round"/>
-        //                 </label>
-        //             </div>
-        //             <select className="custom_item_select" value={this.state.selectedValue} onChange={this.handleChange}>
-        //                 <option value="BasicExample">Basic Example</option>
-        //                 <option value="BasicConversationalExample">Basic Conversational Example</option>
-        //                 <option value="WebViewExample">Web View Example</option>
-        //                 <option value="CarouselExample">Carousel Example</option>
-        //                 <option value="RatingsExample">Ratings Example</option>
-        //                 <option value="NFCExample">NFC Example</option>
-        //             </select>
-        //             <input className="custom_item" type="text" value={this.state.activityPayload} onChange={this.payloadChange}/>
-        //                 <div className="misc_row">
-        //                     <input className="normal_button button_white custom_activity_button left" type="submit" value="Start" onClick={this.startCustomActivity}/>
-        //                     {showMessage && <input className="normal_button button_white custom_activity_button max_width_half right" type="submit" value="Send Message" onClick={this.sendMessage}/>}
-        //                 </div>
-        //         </div>
-        //     </div>
-        // );
     }
 }
