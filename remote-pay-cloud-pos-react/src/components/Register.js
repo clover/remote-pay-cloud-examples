@@ -10,6 +10,7 @@ import React from 'react';
 import RegisterLine from './RegisterLine';
 import RegisterLineItem from './RegisterLineItem';
 import sdk from 'remote-pay-cloud-api';
+import User from './SVGs/User';
 
 const data = require ('../../src/items.js');
 
@@ -976,6 +977,7 @@ export default class Register extends React.Component {
                     <h3>{newOrder}</h3>
                     {vaultedCard &&
                     <div className="row sale_header">
+                        <User/>
                         <div className="order_detail_column">
                             <div>Name: {this.card.name}</div>
                             <div>Card: {this.card.card.first6}xxxxxx{this.card.card.last4}</div>
