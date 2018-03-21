@@ -1,20 +1,19 @@
-var path = require('path');
-var webpack = require('webpack');
-
-var commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
-        name: 'commons',
-        filename: 'common.js'
-    }
-);
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
-    entry: ["babel-polyfill", "./public/index.js"],
+    entry: {
+        "babel": "babel-polyfill",
+        "cloudExample": "./public/index.js"
+    },
     resolve: {
         extensions: ['.js']
     },
     output: {
         path: path.resolve(__dirname, './public/built'),
-        filename: "bundle.js"
+        filename: "[name].js",
+        libraryTarget: 'var',
+        library: 'clover'
     },
     module: {
       rules: [
@@ -29,6 +28,5 @@ module.exports = {
           }
         }
       ]
-    },
-    plugins: [commonsPlugin]
+    }
 };
