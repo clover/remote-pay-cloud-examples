@@ -1,5 +1,7 @@
 ## Example Remote Pay Cloud POS in Node.js
 
+**Please Note**: Secure Network Pay Display is in beta and has not yet been published to the Clover App Market. In order to develop with this app, please email your [sandbox test merchant UUID](https://docs.clover.com/build/merchant-id-and-api-token-for-development/#get-your-test-merchants-uuid-mid) to semi-integrations@clover.com.
+
 This example contains a simple Node.js application that demonstrates how to connect to a Clover device using the Clover Javascript Cloud Connector. It also shows how to communicate with the device to display information, transact sales, and perform other operations.
 
 ## Requirements

@@ -1,5 +1,7 @@
 # Remote Pay Cloud Starter
 
+**Please Note**: Secure Network Pay Display is in beta and has not yet been published to the Clover App Market. In order to develop with this app, please email your [sandbox test merchant UUID](https://docs.clover.com/build/merchant-id-and-api-token-for-development/#get-your-test-merchants-uuid-mid) to semi-integrations@clover.com.
+
 This repository contains a sample web application that uses Clover Connector to connect to a Clover device and perform basic operations.
 
 To clone this repository, enter the following on the command line:
