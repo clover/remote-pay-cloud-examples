@@ -14,7 +14,6 @@ import Cloud from './SVGs/Cloud';
 import Network from './SVGs/Network';
 import Home from './SVGs/Home';
 
-
 export default class Layout extends Component {
 
     constructor(props){

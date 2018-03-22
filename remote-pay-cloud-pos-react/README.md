@@ -14,3 +14,11 @@ This will start a local server on port 3000. You can then navigate to http://loc
     
 ## Prerequisites
 Please see the [Getting Started with Clover Connector tutorial](https://docs.clover.com/build/getting-started-with-clover-connector/) for more information and a list of prerequisites.
+
+## Configuration
+Once you have completed the above steps you will need to modify this example application's configuration file.  Open ./src/config.js:
+
+```javascript
+    clientId: 'HBK8YZG9EQNJG', // Update this to match your "App ID".  From the Clover Developer Dashboard find your app, select "settings" and your "App ID" will be displayed.
+    devicesDomain: 'https://apisandbox.dev.clover.com/v3/merchants/', // Update this to match the environment you are hitting, e.g. https://apisandbox.dev.clover.com/v3/merchants/
+    oAuthDomain: 'https://sandbox.dev.clover.com' // Update this to match the environment you are hitting, e.g. https://sandbox.dev.clover.com
