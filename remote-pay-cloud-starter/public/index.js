@@ -49,6 +49,7 @@ const cloudExample = () => {
          * Establishes a connection to the Clover device based on the configuration provided.
          */
         connect: function () {
+            clover.DebugConfig.loggingEnabled = true;
             let cloverDeviceConnectionConfiguration = null;
             baseConfiguration["webSocketFactoryFunction"] = clover.BrowserWebSocketImpl.createInstance;
             baseConfiguration["imageUtil"] = new clover.ImageUtil();
