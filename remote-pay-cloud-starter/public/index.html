@@ -27,6 +27,22 @@
         cloudExample.resetDevice();
     }
 
+    function showThankYouScreen() {
+        cloudExample.showThankYouScreen();
+    }
+
+    function showWelcomeScreen() {
+        cloudExample.showWelcomeScreen();
+    }
+
+    function performRefund() {
+        cloudExample.performRefund();
+    }
+
+    function performSaleRefund() {
+        cloudExample.performSaleRefund();
+    }
+
     window.onbeforeunload = () => cloudExample.cleanup
 
 </script>
@@ -45,6 +61,14 @@
         <button type="button" onclick="showMessage()" class="btn btn-success">Show a message on your Clover device
         </button>
         <button type="button" onclick="resetDevice()" class="btn btn-success">Reset your Clover device
+        </button>
+        <button type="button" onclick="showThankYouScreen()" class="btn btn-success">Show the Thank You screen
+        </button>
+        <button type="button" onclick="showWelcomeScreen()" class="btn btn-success">Show the Welcome screen
+        </button>
+        <button type="button" onclick="performRefund()" class="btn btn-success">Try a refund
+        </button>
+        <button type="button" onclick="performSaleRefund()" class="btn btn-success">Try a sale with refund
         </button>
       </div>
     </div>

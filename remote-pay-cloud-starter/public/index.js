@@ -27,10 +27,10 @@ const cloudExample = () => {
 
     // If useCloudConfiguration is set to true, enter your cloud configuration here.
     const cloudConfiguration = {
-        "accessToken": "yourAccessTokenHere",
-        "cloverServer": "https://sandbox.dev.clover.com/",
-        "merchantId": "yourMerchantIdhere",
-        "deviceId": "yourDeviceUUIDHere",
+        "accessToken": "53eb5a6c-3045-f4b4-fbe9-057756c37d1c",
+        "cloverServer": "https://dev1.dev.clover.com/",
+        "merchantId": "M6V3D9QH6VSRC",
+        "deviceId": "0dee08ba621262cb4cefccfe7d8281e7",
         "friendlyId": "Cloud Example"
     };
 
@@ -49,6 +49,7 @@ const cloudExample = () => {
          * Establishes a connection to the Clover device based on the configuration provided.
          */
         connect: function () {
+            clover.DebugConfig.loggingEnabled = true;
             let cloverDeviceConnectionConfiguration = null;
             baseConfiguration["webSocketFactoryFunction"] = clover.BrowserWebSocketImpl.createInstance;
             baseConfiguration["imageUtil"] = new clover.ImageUtil();
@@ -87,7 +88,98 @@ const cloudExample = () => {
         },
 
         /**
+         * Shows the Thank You screen
+         */
+
+        showThankYouScreen: function() {
+            getCloverConnector().showThankYouScreen();
+        },
+
+        /**
+         * Shows the Welcome screen
+         */
+
+        showWelcomeScreen: function() {
+            getCloverConnector().showWelcomeScreen();
+        },
+
+        /**
+         * Performs a manual refund on your clover device
+         */
+        performRefund: function() {
+          const refundRequest = new clover.remotepay.ManualRefundRequest();
+
+          //refundRequest.setFullRefund(true);
+          refundRequest.setAmount(10);
+          //refundRequest.setAutoAcceptSignature(false);
+          console.log({message: "Sending refund", request: refundRequest});
+
+          let defaultCloverConnectorListener = buildCloverConnectionListener();
+
+          getCloverConnector().addCloverConnectorListener(Object.assign({}, defaultCloverConnectorListener, {
+
+              onManualRefundResponse: function (response) {
+                  updateStatus("Refund complete.", response.result === "SUCCESS");
+                  setTimeout(() => updateStatus("Please select an action to execute"), 5000);
+                  console.log({message: "Refund response received", response: response});
+
+                  /*if (!response.getRefunded()) {
+                      console.log({error: "Response is not a refund!"}); // Might need a refund response?
+                  }*/
+              },
+          }));
+
+          getCloverConnector().manualRefund(refundRequest);
+        },
+
+        /**
          * Performs a sale on your Clover device.
+         */
+        performSaleRefund: function () {
+            const saleRequest = new clover.remotepay.SaleRequest();
+            saleRequest.setExternalId(clover.CloverID.getNewId());
+            saleRequest.setAmount(10);
+            saleRequest.setAutoAcceptSignature(false);
+            console.log({message: "Sending sale", request: saleRequest});
+
+            let defaultCloverConnectorListener = buildCloverConnectionListener();
+            // Add a Clover Listener to handle Sale responses.
+            getCloverConnector().addCloverConnectorListener(Object.assign({}, defaultCloverConnectorListener, {
+
+                onSaleResponse: function (response) {
+                    updateStatus("Sale complete.", response.result === "SUCCESS");
+                    setTimeout(() => updateStatus("Please select an action to execute"), 5000);
+                    console.log({message: "Sale response received", response: response});
+                    if (!response.getIsSale()) {
+                        console.log({error: "Response is not a sale!"});
+                    }
+                },
+
+                // See https://docs.clover.com/build/working-with-challenges/
+                onConfirmPaymentRequest: function (request) {
+                    console.log({message: "Automatically accepting payment", request: request});
+                    updateStatus("Automatically accepting payment");
+                    getCloverConnector().acceptPayment(request.getPayment());
+                    // to reject a payment, pass the payment and the challenge that was the basis for the rejection
+                    // getCloverConnector().rejectPayment(request.getPayment(), request.getChallenges()[REJECTED_CHALLENGE_INDEX]);
+                },
+
+                // See https://docs.clover.com/build/working-with-challenges/
+                onVerifySignatureRequest: function (request) {
+                    console.log({message: "Automatically accepting signature", request: request});
+                    updateStatus("Automatically accepting signature");
+                    getCloverConnector().acceptSignature(request);
+                    // to reject a signature, pass the request to verify
+                    // getCloverConnector().rejectSignature(request);
+                }
+            }));
+            // Perform the sale.
+            getCloverConnector().sale(saleRequest);
+        },
+
+
+        /**
+         * Performs a sale and then a refund on your Clover device.
          */
         performSale: function () {
             const saleRequest = new clover.remotepay.SaleRequest();
@@ -129,6 +221,33 @@ const cloudExample = () => {
             }));
             // Perform the sale.
             getCloverConnector().sale(saleRequest);
+
+
+            const refundRequest = new clover.remotepay.RefundPaymentRequest();
+
+            //refundRequest.setFullRefund(true);
+            refundRequest.setFullRefund(true);
+            refundRequest.setOrderId(saleRequest.getOrderId());
+            //refundRequest.setAmount(10);
+            //refundRequest.setAutoAcceptSignature(false);
+            console.log({message: "Sending refund", request: refundRequest});
+
+            //let defaultCloverConnectorListener = buildCloverConnectionListener();
+
+            getCloverConnector().addCloverConnectorListener(Object.assign({}, defaultCloverConnectorListener, {
+
+                onRefundPaymentResponse: function (response) {
+                    updateStatus("Refund complete.", response.result === "SUCCESS");
+                    setTimeout(() => updateStatus("Please select an action to execute"), 5000);
+                    console.log({message: "Refund response received", response: response});
+
+                    /*if (!response.getRefunded()) {
+                        console.log({error: "Response is not a refund!"}); // Might need a refund response?
+                    }*/
+                },
+            }));
+
+            getCloverConnector().performRefund();
         },
 
         /**
