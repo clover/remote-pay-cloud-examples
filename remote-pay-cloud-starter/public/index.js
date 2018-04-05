@@ -107,16 +107,17 @@ const cloudExample = () => {
          * Performs a manual refund on your clover device
          */
         performRefund: function() {
-          const refundRequest = new clover.remotepay.ManualRefundRequest();
+            const refundRequest = new clover.remotepay.ManualRefundRequest();
 
           //refundRequest.setFullRefund(true);
-          refundRequest.setAmount(10);
+            refundRequest.setExternalId(clover.CloverID.getNewId());
+            refundRequest.setAmount(10);
           //refundRequest.setAutoAcceptSignature(false);
-          console.log({message: "Sending refund", request: refundRequest});
+            console.log({message: "Sending refund", request: refundRequest});
 
-          let defaultCloverConnectorListener = buildCloverConnectionListener();
+            let defaultCloverConnectorListener = buildCloverConnectionListener();
 
-          getCloverConnector().addCloverConnectorListener(Object.assign({}, defaultCloverConnectorListener, {
+            getCloverConnector().addCloverConnectorListener(Object.assign({}, defaultCloverConnectorListener, {
 
               onManualRefundResponse: function (response) {
                   updateStatus("Refund complete.", response.result === "SUCCESS");
@@ -126,10 +127,10 @@ const cloudExample = () => {
                   /*if (!response.getRefunded()) {
                       console.log({error: "Response is not a refund!"}); // Might need a refund response?
                   }*/
-              },
-          }));
+                  },
+            }));
 
-          getCloverConnector().manualRefund(refundRequest);
+            getCloverConnector().manualRefund(refundRequest);
         },
 
         /**
@@ -226,6 +227,7 @@ const cloudExample = () => {
             const refundRequest = new clover.remotepay.RefundPaymentRequest();
 
             //refundRequest.setFullRefund(true);
+            refundRequest.setExternalId(clover.CloverID.getNewId());
             refundRequest.setFullRefund(true);
             refundRequest.setOrderId(saleRequest.getOrderId());
             //refundRequest.setAmount(10);
