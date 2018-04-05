@@ -136,7 +136,7 @@ const cloudExample = () => {
         /**
          * Performs a sale on your Clover device.
          */
-        performSaleRefund: function () {
+        performSale: function () {
             const saleRequest = new clover.remotepay.SaleRequest();
             saleRequest.setExternalId(clover.CloverID.getNewId());
             saleRequest.setAmount(10);
@@ -182,7 +182,7 @@ const cloudExample = () => {
         /**
          * Performs a sale and then a refund on your Clover device.
          */
-        performSale: function () {
+         performSaleRefund: function () {
             const saleRequest = new clover.remotepay.SaleRequest();
             saleRequest.setExternalId(clover.CloverID.getNewId());
             saleRequest.setAmount(10);
