@@ -200,6 +200,20 @@ const cloudExample = () => {
                     if (!response.getIsSale()) {
                         console.log({error: "Response is not a sale!"});
                     }
+
+                    // Make sure we have a sale and everything is good.
+                    if (true) {
+                        const refundRequest = new clover.remotepay.RefundPaymentRequest();
+
+                        //refundRequest.setFullRefund(true);
+                        refundRequest.setFullRefund(true);
+                        refundRequest.setPaymentId(response.payment.id);
+                        refundRequest.setOrderId(response.payment.order.id);
+                        console.log({message: "Sending refund", request: refundRequest});
+
+                        getCloverConnector().refundPayment(refundRequest);
+                    }
+
                 },
 
                 // See https://docs.clover.com/build/working-with-challenges/
@@ -209,6 +223,16 @@ const cloudExample = () => {
                     getCloverConnector().acceptPayment(request.getPayment());
                     // to reject a payment, pass the payment and the challenge that was the basis for the rejection
                     // getCloverConnector().rejectPayment(request.getPayment(), request.getChallenges()[REJECTED_CHALLENGE_INDEX]);
+                },
+
+                onRefundPaymentResponse: function (response) {
+                    updateStatus("Refund complete.", response.result === "SUCCESS");
+                    setTimeout(() => updateStatus("Please select an action to execute"), 5000);
+                    console.log({message: "Refund response received", response: response});
+
+                    /*if (!response.getRefunded()) {
+                        console.log({error: "Response is not a refund!"}); // Might need a refund response?
+                    }*/
                 },
 
                 // See https://docs.clover.com/build/working-with-challenges/
@@ -222,34 +246,6 @@ const cloudExample = () => {
             }));
             // Perform the sale.
             getCloverConnector().sale(saleRequest);
-
-
-            const refundRequest = new clover.remotepay.RefundPaymentRequest();
-
-            //refundRequest.setFullRefund(true);
-            refundRequest.setExternalId(clover.CloverID.getNewId());
-            refundRequest.setFullRefund(true);
-            refundRequest.setOrderId(saleRequest.getOrderId());
-            //refundRequest.setAmount(10);
-            //refundRequest.setAutoAcceptSignature(false);
-            console.log({message: "Sending refund", request: refundRequest});
-
-            //let defaultCloverConnectorListener = buildCloverConnectionListener();
-
-            getCloverConnector().addCloverConnectorListener(Object.assign({}, defaultCloverConnectorListener, {
-
-                onRefundPaymentResponse: function (response) {
-                    updateStatus("Refund complete.", response.result === "SUCCESS");
-                    setTimeout(() => updateStatus("Please select an action to execute"), 5000);
-                    console.log({message: "Refund response received", response: response});
-
-                    /*if (!response.getRefunded()) {
-                        console.log({error: "Response is not a refund!"}); // Might need a refund response?
-                    }*/
-                },
-            }));
-
-            getCloverConnector().performRefund();
         },
 
         /**
