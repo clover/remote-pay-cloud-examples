@@ -39,11 +39,11 @@
         cloudExample.performRefund();
     }
 
-    function performSaleRefund() {
-        cloudExample.performSaleRefund();
+    function performSaleAndRefund() {
+        cloudExample.performSaleAndRefund();
     }
 
-    window.onbeforeunload = () => cloudExample.cleanup
+    window.onbeforeunload = () => cloudExample.cleanup();
 
 </script>
 <div class="container">
@@ -68,7 +68,7 @@
         </button>
         <button type="button" onclick="performRefund()" class="btn btn-success">Try a refund
         </button>
-        <button type="button" onclick="performSaleRefund()" class="btn btn-success">Try a sale with refund
+        <button type="button" onclick="performSaleAndRefund()" class="btn btn-success">Try a sale with refund
         </button>
       </div>
     </div>

@@ -27,10 +27,10 @@ const cloudExample = () => {
 
     // If useCloudConfiguration is set to true, enter your cloud configuration here.
     const cloudConfiguration = {
-        "accessToken": "53eb5a6c-3045-f4b4-fbe9-057756c37d1c",
+        "accessToken": "e5952205-7194-b4bd-1c15-02700d68ee01",
         "cloverServer": "https://dev1.dev.clover.com/",
-        "merchantId": "M6V3D9QH6VSRC",
-        "deviceId": "0dee08ba621262cb4cefccfe7d8281e7",
+        "merchantId": "59RECDKBW11G6",
+        "deviceId": "5602c78304b8aea23a1b3549c8c79863",
         "friendlyId": "Cloud Example"
     };
 
@@ -182,10 +182,10 @@ const cloudExample = () => {
         /**
          * Performs a sale and then a refund on your Clover device.
          */
-         performSaleRefund: function () {
+         performSaleAndRefund: function () {
             const saleRequest = new clover.remotepay.SaleRequest();
             saleRequest.setExternalId(clover.CloverID.getNewId());
-            saleRequest.setAmount(10);
+            saleRequest.setAmount(1000);
             saleRequest.setAutoAcceptSignature(false);
             console.log({message: "Sending sale", request: saleRequest});
 
@@ -206,7 +206,8 @@ const cloudExample = () => {
                         const refundRequest = new clover.remotepay.RefundPaymentRequest();
 
                         //refundRequest.setFullRefund(true);
-                        refundRequest.setFullRefund(true);
+                        refundRequest.setFullRefund(false);
+                        refundRequest.setAmount(400);
                         refundRequest.setPaymentId(response.payment.id);
                         refundRequest.setOrderId(response.payment.order.id);
                         console.log({message: "Sending refund", request: refundRequest});
