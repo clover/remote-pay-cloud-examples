@@ -27,7 +27,9 @@
         cloudExample.resetDevice();
     }
 
-    window.onbeforeunload = () => cloudExample.cleanup();
+    window.onbeforeunload = function() {
+        cloudExample.cleanup();
+    };
 
 </script>
 <div class="container">
