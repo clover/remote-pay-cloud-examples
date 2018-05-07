@@ -9,7 +9,6 @@ import OrderPayment from '../models/OrderPayment';
 import React from 'react';
 import RegisterLine from './RegisterLine';
 import RegisterLineItem from './RegisterLineItem';
-import sdk from 'remote-pay-cloud-api';
 import User from './SVGs/User';
 
 const data = require ('../../src/items.js');
@@ -59,7 +58,7 @@ export default class Register extends React.Component {
 
         this.cloverConnector = this.props.cloverConnection.cloverConnector;
         this.closeStatus = this.props.closeStatus;
-        this.displayOrder = new sdk.order.DisplayOrder();
+        this.displayOrder = new clover.sdk.order.DisplayOrder();
         this.formatter = new CurrencyFormatter;
         this.imageHelper = new ImageHelper();
         this.saleMethod = null;
@@ -123,17 +122,20 @@ export default class Register extends React.Component {
         this.store.setCurrentOrder(this.order);
         if(this.props.location.state != null){
             this.saleMethod = this.props.location.state.saleType;
-            if(this.saleMethod === 'Vaulted'){
+            if(this.saleMethod === 'Vaulted' || this.saleMethod === 'Vaulted PreAuth'){
                 this.card = this.props.location.state.card;
+                if(this.saleMethod === 'Vaulted PreAuth'){
+                    this.saleMethod = 'PreAuth';
+                }
             }
         }
     }
 
     initSettings(){     // initializes transaction settings
-        let manual = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL) == clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL);
-        let swipe = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE) == clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE);
-        let chip = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT) == clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT);
-        let contactless = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_NFC_CONTACTLESS) == clover.CardEntryMethods.CARD_ENTRY_METHOD_NFC_CONTACTLESS);
+        let manual = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL) === clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL);
+        let swipe = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE) === clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE);
+        let chip = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT) === clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT);
+        let contactless = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_NFC_CONTACTLESS) === clover.CardEntryMethods.CARD_ENTRY_METHOD_NFC_CONTACTLESS);
         let forceOffline = this.getOfflineValueForState(this.store.getForceOfflinePayments());
         let allowOffline = this.getOfflineValueForState(this.store.getAllowOfflinePayments());
         let acceptOffline = this.getOfflineValueForState(this.store.getApproveOfflinePaymentWithoutPrompt());
@@ -215,15 +217,15 @@ export default class Register extends React.Component {
             return undefined;
         }
         if(input === 'ON_SCREEN'){
-            return sdk.payments.DataEntryLocation.ON_SCREEN;
+            return clover.sdk.payments.DataEntryLocation.ON_SCREEN;
         }
         if(input === 'ON_PAPER'){
             this.setState({sigThreshold: '0.00'});
-            return sdk.payments.DataEntryLocation.ON_PAPER;
+            return clover.sdk.payments.DataEntryLocation.ON_PAPER;
         }
         if(input === 'NONE'){
             this.setState({sigThreshold: '0.00'});
-            return sdk.payments.DataEntryLocation.NONE;
+            return clover.sdk.payments.DataEntryLocation.NONE;
         }
     }
 
@@ -231,13 +233,13 @@ export default class Register extends React.Component {
         if(input === undefined){
             return 'DEFAULT';
         }
-        if(input === sdk.payments.DataEntryLocation.ON_SCREEN){
+        if(input === clover.sdk.payments.DataEntryLocation.ON_SCREEN){
             return 'ON_SCREEN';
         }
-        if(input === sdk.payments.DataEntryLocation.ON_PAPER){
+        if(input === clover.sdk.payments.DataEntryLocation.ON_PAPER){
             return 'ON_PAPER';
         }
-        if(input === sdk.payments.DataEntryLocation.NONE){
+        if(input === clover.sdk.payments.DataEntryLocation.NONE){
             return 'NONE';
         }
     }
@@ -249,14 +251,14 @@ export default class Register extends React.Component {
         }
         if(input === 'NO_TIP'){
             this.setState({tipAmount: '0.00'});
-            return sdk.payments.TipMode.NO_TIP;
+            return clover.sdk.payments.TipMode.NO_TIP;
         }
         if(input === 'ON_SCREEN_BEFORE_PAYMENT'){
             this.setState({tipAmount: '0.00'});
-            return sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT;
+            return clover.sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT;
         }
         if(input === 'TIP_PROVIDED'){
-            return sdk.payments.TipMode.TIP_PROVIDED;
+            return clover.sdk.payments.TipMode.TIP_PROVIDED;
         }
     }
 
@@ -264,13 +266,13 @@ export default class Register extends React.Component {
         if(input === undefined){
             return 'DEFAULT';
         }
-        if(input === sdk.payments.TipMode.NO_TIP){
+        if(input === clover.sdk.payments.TipMode.NO_TIP){
             return 'NO_TIP';
         }
-        if(input === sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT){
+        if(input === clover.sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT){
             return 'ON_SCREEN_BEFORE_PAYMENT';
         }
-        if(input === sdk.payments.TipMode.TIP_PROVIDED){
+        if(input === clover.sdk.payments.TipMode.TIP_PROVIDED){
             return 'TIP_PROVIDED';
         }
     }
@@ -439,12 +441,8 @@ export default class Register extends React.Component {
         //console.log(this.order);
         this.initSettings();
         if(this.state.orderItems.length > 0) {
-            if(this.saleMethod === 'Vaulted') {
-                this.setState({ showSettings: true, makingSale: true });
-            }
-            else if(this.saleMethod === 'PreAuth'){
-                this.setState({ makingSale: true });
-                this.preAuth();
+            if(this.saleMethod === 'PreAuth'){
+                this.setState({ makingSale: true, showSettings: true });
             }
             else{
                 this.setState({ showSaleMethod: true, makingSale: true });
@@ -489,14 +487,15 @@ export default class Register extends React.Component {
         }
         else if(this.saleMethod === 'PreAuth'){
             this.setState({ showSettings: false });
-            this.doPreAuth();
+            this.preAuth();
         }
         this.unfadeBackground();
     }
 
     preAuthContinue(){      // show transaction settings for preauth
         this.initSettings();
-        this.setState({ showSettings: true, promptPreAuth: false });
+        this.setState({promptPreAuth: false });
+        this.doPreAuth();
     }
 
     promptPreAuth(){       // show popup for preauth
@@ -518,7 +517,7 @@ export default class Register extends React.Component {
         this.setState({promptPreAuth : false});
         let externalPaymentID = clover.CloverID.getNewId();
         this.store.getCurrentOrder().setPendingPaymentId(externalPaymentID);
-        let request = new sdk.remotepay.PreAuthRequest();
+        let request = new clover.sdk.remotepay.PreAuthRequest();
         request.setAmount(this.formatter.convertFromFloat(parseFloat(this.state.preAuthAmount).toFixed(2)));
         request.setExternalId(externalPaymentID);
         request.setCardEntryMethods(this.store.getCardEntryMethods());
@@ -527,16 +526,27 @@ export default class Register extends React.Component {
         request.setSignatureThreshold(this.store.getSignatureThreshold());
         request.setDisableReceiptSelection(this.store.getDisableReceiptOptions());
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
-        console.log(request);
+        if(this.card != null){
+            request.setVaultedCard(this.card.card);
+        }
+        console.log('PreAuthRequest', request);
         this.cloverConnector.preAuth(request);
     }
 
 
     preAuth(){  // capture pre auth
         this.setState({showSettings: false, showPaymentMethods : false});
-        let car = new sdk.remotepay.CapturePreAuthRequest();
+        let car = new clover.sdk.remotepay.CapturePreAuthRequest();
         car.paymentId = this.store.getPreAuthPaymentId();
         car.amount = this.formatter.convertFromFloat(this.order.getTotal());
+        car.tipAmount = this.store.getTipAmount() == null ? 0 : this.store.getTipAmount();
+        car.disablePrinting = this.store.getDisablePrinting();
+        car.signatureEntryLocation = this.store.getSignatureEntryLocation();
+        car.signatureThreshold = this.store.getSignatureThreshold();
+        car.disableReceiptSelection = this.store.getDisableReceiptOptions();
+        car.disableDuplicateChecking = this.store.getDisableDuplicateChecking();
+        car.autoAcceptPaymentConfirmations = this.store.getAutomaticPaymentConfirmation();
+        car.autoAcceptSignature = this.store.getAutomaticSignatureConfirmation();
         console.log('CapturePreAuthRequest', car);
         this.cloverConnector.capturePreAuth(car);
         this.saleMethod = null;
@@ -545,7 +555,7 @@ export default class Register extends React.Component {
     makeSaleRequest(){      //  returns transaction request for sale
         let externalPaymentID = clover.CloverID.getNewId();
         this.store.getCurrentOrder().setPendingPaymentId(externalPaymentID);
-        let request = new sdk.remotepay.SaleRequest();
+        let request = new clover.sdk.remotepay.SaleRequest();
         request.setExternalId(externalPaymentID);
         request.setAmount(this.formatter.convertFromFloat(this.order.getTotal()));
         request.setTippableAmount(this.formatter.convertFromFloat(this.order.getTippableAmount()));
@@ -563,13 +573,16 @@ export default class Register extends React.Component {
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
         request.setAutoAcceptPaymentConfirmations(this.store.getAutomaticPaymentConfirmation());
         request.setAutoAcceptSignature(this.store.getAutomaticSignatureConfirmation());
+        if(this.card != null){
+            request.setVaultedCard(this.card.card);
+        }
         return request;
     }
 
     makeAuthRequest(){ //  returns transaction request for auth
         let externalPaymentID = clover.CloverID.getNewId();
         this.store.getCurrentOrder().setPendingPaymentId(externalPaymentID);
-        let request = new sdk.remotepay.AuthRequest();
+        let request = new clover.sdk.remotepay.AuthRequest();
         request.setAmount(this.formatter.convertFromFloat(this.order.getTotal()));
         request.setTippableAmount(this.formatter.convertFromFloat(this.order.getTippableAmount()));
         request.setTaxAmount(this.formatter.convertFromFloat(this.order.getTaxAmount()));
@@ -585,6 +598,9 @@ export default class Register extends React.Component {
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
         request.setAutoAcceptPaymentConfirmations(this.store.getAutomaticPaymentConfirmation());
         request.setAutoAcceptSignature(this.store.getAutomaticSignatureConfirmation());
+        if(this.card != null){
+            request.setVaultedCard(this.card.card);
+        }
         return request;
     }
 
@@ -592,12 +608,12 @@ export default class Register extends React.Component {
         this.setState({ showSettings: false, showPaymentMethods : false });
         if(this.saleMethod === 'Sale') {
             let request = this.makeSaleRequest();
-            console.log(request);
+            console.log('SaleRequest', request);
             this.cloverConnector.sale(request);
         }
         else if(this.saleMethod === 'Auth'){
             let request = this.makeAuthRequest();
-            console.log(request);
+            console.log('AuthRequest', request);
             this.cloverConnector.auth(request);
         }
         this.saleMethod = null;
@@ -608,6 +624,7 @@ export default class Register extends React.Component {
         this.store.setCurrentOrder(this.order);
         let request = this.makeSaleRequest();
         request.setVaultedCard(this.card.card);
+        console.log('SaleRequest w/ Vaulted', request);
         this.cloverConnector.sale(request);
         this.saleMethod = null;
     }
@@ -736,37 +753,44 @@ export default class Register extends React.Component {
                     <h2 className="left_margin">{settingType} Settings</h2>
                     <div className="transaction_settings">
                         <div className="settings_left settings_side">
+                            {notPreAuth &&
                             <div className="settings_section">
                                 <h3>Card Options</h3>
                                 <div className="settings_row">
                                     <div className="setting_title">Manual</div>
                                     <label className="switch">
-                                        <input type="checkbox" ref="manual_entry" checked={this.state.manualCardEntry} onChange={this.toggleManual}/>
+                                        <input type="checkbox" ref="manual_entry" checked={this.state.manualCardEntry}
+                                               onChange={this.toggleManual}/>
                                         <span className="slider round"/>
                                     </label>
                                 </div>
                                 <div className="settings_row">
                                     <div className="setting_title">Swipe</div>
                                     <label className="switch">
-                                        <input type="checkbox" ref="swipe_entry" checked={this.state.swipeCardEntry} onChange={this.toggleSwipe}/>
+                                        <input type="checkbox" ref="swipe_entry" checked={this.state.swipeCardEntry}
+                                               onChange={this.toggleSwipe}/>
                                         <span className="slider round"/>
                                     </label>
                                 </div>
                                 <div className="settings_row">
                                     <div className="setting_title">Chip</div>
                                     <label className="switch">
-                                        <input type="checkbox" ref="chip_entry" checked={this.state.chipCardEntry} onChange={this.toggleChip}/>
+                                        <input type="checkbox" ref="chip_entry" checked={this.state.chipCardEntry}
+                                               onChange={this.toggleChip}/>
                                         <span className="slider round"/>
                                     </label>
                                 </div>
                                 <div className="settings_row">
                                     <div className="setting_title">Contactless</div>
                                     <label className="switch">
-                                        <input type="checkbox" ref="contactless_entry" checked={this.state.contactlessCardEntry} onChange={this.toggleContactless}/>
+                                        <input type="checkbox" ref="contactless_entry"
+                                               checked={this.state.contactlessCardEntry}
+                                               onChange={this.toggleContactless}/>
                                         <span className="slider round"/>
                                     </label>
                                 </div>
                             </div>
+                            }
                             {notPreAuth &&
                             <div className="settings_section">
                                 <h3>Offline Payments</h3>

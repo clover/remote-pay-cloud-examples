@@ -9,8 +9,10 @@ export default class VaultCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            currentCard: '',
             customerName : '',
             showPrompt : false,
+            showVaultPrompt: false,
             vaultedCards : []
         };
         this.cloverConnector = this.props.cloverConnection.cloverConnector;
@@ -19,6 +21,7 @@ export default class VaultCard extends React.Component {
         this.unfadeBackground = this.props.unfadeBackground;
 
         this.handleCustomerName = this.handleCustomerName.bind(this);
+        this.openRegister = this.openRegister.bind(this);
         this.openOrder = this.openOrder.bind(this);
         this.promptForName = this.promptForName.bind(this);
         this.vaultCard = this.vaultCard.bind(this);
@@ -36,11 +39,22 @@ export default class VaultCard extends React.Component {
     vaultCard(){        // vault card on Clover device
         this.unfadeBackground();
         this.setState({showPrompt: false});
+        console.log('vaulting card, entry methods:', this.store.cardEntryMethods);
         this.cloverConnector.vaultCard(this.store.cardEntryMethods);
     }
 
-    openOrder(vaultedCard){         // go to register and pass through vaulted card
-        browserHistory.push({pathname: '/register', state : {saleType : 'Vaulted', card: vaultedCard}});
+    openRegister(vaultType){ // go to register and pass through vaulted card
+        console.log('vaultType:' + vaultType);
+        if(vaultType === 'New Order'){
+            browserHistory.push({pathname: '/register', state : {saleType : 'Vaulted', card: this.state.currentCard}});
+        }
+        else if(vaultType === "PreAuth"){
+            browserHistory.push({pathname: '/register', state : {saleType : 'Vaulted PreAuth', card: this.state.currentCard}});
+        }
+    }
+
+    openOrder(vaultedCard){
+        this.setState({showVaultPrompt: true, currentCard: vaultedCard});
     }
 
     handleCustomerName(e){      // handle customer name change
@@ -73,6 +87,14 @@ export default class VaultCard extends React.Component {
                             <ButtonNormal color="white" title="Save" extra="cards_save_button" onClick={this.vaultCard} />
                         </div>
                     </div>
+                </div>
+                }
+                {this.state.showVaultPrompt &&
+                <div className="popup popup_container">
+                        <div className="payment_methods">
+                            <ButtonNormal color="white" extra="button_large" title="New Order"  onClick={() => {this.openRegister('New Order')}}/>
+                            <ButtonNormal color="white" extra="button_large" title="New PreAuth(Tab)" onClick={() => {this.openRegister('PreAuth')}} />
+                        </div>
                 </div>
                 }
                 <div className="card_list">

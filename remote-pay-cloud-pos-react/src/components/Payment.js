@@ -5,7 +5,6 @@ import CurrencyFormatter from './../utils/CurrencyFormatter';
 import PaymentRow from './PaymentRow';
 import React from 'react';
 import Refund from '../models/Refund';
-import sdk from 'remote-pay-cloud-api';
 
 export default class Payment extends React.Component {
     constructor(props){
@@ -35,6 +34,7 @@ export default class Payment extends React.Component {
         this.changePartialRefundAmount = this.changePartialRefundAmount.bind(this);
         this.handleRefund = this.handleRefund.bind(this);
         this.makePartialRefund = this.makePartialRefund.bind(this);
+        this.showReceiptsSale = this.showReceiptsSale.bind(this);
 
         if(this.props.location.state != null) {
             this.type = this.props.location.state.type;
@@ -58,10 +58,11 @@ export default class Payment extends React.Component {
     finishAdjustTip(){
         this.setState({showTipAdjust: false});
         let tempTip = parseFloat(this.state.tipAmount).toFixed(2);
-        let taar = new sdk.remotepay.TipAdjustAuthRequest();
+        let taar = new clover.sdk.remotepay.TipAdjustAuthRequest();
         taar.setPaymentId(this.payment.cloverPaymentId);
         taar.setOrderId(this.payment.cloverOrderId);
         taar.setTipAmount(this.formatter.convertFromFloat(tempTip));
+        console.log('TipAdjustAuthRequest', taar);
         this.cloverConnector.tipAdjustAuth(taar);
     }
 
@@ -84,7 +85,7 @@ export default class Payment extends React.Component {
 
     makeRefund(){
         this.setState({showPartialRefunds: false});
-        let refund = new sdk.remotepay.RefundPaymentRequest();
+        let refund = new clover.sdk.remotepay.RefundPaymentRequest();
         refund.setAmount(this.payment.amount);
         refund.setPaymentId(this.payment.cloverPaymentId);
         refund.setOrderId(this.payment.cloverOrderId);
@@ -95,7 +96,7 @@ export default class Payment extends React.Component {
 
     makePartialRefund(){
         this.setState({showPartialRefunds: false});
-        let refund = new sdk.remotepay.RefundPaymentRequest();
+        let refund = new clover.sdk.remotepay.RefundPaymentRequest();
         refund.setAmount(this.formatter.convertFromFloat(parseFloat(this.state.partialRefundAmount).toFixed(2)));
         refund.setPaymentId(this.payment.cloverPaymentId);
         refund.setOrderId(this.payment.cloverOrderId);
@@ -105,11 +106,19 @@ export default class Payment extends React.Component {
     }
 
     voidPayment(){
-        let vpr = new sdk.remotepay.VoidPaymentRequest();
+        let vpr = new clover.sdk.remotepay.VoidPaymentRequest();
         vpr.setPaymentId(this.payment.cloverPaymentId);
         vpr.setOrderId(this.payment.cloverOrderId);
-        vpr.setVoidReason(sdk.order.VoidReason.USER_CANCEL);
+        vpr.setVoidReason(clover.sdk.order.VoidReason.USER_CANCEL);
+        console.log('VoidPaymentRequest', vpr);
         this.cloverConnector.voidPayment(vpr);
+    }
+
+    showReceiptsSale(){
+        let request = new clover.sdk.remotepay.DisplayReceiptOptionsRequest();
+        request.setPaymentId(this.payment.cloverPaymentId);
+        request.setOrderId(this.payment.cloverOrderId);
+        this.cloverConnector.displayPaymentReceiptOptions(request);
     }
 
     componentWillReceiveProps(newProps) {
@@ -230,6 +239,7 @@ export default class Payment extends React.Component {
                                     <div><strong>{this.payment.transactionTitle}</strong></div>
                                     <div className="middle_grow"><strong>{date.toLocaleDateString([], {month: 'long', day: 'numeric', year: 'numeric'})}  •  {date.toLocaleTimeString()}</strong></div>
                                     <div><strong>{total}</strong></div>
+                                    <span className="show_receipts" onClick={this.showReceiptsSale}>RECEIPTS</span>
                                 </div>
                                 {check && <div className="row font_15"><Checkmark class="checkmark_small"/><div className="payment_successful">Payment successful</div></div>}
                                 <div className="payment_details_list">
@@ -252,7 +262,7 @@ export default class Payment extends React.Component {
                             </div>}
                             {showRefunds &&
                             <div className="payment_section">
-                                {this.payment.refunds.map(function (refund, i) {
+                                {this.payment.refunds.map((refund, i) => {
                                     return(
                                         <div key={"refund-" + i} className="paymentDetails">
                                             <div className="space_between_row space_under">

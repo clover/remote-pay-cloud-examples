@@ -15,10 +15,15 @@ export default class DeviceRow extends React.Component {
         if(this.device.name !== undefined && this.device.name !== null){
             name = this.device.name;
         }
+        let showName = false;
+        if(name.length > 0){
+            showName = true;
+        }
         return(
             <div className="device_row">
                 <div className="row align_center full_height" onClick={this.onClick}>
                     <div className="device_image_box"><img className="device_image" src={imageSrc}/></div>
+                    {showName && <div className="device_name">{name}</div>}
                     {this.device.serial}
                 </div>
             </div>

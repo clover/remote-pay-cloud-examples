@@ -1,6 +1,6 @@
 import ButtonNormal from './ButtonNormal';
 import React from 'react';
-import sdk from 'remote-pay-cloud-api';
+import clover from 'remote-pay-cloud';
 
 export default class RecoveryOptions extends React.Component {
 
@@ -30,6 +30,7 @@ export default class RecoveryOptions extends React.Component {
 
     resetDevice(){      // tells Clover device to reset
         this.unfadeBackground();
+        console.log('resetting device');
         this.cloverConnector.resetDevice();
         this.dismissReset();
     }
@@ -57,8 +58,9 @@ export default class RecoveryOptions extends React.Component {
         this.unfadeBackground();
         let externalPaymentId = this.state.queryPaymentText;
         this.closePaymentID();
-        let request = new sdk.remotepay.RetrievePaymentRequest();
+        let request = new clover.sdk.remotepay.RetrievePaymentRequest();
         request.setExternalPaymentId(externalPaymentId);
+        console.log('RetrievePaymentRequest', request);
         this.cloverConnector.retrievePayment(request);
     }
 
@@ -68,14 +70,19 @@ export default class RecoveryOptions extends React.Component {
     }
 
     getDeviceStatus(){      // gets Clover device status
-        this.cloverConnector.retrieveDeviceStatus(new sdk.remotepay.RetrieveDeviceStatusRequest(false));
+        let request = new clover.sdk.remotepay.RetrieveDeviceStatusRequest(false);
+        console.log('RetrieveDeviceStatusRequest', request);
+        this.cloverConnector.retrieveDeviceStatus(request);
     }
 
     getDeviceStatusResend(){        // gets Clover device status and resends last device activity
-        this.cloverConnector.retrieveDeviceStatus(new sdk.remotepay.RetrieveDeviceStatusRequest(true));
+        let request = new clover.sdk.remotepay.RetrieveDeviceStatusRequest(true);
+        console.log('RetrieveDeviceStatusRequest', request);
+        this.cloverConnector.retrieveDeviceStatus(request);
     }
 
     getPendingPayments(){       // gets pending payments
+        console.log('retrieving pending payments');
         this.cloverConnector.retrievePendingPayments();
     }
 

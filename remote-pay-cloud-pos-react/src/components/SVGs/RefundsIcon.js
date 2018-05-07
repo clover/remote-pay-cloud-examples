@@ -14,7 +14,6 @@ export default class RefundsIcon extends React.Component {
 
         return (
             <svg className={className} version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 80 80">
-
                 <path d="M18.7,21.9l1.9,1c0.2-0.3,0.4-0.7,0.6-1H18.7z"/>
                 <path d="M39.9,59c7.7,0.1,14-6.1,14-13.8c0.1-7.7-6.1-13.9-13.8-14l-14,13c0,0.3,0,0.6,0,0.8
 			C26,52.7,32.2,58.9,39.9,59z M38.9,36.8l0-1.8c0-0.4,0.3-0.7,0.7-0.7l1.5,0c0.4,0,0.7,0.3,0.7,0.7l0,1.6c0.8,0.1,1.5,0.2,2.1,0.3

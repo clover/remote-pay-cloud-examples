@@ -1,5 +1,5 @@
 import CurrencyFormatter from '../utils/CurrencyFormatter';
-import clover from 'remote-pay-cloud-api';
+import clover from 'remote-pay-cloud';
 import Item from './Item';
 
 export default class Order {
@@ -45,7 +45,7 @@ export default class Order {
             this.items.push(new Item(id, title, price, tippable, taxable));
         }
         if(orderItem == null){
-            let lineItem = new clover.order.DisplayLineItem();
+            let lineItem = new clover.sdk.order.DisplayLineItem();
             lineItem.setId(id);
             lineItem.setName(title);
             lineItem.setPrice(this.formatter.formatCurrency(price));

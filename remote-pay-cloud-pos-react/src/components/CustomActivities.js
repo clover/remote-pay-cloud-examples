@@ -2,7 +2,7 @@ import CustomPayloadMessage from '../messages/CustomPayloadMessage';
 import ButtonNormal from './ButtonNormal';
 import PayloadMessage from './PayloadMessage';
 import React from 'react';
-import sdk from 'remote-pay-cloud-api';
+import clover from 'remote-pay-cloud';
 
 export default class CustomActivities extends React.Component {
 
@@ -10,7 +10,7 @@ export default class CustomActivities extends React.Component {
         super(props);
         this.state = {
             activityPayload: '',
-            customActivityAction: 'com.example.clover.customactivity',
+            customActivityAction: 'com.clover.loyalty.example.BurgerBucksCFPActivity',
             finalPayload: '',
             initialPayload: '',
             messages: [],
@@ -36,22 +36,21 @@ export default class CustomActivities extends React.Component {
     }
 
     startActivity(){
-        let car = new sdk.remotepay.CustomActivityRequest();
+        let car = new clover.sdk.remotepay.CustomActivityRequest();
         car.setAction(this.state.customActivityAction);
         car.setPayload(this.state.activityPayload);
         car.setNonBlocking(this.state.nonBlocking);
-
+        console.log('CustomActivityRequest', car);
         this.cloverConnector.startCustomActivity(car);
     }
 
     sendMessageToActivity() {
-
-        let messageRequest = new sdk.remotepay.MessageToActivity();
-            messageRequest.setAction(this.state.customActivityAction);
-            messageRequest.setPayload(this.state.payloadToSend);
-            this.cloverConnector.sendMessageToActivity(messageRequest);
-
-            this.setState({ payloadToSend : '', messages :  this.state.messages.concat([new CustomPayloadMessage(this.state.payloadToSend, true)])});
+        let messageRequest = new clover.sdk.remotepay.MessageToActivity();
+        messageRequest.setAction(this.state.customActivityAction);
+        messageRequest.setPayload(this.state.payloadToSend);
+        console.log('MessageToActivity', messageRequest);
+        this.cloverConnector.sendMessageToActivity(messageRequest);
+        this.setState({ payloadToSend : '', messages :  this.state.messages.concat([new CustomPayloadMessage(this.state.payloadToSend, true)])});
     }
 
     finalPayload(finalMessageFromCustomActivity){
