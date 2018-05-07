@@ -36,7 +36,7 @@ const cloudExample = () => {
 
     // If useCloudConfiguration is set to true, enter your endpoint here.  The endpoint can be found on the opening screen of Secure Network Pay Display on your device.
     const networkConfiguration = {
-        "endpoint": "wss://yourdevicehostorip:yourdeviceport/remote_pay"
+        "endpoint": "ws://10.249.253.98:12345/remote_pay"
     };
 
     /**
