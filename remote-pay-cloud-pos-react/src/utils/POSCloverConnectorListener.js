@@ -1,7 +1,7 @@
 import React from 'react';
 import Refund from '../models/Refund';
 import PaymentRefund from '../models/PaymentRefund';
-import clover from 'remote-pay-cloud-api';
+import clover from 'remote-pay-cloud';
 import OrderPayment from '../models/OrderPayment';
 import Transaction from '../models/Transaction';
 import VaultedCard from '../models/VaultedCard';
@@ -15,7 +15,7 @@ import CustomerInfoMessage from '../messages/CustomerInfoMessage';
 import CurrencyFormatter from './CurrencyFormatter';
 import CardDataHelper from './CardDataHelper';
 
-export default class POSCloverConnectorListener extends clover.remotepay.ICloverConnectorListener{
+export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICloverConnectorListener{
 
     constructor(options) {
         super();

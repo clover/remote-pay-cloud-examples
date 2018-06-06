@@ -5,7 +5,6 @@ import CurrencyFormatter from './../utils/CurrencyFormatter';
 import React from 'react';
 import Refund from '../models/Refund';
 import RefundRow from './RefundRow';
-import sdk from 'remote-pay-cloud-api';
 import TitleBar from './TitleBar';
 import TransactionRow from './TransactionRow';
 
@@ -34,7 +33,7 @@ export default class Refunds extends React.Component {
         let externalPaymentID = clover.CloverID.getNewId();
         document.getElementById('refund_input').value = '0.00';
 
-        let request = new sdk.remotepay.ManualRefundRequest();
+        let request = new clover.sdk.remotepay.ManualRefundRequest();
         request.setExternalId(externalPaymentID);
         request.setAmount(this.formatter.convertFromFloat(this.state.refundAmount));
         request.setCardEntryMethods(this.store.getCardEntryMethods());

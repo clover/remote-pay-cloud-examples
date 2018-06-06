@@ -9,7 +9,6 @@ import OrderPayment from '../models/OrderPayment';
 import React from 'react';
 import RegisterLine from './RegisterLine';
 import RegisterLineItem from './RegisterLineItem';
-import sdk from 'remote-pay-cloud-api';
 import User from './SVGs/User';
 
 const data = require ('../../src/items.js');
@@ -59,7 +58,7 @@ export default class Register extends React.Component {
 
         this.cloverConnector = this.props.cloverConnection.cloverConnector;
         this.closeStatus = this.props.closeStatus;
-        this.displayOrder = new sdk.order.DisplayOrder();
+        this.displayOrder = new clover.sdk.order.DisplayOrder();
         this.formatter = new CurrencyFormatter;
         this.imageHelper = new ImageHelper();
         this.saleMethod = null;
@@ -215,15 +214,15 @@ export default class Register extends React.Component {
             return undefined;
         }
         if(input === 'ON_SCREEN'){
-            return sdk.payments.DataEntryLocation.ON_SCREEN;
+            return clover.sdk.payments.DataEntryLocation.ON_SCREEN;
         }
         if(input === 'ON_PAPER'){
             this.setState({sigThreshold: '0.00'});
-            return sdk.payments.DataEntryLocation.ON_PAPER;
+            return clover.sdk.payments.DataEntryLocation.ON_PAPER;
         }
         if(input === 'NONE'){
             this.setState({sigThreshold: '0.00'});
-            return sdk.payments.DataEntryLocation.NONE;
+            return clover.sdk.payments.DataEntryLocation.NONE;
         }
     }
 
@@ -231,13 +230,13 @@ export default class Register extends React.Component {
         if(input === undefined){
             return 'DEFAULT';
         }
-        if(input === sdk.payments.DataEntryLocation.ON_SCREEN){
+        if(input === clover.sdk.payments.DataEntryLocation.ON_SCREEN){
             return 'ON_SCREEN';
         }
-        if(input === sdk.payments.DataEntryLocation.ON_PAPER){
+        if(input === clover.sdk.payments.DataEntryLocation.ON_PAPER){
             return 'ON_PAPER';
         }
-        if(input === sdk.payments.DataEntryLocation.NONE){
+        if(input === clover.sdk.payments.DataEntryLocation.NONE){
             return 'NONE';
         }
     }
@@ -249,14 +248,14 @@ export default class Register extends React.Component {
         }
         if(input === 'NO_TIP'){
             this.setState({tipAmount: '0.00'});
-            return sdk.payments.TipMode.NO_TIP;
+            return clover.sdk.payments.TipMode.NO_TIP;
         }
         if(input === 'ON_SCREEN_BEFORE_PAYMENT'){
             this.setState({tipAmount: '0.00'});
-            return sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT;
+            return clover.sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT;
         }
         if(input === 'TIP_PROVIDED'){
-            return sdk.payments.TipMode.TIP_PROVIDED;
+            return clover.sdk.payments.TipMode.TIP_PROVIDED;
         }
     }
 
@@ -264,13 +263,13 @@ export default class Register extends React.Component {
         if(input === undefined){
             return 'DEFAULT';
         }
-        if(input === sdk.payments.TipMode.NO_TIP){
+        if(input === clover.sdk.payments.TipMode.NO_TIP){
             return 'NO_TIP';
         }
-        if(input === sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT){
+        if(input === clover.sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT){
             return 'ON_SCREEN_BEFORE_PAYMENT';
         }
-        if(input === sdk.payments.TipMode.TIP_PROVIDED){
+        if(input === clover.sdk.payments.TipMode.TIP_PROVIDED){
             return 'TIP_PROVIDED';
         }
     }
@@ -518,7 +517,7 @@ export default class Register extends React.Component {
         this.setState({promptPreAuth : false});
         let externalPaymentID = clover.CloverID.getNewId();
         this.store.getCurrentOrder().setPendingPaymentId(externalPaymentID);
-        let request = new sdk.remotepay.PreAuthRequest();
+        let request = new clover.sdk.remotepay.PreAuthRequest();
         request.setAmount(this.formatter.convertFromFloat(parseFloat(this.state.preAuthAmount).toFixed(2)));
         request.setExternalId(externalPaymentID);
         request.setCardEntryMethods(this.store.getCardEntryMethods());
@@ -534,7 +533,7 @@ export default class Register extends React.Component {
 
     preAuth(){  // capture pre auth
         this.setState({showSettings: false, showPaymentMethods : false});
-        let car = new sdk.remotepay.CapturePreAuthRequest();
+        let car = new clover.sdk.remotepay.CapturePreAuthRequest();
         car.paymentId = this.store.getPreAuthPaymentId();
         car.amount = this.formatter.convertFromFloat(this.order.getTotal());
         console.log('CapturePreAuthRequest', car);
@@ -545,7 +544,7 @@ export default class Register extends React.Component {
     makeSaleRequest(){      //  returns transaction request for sale
         let externalPaymentID = clover.CloverID.getNewId();
         this.store.getCurrentOrder().setPendingPaymentId(externalPaymentID);
-        let request = new sdk.remotepay.SaleRequest();
+        let request = new clover.sdk.remotepay.SaleRequest();
         request.setExternalId(externalPaymentID);
         request.setAmount(this.formatter.convertFromFloat(this.order.getTotal()));
         request.setTippableAmount(this.formatter.convertFromFloat(this.order.getTippableAmount()));
@@ -569,7 +568,7 @@ export default class Register extends React.Component {
     makeAuthRequest(){ //  returns transaction request for auth
         let externalPaymentID = clover.CloverID.getNewId();
         this.store.getCurrentOrder().setPendingPaymentId(externalPaymentID);
-        let request = new sdk.remotepay.AuthRequest();
+        let request = new clover.sdk.remotepay.AuthRequest();
         request.setAmount(this.formatter.convertFromFloat(this.order.getTotal()));
         request.setTippableAmount(this.formatter.convertFromFloat(this.order.getTippableAmount()));
         request.setTaxAmount(this.formatter.convertFromFloat(this.order.getTaxAmount()));

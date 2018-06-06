@@ -1,6 +1,5 @@
 import clover from 'remote-pay-cloud';
 import CurrencyFormatter from './../utils/CurrencyFormatter';
-import sdk from 'remote-pay-cloud-api';
 import Transaction from "./Transaction";
 
 export default class Store {
@@ -29,11 +28,11 @@ export default class Store {
         this.preAuth = null;
         this.preAuthPaymentId = null;
         this.refunds = [];
-        this.signatureEntryLocation = sdk.payments.DataEntryLocation.NONE;
+        this.signatureEntryLocation = clover.sdk.payments.DataEntryLocation.NONE;
         this.signatureThreshold = 0;
         this.storeName = null;
         this.tipAmount = 0;
-        this.tipMode = sdk.payments.TipMode.NO_TIP;
+        this.tipMode = clover.sdk.payments.TipMode.NO_TIP;
         this.transactions = [];
         this.vaultedCards = [];
         //this.forceOfflinePayments = undefined;
