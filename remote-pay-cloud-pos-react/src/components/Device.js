@@ -1,7 +1,7 @@
 import ButtonNormal from './ButtonNormal';
 import ButtonPrinterDropdown from './ButtonPrinterDropdown';
 import React from 'react';
-import sdk from 'remote-pay-cloud-api';
+import clover from 'remote-pay-cloud';
 
 export default class Device extends React.Component {
 
@@ -44,26 +44,26 @@ export default class Device extends React.Component {
     }
 
     printText(){        // prints text on Clover Device
-        let pr = new sdk.remotepay.PrintRequest();
+        let pr = new clover.sdk.remotepay.PrintRequest();
         pr.setText([this.state.printTextContent]);
         this.cloverConnector.print(pr);
     }
 
     printerChosen(printer, printType){      // executes print job based on type selected
         if(printType === 'URL'){
-            let pr = new sdk.remotepay.PrintRequest();
+            let pr = new clover.sdk.remotepay.PrintRequest();
             pr.setImageUrl([this.state.printImageURL]);
             pr.setPrintDeviceId(printer.id);
             this.cloverConnector.print(pr);
         }
         else if(printType === 'TEXT'){
-            let pr = new sdk.remotepay.PrintRequest();
+            let pr = new clover.sdk.remotepay.PrintRequest();
             pr.setText([this.state.printTextContent]);
             pr.setPrintDeviceId(printer.id);
             this.cloverConnector.print(pr);
         }
         else if(printType === 'CASH'){
-            let ocdr = new sdk.remotepay.OpenCashDrawerRequest();
+            let ocdr = new clover.sdk.remotepay.OpenCashDrawerRequest();
             ocdr.setReason('POS JavaScript Example Test');
             ocdr.setDeviceId(printer.id);
             this.cloverConnector.openCashDrawer(ocdr);
@@ -91,7 +91,7 @@ export default class Device extends React.Component {
             let image = new Image();
             image.src = reader.result;
 
-            let pr = new sdk.remotepay.PrintRequest();
+            let pr = new clover.sdk.remotepay.PrintRequest();
             pr.setImage([image]);
 
             image.addEventListener('load', function() {
@@ -119,7 +119,7 @@ export default class Device extends React.Component {
             let image = new Image();
             image.src = reader.result;
 
-            let pr = new sdk.remotepay.PrintRequest();
+            let pr = new clover.sdk.remotepay.PrintRequest();
             pr.setImage([image]);
             pr.setPrintDeviceId(printer.id);
 
@@ -135,26 +135,26 @@ export default class Device extends React.Component {
     }
 
     closeout(){     // tells Clover device to closeout
-        let request = new sdk.remotepay.CloseoutRequest();
+        let request = new clover.sdk.remotepay.CloseoutRequest();
         request.setAllowOpenTabs(false);
         request.setBatchId(null);
         this.cloverConnector.closeout(request);
     }
 
     openCashDrawer(){       // tells Clover device to open cash drawer
-        let ocdr = new sdk.remotepay.OpenCashDrawerRequest();
+        let ocdr = new clover.sdk.remotepay.OpenCashDrawerRequest();
         ocdr.setReason('POS JavaScript Example Test');
         this.cloverConnector.openCashDrawer(ocdr);
     }
 
     printFromURL(){     // tells Clover device to print image from URL
-        let pr = new sdk.remotepay.PrintRequest();
+        let pr = new clover.sdk.remotepay.PrintRequest();
         pr.setImageUrl([this.state.printImageURL]);
         this.cloverConnector.print(pr);
     }
 
     readCardData(){     // tells Clover device to read card data
-        this.cloverConnector.readCardData(new sdk.remotepay.ReadCardDataRequest(this.store.getCardEntryMethods()));
+        this.cloverConnector.readCardData(new clover.sdk.remotepay.ReadCardDataRequest(this.store.getCardEntryMethods()));
     }
 
     messageChange(e){       // handles message change for show message
@@ -174,7 +174,7 @@ export default class Device extends React.Component {
     }
 
     componentWillMount() {
-        let rpr = new sdk.remotepay.RetrievePrintersRequest();
+        let rpr = new clover.sdk.remotepay.RetrievePrintersRequest();
         this.cloverConnector.retrievePrinters(rpr);
     }
 

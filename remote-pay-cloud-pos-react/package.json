@@ -29,8 +29,7 @@
     "react-dom": "^15.3.2",
     "react-qr-reader": "^1.2.1",
     "react-router": "^2.6.1",
-    "remote-pay-cloud": "1.4.x",
-    "remote-pay-cloud-api": "1.4.x",
+    "remote-pay-cloud": "dev",
     "webrtc-adapter": "^5.0.4",
     "xmlhttprequest": "^1.8.0"
   },

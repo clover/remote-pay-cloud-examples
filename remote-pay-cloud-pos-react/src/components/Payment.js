@@ -5,7 +5,6 @@ import CurrencyFormatter from './../utils/CurrencyFormatter';
 import PaymentRow from './PaymentRow';
 import React from 'react';
 import Refund from '../models/Refund';
-import sdk from 'remote-pay-cloud-api';
 
 export default class Payment extends React.Component {
     constructor(props){
@@ -58,7 +57,7 @@ export default class Payment extends React.Component {
     finishAdjustTip(){
         this.setState({showTipAdjust: false});
         let tempTip = parseFloat(this.state.tipAmount).toFixed(2);
-        let taar = new sdk.remotepay.TipAdjustAuthRequest();
+        let taar = new clover.sdk.remotepay.TipAdjustAuthRequest();
         taar.setPaymentId(this.payment.cloverPaymentId);
         taar.setOrderId(this.payment.cloverOrderId);
         taar.setTipAmount(this.formatter.convertFromFloat(tempTip));
@@ -84,7 +83,7 @@ export default class Payment extends React.Component {
 
     makeRefund(){
         this.setState({showPartialRefunds: false});
-        let refund = new sdk.remotepay.RefundPaymentRequest();
+        let refund = new clover.sdk.remotepay.RefundPaymentRequest();
         refund.setAmount(this.payment.amount);
         refund.setPaymentId(this.payment.cloverPaymentId);
         refund.setOrderId(this.payment.cloverOrderId);
@@ -95,7 +94,7 @@ export default class Payment extends React.Component {
 
     makePartialRefund(){
         this.setState({showPartialRefunds: false});
-        let refund = new sdk.remotepay.RefundPaymentRequest();
+        let refund = new clover.sdk.remotepay.RefundPaymentRequest();
         refund.setAmount(this.formatter.convertFromFloat(parseFloat(this.state.partialRefundAmount).toFixed(2)));
         refund.setPaymentId(this.payment.cloverPaymentId);
         refund.setOrderId(this.payment.cloverOrderId);
@@ -105,10 +104,10 @@ export default class Payment extends React.Component {
     }
 
     voidPayment(){
-        let vpr = new sdk.remotepay.VoidPaymentRequest();
+        let vpr = new clover.sdk.remotepay.VoidPaymentRequest();
         vpr.setPaymentId(this.payment.cloverPaymentId);
         vpr.setOrderId(this.payment.cloverOrderId);
-        vpr.setVoidReason(sdk.order.VoidReason.USER_CANCEL);
+        vpr.setVoidReason(clover.sdk.order.VoidReason.USER_CANCEL);
         this.cloverConnector.voidPayment(vpr);
     }
 

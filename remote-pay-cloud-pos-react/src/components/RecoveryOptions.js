@@ -1,6 +1,6 @@
 import ButtonNormal from './ButtonNormal';
 import React from 'react';
-import sdk from 'remote-pay-cloud-api';
+import clover from 'remote-pay-cloud';
 
 export default class RecoveryOptions extends React.Component {
 
@@ -57,7 +57,7 @@ export default class RecoveryOptions extends React.Component {
         this.unfadeBackground();
         let externalPaymentId = this.state.queryPaymentText;
         this.closePaymentID();
-        let request = new sdk.remotepay.RetrievePaymentRequest();
+        let request = new clover.sdk.remotepay.RetrievePaymentRequest();
         request.setExternalPaymentId(externalPaymentId);
         this.cloverConnector.retrievePayment(request);
     }
@@ -68,11 +68,11 @@ export default class RecoveryOptions extends React.Component {
     }
 
     getDeviceStatus(){      // gets Clover device status
-        this.cloverConnector.retrieveDeviceStatus(new sdk.remotepay.RetrieveDeviceStatusRequest(false));
+        this.cloverConnector.retrieveDeviceStatus(new clover.sdk.remotepay.RetrieveDeviceStatusRequest(false));
     }
 
     getDeviceStatusResend(){        // gets Clover device status and resends last device activity
-        this.cloverConnector.retrieveDeviceStatus(new sdk.remotepay.RetrieveDeviceStatusRequest(true));
+        this.cloverConnector.retrieveDeviceStatus(new clover.sdk.remotepay.RetrieveDeviceStatusRequest(true));
     }
 
     getPendingPayments(){       // gets pending payments

@@ -2,7 +2,7 @@ import CustomPayloadMessage from '../messages/CustomPayloadMessage';
 import ButtonNormal from './ButtonNormal';
 import PayloadMessage from './PayloadMessage';
 import React from 'react';
-import sdk from 'remote-pay-cloud-api';
+import clover from 'remote-pay-cloud';
 
 export default class CustomActivities extends React.Component {
 
@@ -36,7 +36,7 @@ export default class CustomActivities extends React.Component {
     }
 
     startActivity(){
-        let car = new sdk.remotepay.CustomActivityRequest();
+        let car = new clover.sdk.remotepay.CustomActivityRequest();
         car.setAction(this.state.customActivityAction);
         car.setPayload(this.state.activityPayload);
         car.setNonBlocking(this.state.nonBlocking);
@@ -46,7 +46,7 @@ export default class CustomActivities extends React.Component {
 
     sendMessageToActivity() {
 
-        let messageRequest = new sdk.remotepay.MessageToActivity();
+        let messageRequest = new clover.sdk.remotepay.MessageToActivity();
             messageRequest.setAction(this.state.customActivityAction);
             messageRequest.setPayload(this.state.payloadToSend);
             this.cloverConnector.sendMessageToActivity(messageRequest);
