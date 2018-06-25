@@ -296,7 +296,7 @@ export default class Layout extends Component {
 
     closeStatus(){      // closes status
         if(!this.state.challenge && !this.state.response){
-            this.setState({ statusToggle: false });
+            this.setState({ statusToggle: false , inputOptions: null});
             if(this.state.statusArray === null){
                 this.setState({ fadeBackground: false })
             }
@@ -442,6 +442,7 @@ export default class Layout extends Component {
         let showInputOptions = false;
         if(this.state.inputOptions !== null){
             showInputOptions = true;
+            showStatus = true;
             let inputButtons = this.state.inputOptions.map((option, i) =>
                 <ButtonNormal key={"option-" + i} title={option.description} color="white" extra="input_options_button" onClick={() => {this.inputClick(option)}}/>
             );
@@ -507,7 +508,6 @@ export default class Layout extends Component {
                     <h3>{statusArrayTitle}</h3>
                     {listContainer}
                 </div>}
-
                 {showStatus &&
                 <div className="popup_container popup">
                     <div className="close_popup" onClick={this.closeStatus}>X</div>
