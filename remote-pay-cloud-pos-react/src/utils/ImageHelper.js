@@ -33,7 +33,7 @@ export default class ImageHelper {
         if(deviceTypeName === 'BAYLEAF'){
             image = 'images/flex.png';
         }
-        else if(deviceTypeName === 'MAPLECUTTER'){
+        else if(deviceTypeName === 'MAPLECUTTER' || 'KNOTTYPINE'){
             image = 'images/mini.png';
         }
         else if(deviceTypeName === 'LEAFCUTTER'){

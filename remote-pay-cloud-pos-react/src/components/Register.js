@@ -122,8 +122,11 @@ export default class Register extends React.Component {
         this.store.setCurrentOrder(this.order);
         if(this.props.location.state != null){
             this.saleMethod = this.props.location.state.saleType;
-            if(this.saleMethod === 'Vaulted'){
+            if(this.saleMethod === 'Vaulted' || this.saleMethod === 'Vaulted PreAuth'){
                 this.card = this.props.location.state.card;
+                if(this.saleMethod === 'Vaulted PreAuth'){
+                    this.saleMethod = 'PreAuth';
+                }
             }
         }
     }
@@ -438,12 +441,8 @@ export default class Register extends React.Component {
         //console.log(this.order);
         this.initSettings();
         if(this.state.orderItems.length > 0) {
-            if(this.saleMethod === 'Vaulted') {
-                this.setState({ showSettings: true, makingSale: true });
-            }
-            else if(this.saleMethod === 'PreAuth'){
-                this.setState({ makingSale: true });
-                this.preAuth();
+            if(this.saleMethod === 'PreAuth'){
+                this.setState({ makingSale: true, showSettings: true });
             }
             else{
                 this.setState({ showSaleMethod: true, makingSale: true });
@@ -488,14 +487,15 @@ export default class Register extends React.Component {
         }
         else if(this.saleMethod === 'PreAuth'){
             this.setState({ showSettings: false });
-            this.doPreAuth();
+            this.preAuth();
         }
         this.unfadeBackground();
     }
 
     preAuthContinue(){      // show transaction settings for preauth
         this.initSettings();
-        this.setState({ showSettings: true, promptPreAuth: false });
+        this.setState({promptPreAuth: false });
+        this.doPreAuth();
     }
 
     promptPreAuth(){       // show popup for preauth
@@ -526,6 +526,9 @@ export default class Register extends React.Component {
         request.setSignatureThreshold(this.store.getSignatureThreshold());
         request.setDisableReceiptSelection(this.store.getDisableReceiptOptions());
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
+        if(this.card != null){
+            request.setVaultedCard(this.card.card);
+        }
         console.log(request);
         this.cloverConnector.preAuth(request);
     }
@@ -536,6 +539,14 @@ export default class Register extends React.Component {
         let car = new clover.sdk.remotepay.CapturePreAuthRequest();
         car.paymentId = this.store.getPreAuthPaymentId();
         car.amount = this.formatter.convertFromFloat(this.order.getTotal());
+        car.tipAmount = this.store.getTipAmount() == null ? 0 : this.store.getTipAmount();
+        car.disablePrinting = this.store.getDisablePrinting();
+        car.signatureEntryLocation = this.store.getSignatureEntryLocation();
+        car.signatureThreshold = this.store.getSignatureThreshold();
+        car.disableReceiptSelection = this.store.getDisableReceiptOptions();
+        car.disableDuplicateChecking = this.store.getDisableDuplicateChecking();
+        car.autoAcceptPaymentConfirmations = this.store.getAutomaticPaymentConfirmation();
+        car.autoAcceptSignature = this.store.getAutomaticSignatureConfirmation();
         console.log('CapturePreAuthRequest', car);
         this.cloverConnector.capturePreAuth(car);
         this.saleMethod = null;
@@ -562,6 +573,9 @@ export default class Register extends React.Component {
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
         request.setAutoAcceptPaymentConfirmations(this.store.getAutomaticPaymentConfirmation());
         request.setAutoAcceptSignature(this.store.getAutomaticSignatureConfirmation());
+        if(this.card != null){
+            request.setVaultedCard(this.card.card);
+        }
         return request;
     }
 
@@ -584,6 +598,9 @@ export default class Register extends React.Component {
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
         request.setAutoAcceptPaymentConfirmations(this.store.getAutomaticPaymentConfirmation());
         request.setAutoAcceptSignature(this.store.getAutomaticSignatureConfirmation());
+        if(this.card != null){
+            request.setVaultedCard(this.card.card);
+        }
         return request;
     }
 
@@ -735,37 +752,44 @@ export default class Register extends React.Component {
                     <h2 className="left_margin">{settingType} Settings</h2>
                     <div className="transaction_settings">
                         <div className="settings_left settings_side">
+                            {notPreAuth &&
                             <div className="settings_section">
                                 <h3>Card Options</h3>
                                 <div className="settings_row">
                                     <div className="setting_title">Manual</div>
                                     <label className="switch">
-                                        <input type="checkbox" ref="manual_entry" checked={this.state.manualCardEntry} onChange={this.toggleManual}/>
+                                        <input type="checkbox" ref="manual_entry" checked={this.state.manualCardEntry}
+                                               onChange={this.toggleManual}/>
                                         <span className="slider round"/>
                                     </label>
                                 </div>
                                 <div className="settings_row">
                                     <div className="setting_title">Swipe</div>
                                     <label className="switch">
-                                        <input type="checkbox" ref="swipe_entry" checked={this.state.swipeCardEntry} onChange={this.toggleSwipe}/>
+                                        <input type="checkbox" ref="swipe_entry" checked={this.state.swipeCardEntry}
+                                               onChange={this.toggleSwipe}/>
                                         <span className="slider round"/>
                                     </label>
                                 </div>
                                 <div className="settings_row">
                                     <div className="setting_title">Chip</div>
                                     <label className="switch">
-                                        <input type="checkbox" ref="chip_entry" checked={this.state.chipCardEntry} onChange={this.toggleChip}/>
+                                        <input type="checkbox" ref="chip_entry" checked={this.state.chipCardEntry}
+                                               onChange={this.toggleChip}/>
                                         <span className="slider round"/>
                                     </label>
                                 </div>
                                 <div className="settings_row">
                                     <div className="setting_title">Contactless</div>
                                     <label className="switch">
-                                        <input type="checkbox" ref="contactless_entry" checked={this.state.contactlessCardEntry} onChange={this.toggleContactless}/>
+                                        <input type="checkbox" ref="contactless_entry"
+                                               checked={this.state.contactlessCardEntry}
+                                               onChange={this.toggleContactless}/>
                                         <span className="slider round"/>
                                     </label>
                                 </div>
                             </div>
+                            }
                             {notPreAuth &&
                             <div className="settings_section">
                                 <h3>Offline Payments</h3>
