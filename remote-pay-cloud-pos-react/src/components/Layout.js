@@ -155,6 +155,7 @@ export default class Layout extends Component {
     }
 
     connect(){      // connects to Clover device
+        console.log('connecting to device');
         this.cloverConnection.connectToDevicePairing(this.state.uriText, null);
     }
 
@@ -203,11 +204,13 @@ export default class Layout extends Component {
     }
 
     acceptSignature(){      // accepts signature
+        console.log('accepting signature', this.state.signatureRequest);
         this.cloverConnection.cloverConnector.acceptSignature(this.state.signatureRequest);
         this.closeSignature();
     }
 
     rejectSignature(){      // rejects signature
+        console.log('rejecting signature', this.state.signatureRequest);
         this.cloverConnection.cloverConnector.rejectSignature(this.state.signatureRequest);
         this.closeSignature();
     }
@@ -316,11 +319,13 @@ export default class Layout extends Component {
     }
 
     acceptPayment(){       // accepts payment
+        console.log('accepting payment', this.state.request.payment);
         this.cloverConnection.cloverConnector.acceptPayment(this.state.request.payment);
         this.setState({ challenge : false, statusToggle : false, fadeBackground: false });
     }
 
     rejectPayment(){        //rejects payment
+        console.log('rejecting payment', this.state.request.payment);
         this.cloverConnection.cloverConnector.rejectPayment(this.state.request.payment, this.state.challengeContent);
         this.setState({ challenge: false, statusToggle: false, fadeBackground: false, responseFail: true });
     }
@@ -330,6 +335,7 @@ export default class Layout extends Component {
     }
 
     inputClick(io){     // performs input option click
+        console.log('selecting input option', io);
         this.cloverConnection.cloverConnector.invokeInputOption(io);
         this.closeStatus();
     }
@@ -358,6 +364,7 @@ export default class Layout extends Component {
                 this.setState({ result: data });
                 let dataPieces = data.split('?');
                 let authToken = dataPieces[1].split('=')[1];
+                console.log('connecting to device');
                 this.cloverConnection.connectToDevicePairing(dataPieces[0], authToken);
             }
         }

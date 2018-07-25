@@ -61,6 +61,7 @@ export default class Payment extends React.Component {
         taar.setPaymentId(this.payment.cloverPaymentId);
         taar.setOrderId(this.payment.cloverOrderId);
         taar.setTipAmount(this.formatter.convertFromFloat(tempTip));
+        console.log('TipAdjustAuthRequest', taar);
         this.cloverConnector.tipAdjustAuth(taar);
     }
 
@@ -108,6 +109,7 @@ export default class Payment extends React.Component {
         vpr.setPaymentId(this.payment.cloverPaymentId);
         vpr.setOrderId(this.payment.cloverOrderId);
         vpr.setVoidReason(clover.sdk.order.VoidReason.USER_CANCEL);
+        console.log('VoidPaymentRequest', vpr);
         this.cloverConnector.voidPayment(vpr);
     }
 

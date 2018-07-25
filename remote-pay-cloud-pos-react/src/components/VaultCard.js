@@ -39,6 +39,7 @@ export default class VaultCard extends React.Component {
     vaultCard(){        // vault card on Clover device
         this.unfadeBackground();
         this.setState({showPrompt: false});
+        console.log('vaulting card, entry methods:', this.store.cardEntryMethods);
         this.cloverConnector.vaultCard(this.store.cardEntryMethods);
     }
 

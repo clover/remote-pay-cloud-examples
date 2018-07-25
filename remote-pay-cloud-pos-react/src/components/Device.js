@@ -40,12 +40,14 @@ export default class Device extends React.Component {
     }
 
     showMessage(){      // shows message on Clover Device
+        console.log('showMessage', this.state.showMessageContent);
         this.cloverConnector.showMessage(this.state.showMessageContent);
     }
 
     printText(){        // prints text on Clover Device
         let pr = new clover.sdk.remotepay.PrintRequest();
         pr.setText([this.state.printTextContent]);
+        console.log('PrintRequest - Print Text', pr);
         this.cloverConnector.print(pr);
     }
 
@@ -54,28 +56,33 @@ export default class Device extends React.Component {
             let pr = new clover.sdk.remotepay.PrintRequest();
             pr.setImageUrl([this.state.printImageURL]);
             pr.setPrintDeviceId(printer.id);
+            console.log('PrintRequest - Print Image URL', pr);
             this.cloverConnector.print(pr);
         }
         else if(printType === 'TEXT'){
             let pr = new clover.sdk.remotepay.PrintRequest();
             pr.setText([this.state.printTextContent]);
             pr.setPrintDeviceId(printer.id);
+            console.log('PrintRequest - Print Text', pr);
             this.cloverConnector.print(pr);
         }
         else if(printType === 'CASH'){
             let ocdr = new clover.sdk.remotepay.OpenCashDrawerRequest();
             ocdr.setReason('POS JavaScript Example Test');
             ocdr.setDeviceId(printer.id);
+            console.log('OpenCashDrawerRequest', ocdr);
             this.cloverConnector.openCashDrawer(ocdr);
         }
         this.setState({ printType: null });
     }
 
     showWelcomeScreen(){     // shows welcome screen on Clover device
+        console.log('showing welcome screen');
         this.cloverConnector.showWelcomeScreen();
     }
 
     showThankYouScreen(){       // shows thank you screen on Clover device
+        console.log('showing thank you screen');
         this.cloverConnector.showThankYouScreen();
     }
 
@@ -95,6 +102,7 @@ export default class Device extends React.Component {
             pr.setImage([image]);
 
             image.addEventListener('load', function() {
+                console.log('PrintRequest - Print Image', pr);
                 this.cloverConnector.print(pr);
             }.bind(this));
             image.addEventListener('error', function() {
@@ -124,6 +132,7 @@ export default class Device extends React.Component {
             pr.setPrintDeviceId(printer.id);
 
             image.addEventListener('load', function() {
+                console.log('PrintRequest - Print Image URL', pr);
                 this.cloverConnector.print(pr);
             }.bind(this));
             image.addEventListener('error', function() {
@@ -138,23 +147,28 @@ export default class Device extends React.Component {
         let request = new clover.sdk.remotepay.CloseoutRequest();
         request.setAllowOpenTabs(false);
         request.setBatchId(null);
+        console.log('CloseoutRequest', request);
         this.cloverConnector.closeout(request);
     }
 
     openCashDrawer(){       // tells Clover device to open cash drawer
         let ocdr = new clover.sdk.remotepay.OpenCashDrawerRequest();
         ocdr.setReason('POS JavaScript Example Test');
+        console.log('OpenCashDrawerRequest', ocdr);
         this.cloverConnector.openCashDrawer(ocdr);
     }
 
     printFromURL(){     // tells Clover device to print image from URL
         let pr = new clover.sdk.remotepay.PrintRequest();
         pr.setImageUrl([this.state.printImageURL]);
+        console.log('PrintRequest - Print Image URL', pr);
         this.cloverConnector.print(pr);
     }
 
     readCardData(){     // tells Clover device to read card data
-        this.cloverConnector.readCardData(new clover.sdk.remotepay.ReadCardDataRequest(this.store.getCardEntryMethods()));
+        let request = new clover.sdk.remotepay.ReadCardDataRequest(this.store.getCardEntryMethods());
+        console.log('ReadCardDataRequest', request);
+        this.cloverConnector.readCardData(request);
     }
 
     messageChange(e){       // handles message change for show message
@@ -175,6 +189,7 @@ export default class Device extends React.Component {
 
     componentWillMount() {
         let rpr = new clover.sdk.remotepay.RetrievePrintersRequest();
+        console.log('RetrievePrintersRequest', rpr);
         this.cloverConnector.retrievePrinters(rpr);
     }
 

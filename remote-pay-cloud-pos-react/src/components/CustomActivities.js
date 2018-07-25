@@ -40,18 +40,17 @@ export default class CustomActivities extends React.Component {
         car.setAction(this.state.customActivityAction);
         car.setPayload(this.state.activityPayload);
         car.setNonBlocking(this.state.nonBlocking);
-
+        console.log('CustomActivityRequest', car);
         this.cloverConnector.startCustomActivity(car);
     }
 
     sendMessageToActivity() {
-
         let messageRequest = new clover.sdk.remotepay.MessageToActivity();
-            messageRequest.setAction(this.state.customActivityAction);
-            messageRequest.setPayload(this.state.payloadToSend);
-            this.cloverConnector.sendMessageToActivity(messageRequest);
-
-            this.setState({ payloadToSend : '', messages :  this.state.messages.concat([new CustomPayloadMessage(this.state.payloadToSend, true)])});
+        messageRequest.setAction(this.state.customActivityAction);
+        messageRequest.setPayload(this.state.payloadToSend);
+        console.log('MessageToActivity', messageRequest);
+        this.cloverConnector.sendMessageToActivity(messageRequest);
+        this.setState({ payloadToSend : '', messages :  this.state.messages.concat([new CustomPayloadMessage(this.state.payloadToSend, true)])});
     }
 
     finalPayload(finalMessageFromCustomActivity){
