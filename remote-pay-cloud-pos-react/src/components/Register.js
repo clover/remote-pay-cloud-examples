@@ -132,10 +132,10 @@ export default class Register extends React.Component {
     }
 
     initSettings(){     // initializes transaction settings
-        let manual = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL) == clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL);
-        let swipe = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE) == clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE);
-        let chip = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT) == clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT);
-        let contactless = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_NFC_CONTACTLESS) == clover.CardEntryMethods.CARD_ENTRY_METHOD_NFC_CONTACTLESS);
+        let manual = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL) === clover.CardEntryMethods.CARD_ENTRY_METHOD_MANUAL);
+        let swipe = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE) === clover.CardEntryMethods.CARD_ENTRY_METHOD_MAG_STRIPE);
+        let chip = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT) === clover.CardEntryMethods.CARD_ENTRY_METHOD_ICC_CONTACT);
+        let contactless = ((this.store.cardEntryMethods & clover.CardEntryMethods.CARD_ENTRY_METHOD_NFC_CONTACTLESS) === clover.CardEntryMethods.CARD_ENTRY_METHOD_NFC_CONTACTLESS);
         let forceOffline = this.getOfflineValueForState(this.store.getForceOfflinePayments());
         let allowOffline = this.getOfflineValueForState(this.store.getAllowOfflinePayments());
         let acceptOffline = this.getOfflineValueForState(this.store.getApproveOfflinePaymentWithoutPrompt());
@@ -529,7 +529,7 @@ export default class Register extends React.Component {
         if(this.card != null){
             request.setVaultedCard(this.card.card);
         }
-        console.log(request);
+        console.log('PreAuthRequest', request);
         this.cloverConnector.preAuth(request);
     }
 
@@ -608,12 +608,12 @@ export default class Register extends React.Component {
         this.setState({ showSettings: false, showPaymentMethods : false });
         if(this.saleMethod === 'Sale') {
             let request = this.makeSaleRequest();
-            console.log(request);
+            console.log('SaleRequest', request);
             this.cloverConnector.sale(request);
         }
         else if(this.saleMethod === 'Auth'){
             let request = this.makeAuthRequest();
-            console.log(request);
+            console.log('AuthRequest', request);
             this.cloverConnector.auth(request);
         }
         this.saleMethod = null;
@@ -624,6 +624,7 @@ export default class Register extends React.Component {
         this.store.setCurrentOrder(this.order);
         let request = this.makeSaleRequest();
         request.setVaultedCard(this.card.card);
+        console.log('SaleRequest w/ Vaulted', request);
         this.cloverConnector.sale(request);
         this.saleMethod = null;
     }

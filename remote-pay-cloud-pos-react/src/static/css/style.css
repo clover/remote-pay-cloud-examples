@@ -1514,6 +1514,10 @@ input:checked + .slider:before {
     align-items: center;
 }
 
+.device_name{
+    padding-right: 10px;
+}
+
 .device_image{
     height: 40px;
 }

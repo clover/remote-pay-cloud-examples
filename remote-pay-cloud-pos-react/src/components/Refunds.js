@@ -37,6 +37,7 @@ export default class Refunds extends React.Component {
         request.setExternalId(externalPaymentID);
         request.setAmount(this.formatter.convertFromFloat(this.state.refundAmount));
         request.setCardEntryMethods(this.store.getCardEntryMethods());
+        console.log('ManualRefundRequest', request);
         this.cloverConnector.manualRefund(request);
     }
 
