@@ -27,6 +27,9 @@ export default class CurrencyFormatter {
         let number = currency.toString();
         let first = number.substr(0,number.length-2);
         let last =  number.substr(number.length-2);
+        if(last.length == 1){
+            last = "0" + last;
+        }
         let float = first+"."+last;
         return parseFloat(float).toFixed(2);
     }
