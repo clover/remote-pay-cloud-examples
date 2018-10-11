@@ -144,6 +144,17 @@ h3{
     z-index: 1;
 }
 
+.popup_opaque_settings{
+    position: absolute;
+    background-color: #e6e6e6;
+    opacity: 0.65;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+
 .popup_full_opaque{
     position: absolute;
     background-color: #e6e6e6;
@@ -1621,6 +1632,67 @@ input:checked + .slider:before {
     background: #DEE0E1;
     border-radius: 10px;
     padding: 10px;
+}
+
+.tip_suggestions{
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    width: 25%;
+    background: white;
+    position: absolute;
+    top: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 4px #000000;
+    z-index: 4;
+    max-height: 400px;
+}
+
+.tipSuggestion{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tip_suggestion_checkbox{
+    margin-right: 10px;
+}
+
+.tip_suggestion_percentage{
+    border: 0;
+    outline: 0;
+    border-bottom: 1px solid #A9A9A9;
+    margin-right: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.tip_suggestion_label{
+    border: 0;
+    outline: 0;
+    font-size: 16px;
+    border-bottom: 1px solid #A9A9A9;
+    padding-left: 5px;
+    width: 65%;
+}
+
+.tip_suggestions_button{
+    margin: 10px 10px 0px 10px;
+    padding: 10px;
+    width: 30%;
+}
+
+.tip_suggestions_button_container{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.tip_suggestions_header{
 }
 
 
