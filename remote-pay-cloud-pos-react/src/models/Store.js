@@ -10,7 +10,7 @@ export default class Store {
         this.automaticSignatureConfirmation = true;
         this.automaticPaymentConfirmation = true;
         this.availableItems = [];
-        this.cardEntryMethods =
+        this.cardEntryMethods = clover.CardEntryMethods.DEFAULT;
         this.credits = [];
         this.customActivity = null;
         this.deviceId = null;
