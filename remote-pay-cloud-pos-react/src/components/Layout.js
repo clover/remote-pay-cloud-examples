@@ -606,8 +606,6 @@ export default class Layout extends Component {
                             <p>{this.state.result}</p>
                         </div>
                         }
-
-
                     </div>
                 )}
             </div>
