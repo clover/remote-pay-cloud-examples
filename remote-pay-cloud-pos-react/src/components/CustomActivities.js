@@ -10,7 +10,7 @@ export default class CustomActivities extends React.Component {
         super(props);
         this.state = {
             activityPayload: '',
-            customActivityAction: 'com.example.clover.customactivity',
+            customActivityAction: 'com.clover.loyalty.example.BurgerBucksCFPActivity',
             finalPayload: '',
             initialPayload: '',
             messages: [],

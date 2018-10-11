@@ -10,6 +10,7 @@ import React from 'react';
 import RegisterLine from './RegisterLine';
 import RegisterLineItem from './RegisterLineItem';
 import User from './SVGs/User';
+import TipSuggestions from './TipSuggestions';
 
 const data = require ('../../src/items.js');
 
@@ -31,6 +32,7 @@ export default class Register extends React.Component {
             disableReceipt: false,
             discount: '',
             fadeBackground: false,
+            fadeSettingsBackground: false,
             forceOfflinePaymentSelection: 'default',
             makingSale: false,
             manualCardEntry : false,
@@ -46,6 +48,7 @@ export default class Register extends React.Component {
             showPaymentMethods: false,
             showSaleMethod: false,
             showSettings: false,
+            showTipSuggestions: false,
             signatureEntryLocation: 'DEFAULT',
             sigThreshold: '0.00',
             subtotal : 0,
@@ -87,6 +90,7 @@ export default class Register extends React.Component {
         this.handleSignatureEntryChange = this.handleSignatureEntryChange.bind(this);
         this.handleTipModeChange = this.handleTipModeChange.bind(this);
         this.initSettings = this.initSettings.bind(this);
+        this.isTipNull = this.isTipNull.bind(this);
         this.makeSale = this.makeSale.bind(this);
         this.newOrder = this.newOrder.bind(this);
         this.preAuth = this.preAuth.bind(this);
@@ -95,6 +99,9 @@ export default class Register extends React.Component {
         this.saleChosen = this.saleChosen.bind(this);
         this.save = this.save.bind(this);
         this.saveSettings = this.saveSettings.bind(this);
+        this.saveTipSuggestions = this.saveTipSuggestions.bind(this);
+        this.setTipSuggestions = this.setTipSuggestions.bind(this);
+        this.showTipSuggestions = this.showTipSuggestions.bind(this);
         this.vaultedCardChosen = this.vaultedCardChosen.bind(this);
         this.toggleChip = this.toggleChip.bind(this);
         this.toggleConfirmChallenges = this.toggleConfirmChallenges.bind(this);
@@ -346,6 +353,20 @@ export default class Register extends React.Component {
         this.setState({ preAuthChosen : false });
     }
 
+    saveTipSuggestions(tipSuggestion1, tipSuggestion2, tipSuggestion3, tipSuggestion4){       // saves tip suggestions to the store
+        this.unfadeBackgroundSettings();
+        this.setState({ showTipSuggestions: false });
+        this.store.tipSuggestion1 = tipSuggestion1;
+        this.store.tipSuggestion2 = tipSuggestion2;
+        this.store.tipSuggestion3 = tipSuggestion3;
+        this.store.tipSuggestion4 = tipSuggestion4;
+    }
+
+    showTipSuggestions(){
+        this.fadeBackgroundSettings();
+        this.setState({ showTipSuggestions: true });
+    }
+
     addToOrder(id, title, price, tippable, taxable) {       // adds available item to order
         this.order.addItem(id, title, price, tippable, taxable);
         this.setState({
@@ -418,7 +439,7 @@ export default class Register extends React.Component {
         }
     }
 
-     save(){     // saves current order
+    save(){     // saves current order
         this.setState({ payNoItems : false });
         if(this.state.orderItems.length > 0){
             this.newOrder();
@@ -511,6 +532,26 @@ export default class Register extends React.Component {
         this.setState({ preAuthAmount : e.target.value });
     }
 
+    isTipNull(tipSuggestion){
+        if(tipSuggestion == null || !tipSuggestion.isEnabled || tipSuggestion.percentage.length < 1){
+            return null;
+        }
+        return tipSuggestion;
+    }
+
+    setTipSuggestions(request){
+        let tipSuggestion1 = this.isTipNull(this.store.tipSuggestion1);
+        let tipSuggestion2 = this.isTipNull(this.store.tipSuggestion2);
+        let tipSuggestion3 = this.isTipNull(this.store.tipSuggestion3);
+        let tipSuggestion4 = this.isTipNull(this.store.tipSuggestion4);
+        if(tipSuggestion1 == null & tipSuggestion2 == null & tipSuggestion3 == null & tipSuggestion4 == null){
+            return;
+        }
+        else {
+            request.setTipSuggestions([tipSuggestion1, tipSuggestion2, tipSuggestion3, tipSuggestion4]);
+        }
+    }
+
 
     doPreAuth(){        // make preauth transaction
         this.unfadeBackground();
@@ -573,6 +614,7 @@ export default class Register extends React.Component {
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
         request.setAutoAcceptPaymentConfirmations(this.store.getAutomaticPaymentConfirmation());
         request.setAutoAcceptSignature(this.store.getAutomaticSignatureConfirmation());
+        this.setTipSuggestions(request);
         if(this.card != null){
             request.setVaultedCard(this.card.card);
         }
@@ -598,6 +640,7 @@ export default class Register extends React.Component {
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
         request.setAutoAcceptPaymentConfirmations(this.store.getAutomaticPaymentConfirmation());
         request.setAutoAcceptSignature(this.store.getAutomaticSignatureConfirmation());
+
         if(this.card != null){
             request.setVaultedCard(this.card.card);
         }
@@ -633,8 +676,16 @@ export default class Register extends React.Component {
         this.setState({ fadeBackground: true });
     }
 
+    fadeBackgroundSettings(){
+        this.setState({ fadeSettingsBackground: true});
+    }
+
     unfadeBackground(){    // unfade background
         this.setState({ fadeBackground: false });
+    }
+
+    unfadeBackgroundSettings(){    // unfade background
+        this.setState({ fadeSettingsBackground: false });
     }
 
     componentWillReceiveProps(newProps) {
@@ -674,6 +725,7 @@ export default class Register extends React.Component {
         let cardText = 'Card';
         const discount = this.state.discount.name;
         let fadeBackground = this.state.fadeBackground;
+        let fadeSettingsBackground = this.state.fadeSettingsBackground;
         let isSale = false;
         let newOrder = 'New Order';
         let notPreAuth = true;
@@ -682,6 +734,7 @@ export default class Register extends React.Component {
         let showPreAuth = false;
         let showPreAuthHeader = false;
         const showSaleMethods = this.state.showSaleMethod;
+        let showTipSuggestions = this.state.showTipSuggestions;
         let showVaultedCard = this.state.areVaultedCards;
         let vaultedCard = false;
 
@@ -726,6 +779,9 @@ export default class Register extends React.Component {
                 {fadeBackground &&
                 <div className="popup_opaque"></div>
                 }
+                {fadeSettingsBackground &&
+                <div className="popup_opaque_settings"></div>
+                }
                 {promptPreAuth &&
                 <div className="popup popup_container">
                     <div className="close_popup" onClick={this.exitPreAuth}>X</div>
@@ -746,6 +802,9 @@ export default class Register extends React.Component {
                         </div>
                     </div>
                 </div>
+                }
+                {showTipSuggestions &&
+                <TipSuggestions tipSuggestion1={this.store.tipSuggestion1} tipSuggestion2={this.store.tipSuggestion2} tipSuggestion3={this.store.tipSuggestion3} tipSuggestion4={this.store.tipSuggestion4} onClick={this.saveTipSuggestions}/>
                 }
                 {this.state.showSettings &&
                 <div className="settings">
@@ -894,6 +953,7 @@ export default class Register extends React.Component {
                                     </div>
                                 </div>
                                 }
+                                <ButtonNormal title="Tip Suggestions" color="white"  extra="refund_button" onClick={this.showTipSuggestions}/>
                             </div>
                             }
 

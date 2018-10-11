@@ -358,7 +358,8 @@ export default class Layout extends Component {
         this.setState({ showQR: true });
     }
 
-    handleScan(data){       // connects to device from qr scan
+    handleScan(data){// connects to device from qr scan
+        console.log("handleScan", data);
         if(data !== null && data !== undefined && this.state.result === 'No Result') {
             if(!this.state.connected) {
                 this.setState({ result: data });
