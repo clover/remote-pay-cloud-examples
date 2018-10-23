@@ -8,12 +8,12 @@
     "url": "https://github.com/clover/remote-pay-cloud-examples"
   },
   "dependencies": {
-    "inquirer": "3.3.0",
+    "inquirer": "4.0.2",
     "nodejs-websocket": "1.7.1",
     "remote-pay-cloud": "1.4.x",
     "xmlhttprequest-ssl": "1.5.5",
     "base64-js": "1.2.1",
-    "image-downloader": "3.3.0",
+    "image-downloader": "3.4.1",
     "ws": "3.2.0"
   },
   "main": "./lib/Examples.js"
