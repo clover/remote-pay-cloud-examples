@@ -20,7 +20,7 @@
     "express": "^4.15.3",
     "remote-pay-cloud": "1.4.x",
     "webpack": "^3.4.0",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^4.1.2",
     "copyfiles": "^1.2.0"
   }
 }
