@@ -34,6 +34,7 @@ export default class Payment extends React.Component {
         this.changePartialRefundAmount = this.changePartialRefundAmount.bind(this);
         this.handleRefund = this.handleRefund.bind(this);
         this.makePartialRefund = this.makePartialRefund.bind(this);
+        this.showReceiptsSale = this.showReceiptsSale.bind(this);
 
         if(this.props.location.state != null) {
             this.type = this.props.location.state.type;
@@ -111,6 +112,13 @@ export default class Payment extends React.Component {
         vpr.setVoidReason(clover.sdk.order.VoidReason.USER_CANCEL);
         console.log('VoidPaymentRequest', vpr);
         this.cloverConnector.voidPayment(vpr);
+    }
+
+    showReceiptsSale(){
+        let request = new clover.sdk.remotepay.DisplayReceiptOptionsRequest();
+        request.setPaymentId(this.payment.cloverPaymentId);
+        request.setOrderId(this.payment.cloverOrderId);
+        this.cloverConnector.displayPaymentReceiptOptions(request);
     }
 
     componentWillReceiveProps(newProps) {
@@ -231,6 +239,7 @@ export default class Payment extends React.Component {
                                     <div><strong>{this.payment.transactionTitle}</strong></div>
                                     <div className="middle_grow"><strong>{date.toLocaleDateString([], {month: 'long', day: 'numeric', year: 'numeric'})}  •  {date.toLocaleTimeString()}</strong></div>
                                     <div><strong>{total}</strong></div>
+                                    <span className="show_receipts" onClick={this.showReceiptsSale}>RECEIPTS</span>
                                 </div>
                                 {check && <div className="row font_15"><Checkmark class="checkmark_small"/><div className="payment_successful">Payment successful</div></div>}
                                 <div className="payment_details_list">
@@ -253,7 +262,7 @@ export default class Payment extends React.Component {
                             </div>}
                             {showRefunds &&
                             <div className="payment_section">
-                                {this.payment.refunds.map(function (refund, i) {
+                                {this.payment.refunds.map((refund, i) => {
                                     return(
                                         <div key={"refund-" + i} className="paymentDetails">
                                             <div className="space_between_row space_under">

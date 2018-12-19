@@ -78,7 +78,6 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
         this.store.setStoreName(merchantInfo.merchantName);
         this.store.setDeviceId(merchantInfo.deviceInfo.serial);
         this.toggleConnection(true);
-        //this.cloverConnector.retrieveDeviceStatus(new sdk.remotepay.RetrieveDeviceStatusRequest(false));
     }
 
     onReady(merchantInfo){

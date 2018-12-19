@@ -1695,4 +1695,8 @@ input:checked + .slider:before {
 .tip_suggestions_header{
 }
 
+.show_receipts{
+    color: #42dff4;
+    margin-left: 20px;
+}
 
