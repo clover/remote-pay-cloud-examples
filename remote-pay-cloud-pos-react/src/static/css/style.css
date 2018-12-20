@@ -1634,40 +1634,7 @@ input:checked + .slider:before {
     padding: 10px;
 }
 
-.tip_suggestions{
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    width: 25%;
-    background: white;
-    position: absolute;
-    top: 40%;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    box-shadow: 0 0 4px #000000;
-    z-index: 4;
-    max-height: 400px;
+.show_receipts{
+    color: #42dff4;
+    margin-left: 20px;
 }
-
-.tipSuggestion{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.tip_suggestion_checkbox{
-    margin-right: 10px;
-}
-
-.tip_suggestion_percentage{
-    border: 0;
-    outline: 0;
-    border-bottom: 1px solid #A9A9A9;
-    margin-right: 10px;
-    text-align: center;
-    font-size: 16px;
-}
-

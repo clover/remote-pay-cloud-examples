@@ -115,10 +115,7 @@ export default class Payment extends React.Component {
     }
 
     showReceiptsSale(){
-        let request = new clover.sdk.remotepay.DisplayReceiptOptionsRequest();
-        request.setPaymentId(this.payment.cloverPaymentId);
-        request.setOrderId(this.payment.cloverOrderId);
-        this.cloverConnector.displayPaymentReceiptOptions(request);
+        this.cloverConnector.displayPaymentReceiptOptions(this.payment.cloverOrderId, this.payment.cloverPaymentId);
     }
 
     componentWillReceiveProps(newProps) {

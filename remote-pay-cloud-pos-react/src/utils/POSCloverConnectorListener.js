@@ -210,7 +210,7 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
         console.log('handleRatings', payload);
         let ratingsMessage = new RatingsMessage(JSON.stringify(payload));
         let ratingsPayload = ratingsMessage.ratings;
-        this.setStatus(ratingsPayload, 'toggle');
+        this.setStatus(ratingsPayload, 'Toggle');
         //this.showRatingsDialog(ratingsPayload);
     }
 
@@ -341,7 +341,7 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
                     this.setStatus('Auth Processed Successfully');
                 }
                 else{
-                    this.setStatus('External Id\'s Do Not Match', 'toggle');
+                    this.setStatus('External Id\'s Do Not Match', 'Toggle');
                 }
             }
             else{
@@ -366,7 +366,7 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
                         currentOrder.setStatus('Pending');
                         let transaction = this.createTransactionFromOrderPayment(orderPayment, true);
                         this.store.addTransaction(transaction);
-                        this.setStatus('Sale Processed Successfully');
+                        this.setStatus('Sale Processed Successfully', 'Toggle');
                         this.cloverConnector.showWelcomeScreen();
                     }
                 }
@@ -386,7 +386,7 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
                         currentOrder.setStatus('PAID');
                         let transaction = this.createTransactionFromOrderPayment(orderPayment, true);
                         this.store.addTransaction(transaction);
-                        this.setStatus('Sale Processed Successfully');
+                        this.setStatus('Sale Processed Successfully', 'Toggle');
                     }
                     else {
                         this.setStatus('External Id\'s Do Not Match');
