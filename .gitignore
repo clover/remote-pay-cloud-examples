@@ -2,3 +2,6 @@
 ideaConfig
 node_modules/
 npm-debug.log
+.gradle/*
+package-lock.json
+
