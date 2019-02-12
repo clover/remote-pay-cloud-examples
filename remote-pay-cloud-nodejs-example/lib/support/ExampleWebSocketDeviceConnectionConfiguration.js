@@ -11,41 +11,32 @@
      * @returns {target}
      */
     deviceConnectionConfiguration.create = function (connectionConfiguration, useCloud) {
-        let deviceConfiguration = null;
+        let configBuilder = null;
         if (useCloud) {
             // Cloud Configuration.
-            deviceConfiguration = new clover.WebSocketCloudCloverDeviceConfiguration(
+            configBuilder  = new clover.WebSocketCloudCloverDeviceConfigurationBuilder(
                 connectionConfiguration.remoteApplicationId,
-                connectionConfiguration.webSocketFactoryFunction,
-                connectionConfiguration.imageUtil,
-                connectionConfiguration.cloverServer,
-                connectionConfiguration.accessToken,
-                connectionConfiguration.httpSupport,
-                connectionConfiguration.merchantId,
                 connectionConfiguration.deviceId,
-                connectionConfiguration.friendlyId,
-                connectionConfiguration.forceReconnect);
+                connectionConfiguration.merchantId,
+                connectionConfiguration.accessToken);
+            configBuilder.setCloverServer(connectionConfiguration.cloverServer);
+            configBuilder.setFriendlyId(connectionConfiguration.friendlyId);
+            configBuilder.setHttpSupport(connectionConfiguration.httpSupport);
+            configBuilder.setWebSocketFactoryFunction(connectionConfiguration.webSocketFactoryFunction);
         } else {
+            let onPairingCode = (pairingCode) => {
+                console.log(`    > Entering Pairing Code on Device: ${pairingCode}`);
+            };
+            let onPairingSuccess = (authToken) => {
+                console.log(`    > Got Pairing Auth Token: ${authToken}`);
+            };
             // Network Configuration.
-            deviceConfiguration = new clover.WebSocketPairedCloverDeviceConfiguration(
-                connectionConfiguration.endpoint,
-                connectionConfiguration.remoteApplicationId,
-                connectionConfiguration.posName,
-                connectionConfiguration.serialNumber,
-                connectionConfiguration.authToken,
-                connectionConfiguration.webSocketFactoryFunction,
-                connectionConfiguration.imageUtil);
-            // Append the pairing code handlers to the device configuration.
-            deviceConfiguration = Object.assign(deviceConfiguration, {
-                onPairingCode: function (pairingCode) {
-                    console.log(`    > Entering Pairing Code on Device: ${pairingCode}`);
-                },
-                onPairingSuccess: function (authToken) {
-                    console.log(`    > Got Pairing Auth Token: ${authToken}`);
-                }
-            });
+            configBuilder = new clover.WebSocketPairedCloverDeviceConfigurationBuilder(connectionConfiguration.remoteApplicationId,
+                connectionConfiguration.endpoint, connectionConfiguration.serialNumber, connectionConfiguration.authToken, onPairingCode, onPairingSuccess);
+            configBuilder.setWebSocketFactoryFunction(connectionConfiguration.webSocketFactoryFunction);
+            configBuilder.setPosName(connectionConfiguration.posName)
         }
-        return Object.create(deviceConfiguration);
+        return configBuilder.build();
     };
 })(module);
 

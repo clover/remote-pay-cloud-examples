@@ -10,7 +10,7 @@
   "dependencies": {
     "inquirer": "4.0.2",
     "nodejs-websocket": "1.7.1",
-    "remote-pay-cloud": "1.4.x",
+    "remote-pay-cloud": "dev",
     "xmlhttprequest-ssl": "1.5.5",
     "base64-js": "1.2.1",
     "image-downloader": "3.4.1",
