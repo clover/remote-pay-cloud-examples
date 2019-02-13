@@ -32,9 +32,8 @@
             };
             // Network Configuration.
             configBuilder = new clover.WebSocketPairedCloverDeviceConfigurationBuilder(connectionConfiguration.remoteApplicationId,
-                connectionConfiguration.endpoint, connectionConfiguration.serialNumber, connectionConfiguration.authToken, onPairingCode, onPairingSuccess);
+                connectionConfiguration.endpoint, connectionConfiguration.posName, connectionConfiguration.serialNumber, connectionConfiguration.authToken, onPairingCode, onPairingSuccess);
             configBuilder.setWebSocketFactoryFunction(connectionConfiguration.webSocketFactoryFunction);
-            configBuilder.setPosName(connectionConfiguration.posName)
         }
         return configBuilder.build();
     };

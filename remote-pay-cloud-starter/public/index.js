@@ -183,9 +183,9 @@ const cloudExample = () => {
         };
 
         const configBuilder = new clover.WebSocketPairedCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
-            connectionConfiguration.endpoint, connectionConfiguration.serialNumber, connectionConfiguration.authToken, onPairingCode, onPairingSuccess);
+            connectionConfiguration.endpoint, connectionConfiguration.posName, connectionConfiguration.serialNumber, connectionConfiguration.authToken, onPairingCode, onPairingSuccess);
 
-        return configBuilder.setPosName(connectionConfiguration.posName).build();
+        return configBuilder.build();
     }
 
     /**
