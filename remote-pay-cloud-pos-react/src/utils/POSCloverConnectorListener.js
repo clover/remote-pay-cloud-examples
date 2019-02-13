@@ -39,7 +39,7 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
     // COMMUNICATION
 
     onDeviceActivityStart(deviceEvent) {     // called when a Clover device activity starts
-        console.log("onDeviceActivityStart", deviceEvent);
+        // console.log("onDeviceActivityStart", deviceEvent);
         this.lastDeviceEvent = deviceEvent.getEventState();
         let message = deviceEvent.getMessage();
         if(message !== undefined && this.notCustomActivity(message) && message !== null) {
@@ -54,7 +54,7 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
     }
 
     onDeviceActivityEnd(deviceEvent) {      // called when a Clover device activity ends
-        console.log("onDeviceActivityEnd", deviceEvent);
+        // console.log("onDeviceActivityEnd", deviceEvent);
         if(deviceEvent.getEventState() !== undefined){
             this.closeStatus();
         }
@@ -356,6 +356,7 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
         console.log('onSaleResponse', response);
         if(response !== null) {
             if (!response.isSale) {
+                console.log('response was not a sale #1')
                 this.setStatus('Response was not a sale', response.reason);
                 if (response.payment.offline) {
                     if (response.success) {

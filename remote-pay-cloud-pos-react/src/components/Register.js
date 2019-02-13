@@ -563,8 +563,6 @@ export default class Register extends React.Component {
         request.setExternalId(externalPaymentID);
         request.setCardEntryMethods(this.store.getCardEntryMethods());
         request.setDisablePrinting(this.store.getDisablePrinting());
-        request.setSignatureEntryLocation(this.store.getSignatureEntryLocation());
-        request.setSignatureThreshold(this.store.getSignatureThreshold());
         request.setDisableReceiptSelection(this.store.getDisableReceiptOptions());
         request.setDisableDuplicateChecking(this.store.getDisableDuplicateChecking());
         if(this.card != null){

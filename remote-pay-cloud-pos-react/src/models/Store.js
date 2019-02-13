@@ -18,7 +18,7 @@ export default class Store {
         this.disablePrinting = false;
         this.disableReceiptOptions = true;
         this.discounts = [];
-        this.forceOfflinePayments = true;
+        this.forceOfflinePayments = false;
         this.formatter = new CurrencyFormatter();
         this.currentOrder = null;
         this.lastVaultedCard = null;
