@@ -27,16 +27,16 @@ const cloudExample = () => {
 
     // If useCloudConfiguration is set to true, enter your cloud configuration here.
     const cloudConfiguration = {
-        "accessToken": "ccac08fe-7897-55dd-808f-d2468574db0f",
-        "cloverServer": "https://dev1.dev.clover.com/",
-        "merchantId": "59RECDKBW11G6",
-        "deviceId": "3e98620c2b28bbe42416b9508d824c0f",
-        "friendlyId": "Another Test Cloud Starter 1"
+        "accessToken": "yourAccessToken",
+        "cloverServer": "https://sandbox.dev.clover.com/",
+        "merchantId": "yourMerchantId",
+        "deviceId": "yourDeviceId",
+        "friendlyId": "Clover Cloud Starter"
     };
 
     // If useCloudConfiguration is set to true, enter your endpoint here.  The endpoint can be found on the opening screen of Secure Network Pay Display on your device.
     const networkConfiguration = {
-        "endpoint": "wss://10.249.255.127:12345/remote_pay"
+        "endpoint": "wss://device-ip-address:12345/remote_pay"
     };
 
     /**
@@ -82,17 +82,7 @@ const cloudExample = () => {
          * Resets your Clover device (will cancel ongoing transactions and return to the welcome screen).
          */
         resetDevice: function () {
-            let defaultCloverConnectorListener = buildCloverConnectionListener();
-            getCloverConnector().addCloverConnectorListener(Object.assign({}, defaultCloverConnectorListener, {
-
-                onRetrieveDeviceStatusResponse: function (response) {
-                    console.log({message: "Device status response received", response: response});
-                }
-
-            }));
-            const statusRequest = new clover.remotepay.RetrieveDeviceStatusRequest();
-            statusRequest.setSendLastMessage(true);
-            getCloverConnector().retrieveDeviceStatus(statusRequest);
+            getCloverConnector().resetDevice();
         },
 
         /**
