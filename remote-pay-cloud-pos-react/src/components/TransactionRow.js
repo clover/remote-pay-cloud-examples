@@ -26,7 +26,9 @@ export default class TransactionRow extends React.Component {
 
         let paymentType = this.transaction.transactionTitle;
         if (this.transaction.refund || paymentType === 'Manual Refund'){
-            paymentType = 'Refund';
+            if(this.transaction.refund && paymentType !== 'Manual Refund') {
+                paymentType = 'Refund';
+            }
             displayTotal=(<span className="red_text">(${total})</span>);
         }
         if(this.transaction.transactionType == 'VOIDED'){

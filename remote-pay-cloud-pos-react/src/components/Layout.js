@@ -220,10 +220,10 @@ export default class Layout extends Component {
         if((typeof message === 'object') && (message !== null)){
             this.setState({ statusArray: message,  statusToggle: false, fadeBackground: true, responseFail: false, refundSuccess: false, tipAdjust: false, vaultedCard: false, newCustomMessage: false, finalCustomMessage : false });
         }
-        else if(message == 'Printers'){
+        else if(message === 'Printers'){
             this.setState({ printers: reason, newCustomMessage: false, finalCustomMessage: false })
         }
-        else if (message == 'Sale Processed Successfully' || message == 'Auth Processed Successfully' || message === 'PreAuth Successful' || message === 'PreAuth Processed Successfully') {
+        else if (message === 'Sale Processed Successfully' || message === 'Auth Processed Successfully' || message === 'PreAuth Successful' || message === 'PreAuth Processed Successfully') {
             this.saleFinished(message);
         }
         else if(message === 'Response was not a sale'){
@@ -261,7 +261,7 @@ export default class Layout extends Component {
         this.setState({ statusText: message, statusToggle: true, saleFinished: true, fadeBackground: true, responseFail: false, refundSuccess: false, response: true, tipAdjust: false, vaultedCard: false});
         setTimeout(() => {
             this.setState({ statusToggle: false, fadeBackground: false, response: false });
-        }, 1500);
+        }, 1000);
     }
 
     statusToggle(message){      // shows status for 1.5 seconds then closes
@@ -358,7 +358,8 @@ export default class Layout extends Component {
         this.setState({ showQR: true });
     }
 
-    handleScan(data){       // connects to device from qr scan
+    handleScan(data){// connects to device from qr scan
+        console.log("handleScan", data);
         if(data !== null && data !== undefined && this.state.result === 'No Result') {
             if(!this.state.connected) {
                 this.setState({ result: data });
@@ -605,8 +606,6 @@ export default class Layout extends Component {
                             <p>{this.state.result}</p>
                         </div>
                         }
-
-
                     </div>
                 )}
             </div>
