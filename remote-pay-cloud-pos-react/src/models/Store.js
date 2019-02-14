@@ -18,7 +18,7 @@ export default class Store {
         this.disablePrinting = false;
         this.disableReceiptOptions = true;
         this.discounts = [];
-        this.forceOfflinePayments = true;
+        this.forceOfflinePayments = false;
         this.formatter = new CurrencyFormatter();
         this.currentOrder = null;
         this.lastVaultedCard = null;
@@ -32,15 +32,25 @@ export default class Store {
         this.signatureThreshold = 0;
         this.storeName = null;
         this.tipAmount = 0;
-        this.tipMode = clover.sdk.payments.TipMode.NO_TIP;
+        this.tipMode = clover.sdk.payments.TipMode.ON_SCREEN_BEFORE_PAYMENT;
         this.transactions = [];
         this.vaultedCards = [];
-        //this.forceOfflinePayments = undefined;
-        //this.allowOfflinePayments = undefined;
-        //this.approveOfflinePaymentWithoutPrompt = undefined;\
-        //this.signatureEntryLocation = undefined;
-        //this.tipMode = undefined;
-
+        this.tipSuggestion1 = new clover.sdk.merchant.TipSuggestion();
+        this.tipSuggestion1.setIsEnabled(true);
+        this.tipSuggestion1.setName("Good");
+        this.tipSuggestion1.setPercentage(15);
+        this.tipSuggestion2 =  new clover.sdk.merchant.TipSuggestion();
+        this.tipSuggestion2.setIsEnabled(true);
+        this.tipSuggestion2.setName("Great");
+        this.tipSuggestion2.setPercentage(18);
+        this.tipSuggestion3 = new clover.sdk.merchant.TipSuggestion();
+        this.tipSuggestion3.setIsEnabled(true);
+        this.tipSuggestion3.setName("Wow!");
+        this.tipSuggestion3.setPercentage(20);
+        this.tipSuggestion4 = new clover.sdk.merchant.TipSuggestion();
+        this.tipSuggestion4.setIsEnabled(true);
+        this.tipSuggestion4.setName("Best Service Ever!");
+        this.tipSuggestion4.setPercentage(30);
         this.getNextPaymentId = this.getNextPaymentId.bind(this);
     }
 
@@ -374,6 +384,38 @@ export default class Store {
 
     setDeviceId(id){
         this.deviceId = id;
+    }
+
+    getTipSuggestion1(){
+        return this.tipSuggestion1;
+    }
+
+    setTipSuggestion1(tipSuggestion1){
+        this.tipSuggestion1 = tipSuggestion1;
+    }
+
+    getTipSuggestion2(){
+        return this.tipSuggestion2;
+    }
+
+    setTipSuggestion2(tipSuggestion2){
+        this.tipSuggestion2 = tipSuggestion2;
+    }
+
+    getTipSuggestion3(){
+        return this.tipSuggestion3;
+    }
+
+    setTipSuggestion3(tipSuggestion3){
+        this.tipSuggestion3 = tipSuggestion3;
+    }
+
+    getTipSuggestion4(){
+        return this.tipSuggestion4;
+    }
+
+    setTipSuggestion4(tipSuggestion4){
+        this.tipSuggestion4 = tipSuggestion4;
     }
 
 }

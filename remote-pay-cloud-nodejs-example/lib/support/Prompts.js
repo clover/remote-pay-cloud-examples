@@ -45,8 +45,8 @@
                 name: "10. Reset Device",
                 value: "ResetDevice"
             }, {
-                name: "11. Print Image from URL",
-                value: "PrintFromUrl"
+                name: "11. Print Text",
+                value: "Print"
             }, {
                 name: "99. Exit",
                 value: "Exit"
@@ -106,7 +106,7 @@
             type: "input",
             name: "cloverServer",
             message: "Enter the location of your clover server:",
-            default: "http://localhost:9000/",
+            default: "https://sandbox.dev.clover.com/",
             validate: required
         },
         {
@@ -164,6 +164,15 @@
     ];
 
     prompts.message = [
+        {
+            type: "input",
+            name: "message",
+            message: "Enter Message:",
+            default: "Hello!"
+        }
+    ];
+
+    prompts.print = [
         {
             type: "input",
             name: "message",

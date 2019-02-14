@@ -13,7 +13,7 @@ const cloudExample = () => {
         // Set useCloudConfiguration to true to use Cloud Pay Display, or false to use Secure Network Pay Display.
         // If useCloudConfiguration is true you must properly set baseConfiguration and cloudConfiguration below.
         // If useCloudConfigruation is false you must set baseConfiguration and networkConfiguration below.
-    const useCloudConfiguration = true;
+    const useCloudConfiguration = false;
 
     // Shared by both Network and Cloud configurations.
     // Enter your app's Remote Application Id below!
@@ -27,16 +27,16 @@ const cloudExample = () => {
 
     // If useCloudConfiguration is set to true, enter your cloud configuration here.
     const cloudConfiguration = {
-        "accessToken": "yourAccessTokenHere",
+        "accessToken": "yourAccessToken",
         "cloverServer": "https://sandbox.dev.clover.com/",
-        "merchantId": "yourMerchantIdhere",
-        "deviceId": "yourDeviceUUIDHere",
-        "friendlyId": "Cloud Example"
+        "merchantId": "yourMerchantId",
+        "deviceId": "yourDeviceId",
+        "friendlyId": "Clover Cloud Starter"
     };
 
     // If useCloudConfiguration is set to true, enter your endpoint here.  The endpoint can be found on the opening screen of Secure Network Pay Display on your device.
     const networkConfiguration = {
-        "endpoint": "wss://yourdevicehostorip:yourdeviceport/remote_pay"
+        "endpoint": "wss://device-ip-address:12345/remote_pay"
     };
 
     /**
@@ -51,8 +51,6 @@ const cloudExample = () => {
         connect: function () {
             clover.DebugConfig.loggingEnabled = true;
             let cloverDeviceConnectionConfiguration = null;
-            baseConfiguration["webSocketFactoryFunction"] = clover.BrowserWebSocketImpl.createInstance;
-            baseConfiguration["imageUtil"] = new clover.ImageUtil();
             if (useCloudConfiguration) {
                 cloudConfiguration["httpSupport"] = new clover.HttpSupport(XMLHttpRequest);
                 // Configuration Note: See: https://docs.clover.com/build/getting-started-with-clover-connector/?sdk=browser for more information
@@ -150,17 +148,11 @@ const cloudExample = () => {
      * @returns {WebSocketCloudCloverDeviceConfiguration}
      */
     function getDeviceConfigurationForCloud(connectionConfiguration) {
-        return new clover.WebSocketCloudCloverDeviceConfiguration(
-            connectionConfiguration.applicationId,
-            connectionConfiguration.webSocketFactoryFunction,
-            connectionConfiguration.imageUtil,
-            connectionConfiguration.cloverServer,
-            connectionConfiguration.accessToken,
-            connectionConfiguration.httpSupport,
-            connectionConfiguration.merchantId,
-            connectionConfiguration.deviceId,
-            connectionConfiguration.friendlyId,
-            connectionConfiguration.forceReconnect);
+        const configBuilder = new clover.WebSocketCloudCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
+            connectionConfiguration.deviceId, connectionConfiguration.merchantId, connectionConfiguration.accessToken);
+        configBuilder.setCloverServer(connectionConfiguration.cloverServer);
+        configBuilder.setFriendlyId(connectionConfiguration.friendlyId);
+        return configBuilder.build();
     }
 
     /**
@@ -170,28 +162,20 @@ const cloudExample = () => {
      * @returns {WebSocketPairedCloverDeviceConfiguration}
      */
     function getDeviceConfigurationForNetwork(connectionConfiguration) {
-        let deviceConfiguration = new clover.WebSocketPairedCloverDeviceConfiguration(
-            connectionConfiguration.endpoint,
-            connectionConfiguration.applicationId,
-            connectionConfiguration.posName,
-            connectionConfiguration.serialNumber,
-            connectionConfiguration.authToken,
-            connectionConfiguration.webSocketFactoryFunction,
-            connectionConfiguration.imageUtil);
+        const onPairingCode = (pairingCode) => {
+            const pairingCodeMessage = `Please enter pairing code ${pairingCode} on the device`;
+            updateStatus(pairingCodeMessage);
+            console.log(`    >  ${pairingCodeMessage}`);
+        };
+        const onPairingSuccess = (authToken) => {
+            console.log(`    > Got Pairing Auth Token: ${authToken}`);
+            setAuthToken(authToken);
+        };
 
-        // Append the pairing code handlers to the device configuration.
-        deviceConfiguration = Object.assign(deviceConfiguration, {
-            onPairingCode: function (pairingCode) {
-                let pairingCodeMessage = `Please enter pairing code ${pairingCode} on the device`;
-                updateStatus(pairingCodeMessage);
-                console.log(`    >  ${pairingCodeMessage}`);
-            },
-            onPairingSuccess: function (authToken) {
-                console.log(`    > Got Pairing Auth Token: ${authToken}`);
-                setAuthToken(authToken);
-            }
-        });
-        return deviceConfiguration;
+        const configBuilder = new clover.WebSocketPairedCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
+            connectionConfiguration.endpoint, connectionConfiguration.posName, connectionConfiguration.serialNumber, connectionConfiguration.authToken, onPairingCode, onPairingSuccess);
+
+        return configBuilder.build();
     }
 
     /**

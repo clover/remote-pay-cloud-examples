@@ -144,17 +144,12 @@ var exampleCLI = (function (module) {
                     cloverConnector.resetDevice();
                     showMenu();
                 },
-                "PrintFromUrl": () => {
-                    const printPrompt = [
-                        {
-                            type: "input",
-                            name: "printUrl",
-                            message: "URL Image:",
-                            default: "https://raw.githubusercontent.com/clover/clover-cloud-connector-unit-examples/master/public/images/test_receipt_8.jpg"
-                        }
-                    ];
-                    inquirer.prompt(printPrompt).then((answers) => {
-                        cloverConnector.printImageFromURL("https://raw.githubusercontent.com/clover/clover-cloud-connector-unit-examples/master/public/images/test_receipt_8.jpg");
+                "Print": () => {
+                    inquirer.prompt(Prompts.print).then((answers) => {
+                        const printRequest = new clover.remotepay.PrintRequest();
+                        printRequest.setText([answers.message]);
+                        cloverConnector.print(printRequest);
+                        showMenu();
                     });
                 },
                 "Exit": () => disposeAndExit(cloverConnector)

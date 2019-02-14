@@ -115,11 +115,15 @@ export default class Payment extends React.Component {
     }
 
     showReceiptsSale(){
-        this.cloverConnector.displayPaymentReceiptOptions(this.payment.cloverOrderId, this.payment.cloverPaymentId);
+        let dror = new clover.sdk.remotepay.DisplayReceiptOptionsRequest();
+        dror.setPaymentId(this.payment.cloverPaymentId);
+        dror.setOrderId(this.payment.cloverOrderId);
+        this.cloverConnector.displayReceiptOptions(dror);
     }
 
     componentWillReceiveProps(newProps) {
         this.payment = this.store.getPaymentByCloverId(this.payment.cloverPaymentId);
+        console.log("componentWillReceiveProps", this.payment);
         if(newProps.refundSuccess){
             let _amount = parseFloat(this.formatter.convertToFloat(this.payment.amount));
             let _tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()));
@@ -137,19 +141,28 @@ export default class Payment extends React.Component {
     }
 
     componentWillMount(){
-        if(this.payment.refund){
-            let _amount = parseFloat(this.formatter.convertToFloat(this.payment.amount));
-            let _tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()));
-            let _refundAmount = parseFloat(this.formatter.convertToFloat(this.payment.getRefundsAmount()));
+        if(this.payment !== null) {
+            if (this.payment.refund) {
+                console.log("componentWillMount", this.payment);
+                let _amount = parseFloat(this.formatter.convertToFloat(this.payment.amount));
+                if (this.payment.transactionTitle !== 'Manual Refund') {
+                    let _tipAmount = parseFloat(this.formatter.convertToFloat(this.payment.getTipAmount()));
 
-            let absTotal = parseFloat(( _amount + _tipAmount ) - _refundAmount).toFixed(2);
-            let refundDisabled = absTotal <= 0;
-            let fullDisabled = absTotal < this.payment.amount;
-            console.log('setting isRefund');
-            this.setState({ isRefund: true, refundDisabled: refundDisabled , fullRefundDisabled: fullDisabled});
-        }
-        if(this.payment.transactionType === 'VOIDED'){
-            this.setState({refundDisabled: true});
+                    let _refundAmount = parseFloat(this.formatter.convertToFloat(this.payment.getRefundsAmount()));
+
+                    let absTotal = parseFloat((_amount + _tipAmount) - _refundAmount).toFixed(2);
+                    let refundDisabled = absTotal <= 0;
+                    let fullDisabled = absTotal < this.payment.amount;
+                    console.log('setting isRefund');
+                    this.setState({isRefund: true, refundDisabled: refundDisabled, fullRefundDisabled: fullDisabled});
+                }
+                else {
+                    this.setState({isRefund: true, refundDisabled: true, fullRefundDisabled: true});
+                }
+            }
+            if (this.payment.transactionType === 'VOIDED') {
+                this.setState({refundDisabled: true});
+            }
         }
     }
 
@@ -209,6 +222,10 @@ export default class Payment extends React.Component {
         let status = this.payment.status;
         let check = (status === 'SUCCESS');
 
+        let showReceipts = true;
+        if(this.payment.transactionTitle === 'Manual Refund'){
+            showReceipts = false;
+        }
         return(
             <div className="payments">
                 <h2>Payment Details</h2>
@@ -236,7 +253,9 @@ export default class Payment extends React.Component {
                                     <div><strong>{this.payment.transactionTitle}</strong></div>
                                     <div className="middle_grow"><strong>{date.toLocaleDateString([], {month: 'long', day: 'numeric', year: 'numeric'})}  •  {date.toLocaleTimeString()}</strong></div>
                                     <div><strong>{total}</strong></div>
+                                    {showReceipts &&
                                     <span className="show_receipts" onClick={this.showReceiptsSale}>RECEIPTS</span>
+                                    }
                                 </div>
                                 {check && <div className="row font_15"><Checkmark class="checkmark_small"/><div className="payment_successful">Payment successful</div></div>}
                                 <div className="payment_details_list">
