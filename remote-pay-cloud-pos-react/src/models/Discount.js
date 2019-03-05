@@ -32,11 +32,12 @@ export default class Discount {
     }
 
     appliedTo(sub) {
-        sub = parseFloat(sub).toFixed(2);
         if (this.getAmountOff() == 0) {
-            sub = (sub - (sub * this.getPercentageOff()));
+            sub = this.formatter.convertToFloat(sub);
+            sub = parseFloat(sub - (sub * this.getPercentageOff())).toFixed(2);
+            sub = this.formatter.convertFromFloat(sub);
         } else {
-            sub -= this.formatter.convertToFloat(this.amountOff);
+            sub -= this.amountOff;
         }
         return Math.max(sub, 0);
     }

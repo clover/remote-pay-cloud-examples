@@ -185,14 +185,13 @@ export default class Register extends React.Component {
         this.store.setSignatureEntryLocation(this.getSignatureValueForStore(this.state.signatureEntryLocation));
         //tipMode
         this.store.setTipMode(this.getTipValueForStore(this.state.tipMode));
-        this.store.setTipAmount(this.formatter.convertFromFloat(parseFloat(this.state.tipAmount).toFixed(2)));
+        this.store.setTipAmount(this.formatter.convertFromFloat((this.state.tipAmount)));
         this.store.setSignatureThreshold(this.formatter.convertFromFloat(parseFloat(this.state.sigThreshold).toFixed(2)));
         this.store.setDisableDuplicateChecking(this.state.disableDuplicate);
         this.store.setDisableReceiptOptions(this.state.disableReceipt);
         this.store.setDisablePrinting(this.state.disablePrinting);
         this.store.setAutomaticSignatureConfirmation(this.state.confirmSignature);
         this.store.setAutomaticPaymentConfirmation(this.state.confirmChallenges);
-
     }
 
     getOfflineValueForStore(input){  // gets offline value formatted for store
@@ -710,7 +709,7 @@ export default class Register extends React.Component {
         }
         this.setState({
             orderItems:this.order.getDisplayItems(),
-            subtotal:this.order.getPreTaxSubTotal(),
+            subtotal: this.order.getPreTaxSubTotal(),
             tax: this.order.getTaxAmount(),
             total: this.order.getTotal(),
             payNoItems: false,
@@ -731,6 +730,8 @@ export default class Register extends React.Component {
         const showPayMethods = this.state.showPaymentMethods;
         let showPreAuth = false;
         let showPreAuthHeader = false;
+        const preAuthAmount =  this.state.preAuthAmount !== undefined ? this.formatter.convertToFloatDisplay(this.state.preAuthAmount) : '';
+        const tipAmount = this.state.tipAmount !== undefined ? this.formatter.convertToFloatDisplay(this.state.tipAmount) : '';
         const showSaleMethods = this.state.showSaleMethod;
         let showTipSuggestions = this.state.showTipSuggestions;
         let showVaultedCard = this.state.areVaultedCards;
@@ -758,9 +759,9 @@ export default class Register extends React.Component {
         }
         let orderItems = this.state.orderItems;
         const promptPreAuth = this.state.promptPreAuth;
-        const subtotal = `$${parseFloat(this.state.subtotal).toFixed(2)}`;
-        const tax = `$${parseFloat(this.state.tax).toFixed(2)}`;
-        const total = `$${parseFloat(this.state.total).toFixed(2)}`;
+        const subtotal = this.formatter.convertToFloatDisplay(this.state.subtotal);
+        const tax = this.formatter.convertToFloatDisplay(this.state.tax);
+        const total = this.formatter.convertToFloatDisplay(this.state.total);
         const preAuthPopup = this.state.preAuthChosen;
         let tipProvided = (this.state.tipMode === 'TIP_PROVIDED');
         let sigThreshold = (this.state.signatureEntryLocation !== 'NONE' && this.state.signatureEntryLocation !== 'ON_PAPER');
@@ -790,10 +791,7 @@ export default class Register extends React.Component {
                         </div>
                         <div className="row center row_padding">
                             <div className="input_title">Enter Amount for PreAuth:</div>
-                            <div className="span_container">
-                                <span className="input_span">$</span>
-                                <input className="input_dollar_sign" type="text" value={this.state.preAuthAmount} onChange={this.changePreAuthAmount}/>
-                            </div>
+                            <input className="input_input" type="text" value={preAuthAmount} onChange={this.changePreAuthAmount}/>
                         </div>
                         <div className="row center margin_top">
                             <ButtonNormal title="Continue" extra="preauth_button" color="white" onClick={this.preAuthContinue} />
@@ -945,10 +943,8 @@ export default class Register extends React.Component {
                                 {tipProvided &&
                                 <div className="settings_row">
                                     <div>Tip Amount</div>
-                                    <div>
-                                        <span className="setting_span">$</span>
-                                        <input className="setting_input" type="text" value={this.state.tipAmount} onChange={this.changeTipAmount}/>
-                                    </div>
+                                    <input className="setting_input" type="text" value={tipAmount} onChange={this.changeTipAmount}/>
+
                                 </div>
                                 }
                                 <ButtonNormal title="Tip Suggestions" color="white"  extra="refund_button" onClick={this.showTipSuggestions}/>
