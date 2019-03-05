@@ -16,6 +16,7 @@ export default class Transaction {
         this.transactionType = '';
         this.refund = false;
         this.result = 'Successful';
+        this._tipAmount = '';
     }
 
     getAmount(){
@@ -120,5 +121,14 @@ export default class Transaction {
 
     setDeviceId(id){
         this.deviceId = id;
+    }
+
+
+    getTipAmount() {
+        return this._tipAmount;
+    }
+
+    setTipAmount(value) {
+        this._tipAmount = value;
     }
 }

@@ -52,7 +52,7 @@ export default class OrderPayment {
 
     getTipAmount(){
         if(this.tipAmount !== null){
-            return this.tipAmount;
+            return this.formatter.convertToFloat(this.tipAmount);
         }
         else{
             return 0;
@@ -76,7 +76,12 @@ export default class OrderPayment {
     }
 
     getTotal(){
-        return parseFloat(parseFloat(this.formatter.convertToFloat(this.amount)) + parseFloat(this.formatter.convertToFloat(this.getTipAmount()))).toFixed(2);
+        let amount =  this.formatter.convertToFloat(this.amount);
+        let tipAmount = this.getTipAmount();
+        console.log('getTotal tipAmount', tipAmount, 'amount', amount);
+        let total = parseFloat(parseFloat(amount) + parseFloat(tipAmount)).toFixed(2);
+        console.log('getTotal', total);
+        return total;
     }
 
     getTotalForRequest(){

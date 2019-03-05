@@ -455,7 +455,7 @@ h3{
     margin-top: 20px;
     flex-wrap: wrap;
     overflow-y: scroll;
-    max-height: 450px;
+    max-height: 550px;
 }
 
 .settings_section > h3{
@@ -618,7 +618,7 @@ h3{
     right: 0;
     box-shadow: 0 0 4px #000000;
     z-index: 2;
-    max-height: 600px;
+    max-height: 630px;
 }
 
 .settings > h3 {
@@ -676,8 +676,8 @@ h3{
 
 .setting_input{
     height: 24px;
-    width: 147px;
-    padding-left: 18px;
+    width: 155px;
+    padding-left: 10px;
     font-size: 12px;
 }
 
@@ -1074,7 +1074,7 @@ h3{
     margin-left: 10px;
     margin-right: 10px;
     font-size: 15px;
-    padding: 12px 30px;
+    padding: 8px 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }

@@ -16,7 +16,7 @@ export default class Refunds extends React.Component {
         this.formatter = new CurrencyFormatter;
         this.store = this.props.store;
         this.state = {
-            refundAmount: 0.00,
+            refundAmount: 0,
             refunds : this.store.getRefunds()
         };
 
@@ -26,10 +26,10 @@ export default class Refunds extends React.Component {
     }
 
     handleChange(e){    // handles refund amount change
-        this.setState({ refundAmount: parseFloat(e.target.value).toFixed(2)});
+        this.setState({ refundAmount: e.target.value});
     }
 
-    makeRefund(refund){       // makes manual refund
+    makeRefund(){       // makes manual refund
         let externalPaymentID = clover.CloverID.getNewId();
         document.getElementById('refund_input').value = '0.00';
 
@@ -37,25 +37,24 @@ export default class Refunds extends React.Component {
         request.setExternalId(externalPaymentID);
         request.setAmount(this.formatter.convertFromFloat(this.state.refundAmount));
         request.setCardEntryMethods(this.store.getCardEntryMethods());
+        this.setState({ refundAmount : 0 });
         console.log('ManualRefundRequest', request);
         this.cloverConnector.manualRefund(request);
     }
 
     goToRefund(refund){
-            browserHistory.push({pathname: '/payment', state: {type: 'refund', refund: refund.id}});
+        browserHistory.push({pathname: '/payment', state: {type: 'refund', refund: refund.id}});
     }
 
     render(){
         let refunds = this.store.getRefunds();
+        let refundAmount = this.state.refundAmount !== undefined ? this.formatter.convertToFloatDisplay(this.state.refundAmount) : '';
 
         return(
             <div className="refunds">
                 <div className="make_refund">
                     <div>Enter the Refund Amount:</div>
-                    <div>
-                        <span className="dollar_span_refund">$</span>
-                        <input id="refund_input" className="refund_input" type="text" defaultValue="0.00" onChange={this.handleChange}/>
-                    </div>
+                    <input id="refund_input" className="refund_input" type="text" value={refundAmount} onChange={this.handleChange}/>
                     <ButtonNormal extra="refund_button" title="Make Refund" color="white" onClick={this.makeRefund} />
                 </div>
                 <TitleBar title="Refunds"/>

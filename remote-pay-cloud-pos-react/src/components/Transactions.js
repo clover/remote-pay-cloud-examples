@@ -9,6 +9,7 @@ export default class Transactions extends React.Component {
         super(props);
         this.store = this.props.store;
         this.transactions = this.store.getTransactions();
+        console.log("transactions - getTransactions",this.transactions);
 
         this.goToPayment = this.goToPayment.bind(this);
     }

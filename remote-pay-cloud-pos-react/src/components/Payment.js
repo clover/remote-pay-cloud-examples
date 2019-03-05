@@ -97,7 +97,7 @@ export default class Payment extends React.Component {
     makePartialRefund(){
         this.setState({showPartialRefunds: false});
         let refund = new clover.sdk.remotepay.RefundPaymentRequest();
-        refund.setAmount(this.formatter.convertFromFloat(parseFloat(this.state.partialRefundAmount).toFixed(2)));
+        refund.setAmount(this.formatter.convertFromFloat(this.state.partialRefundAmount));
         refund.setPaymentId(this.payment.cloverPaymentId);
         refund.setOrderId(this.payment.cloverOrderId);
         refund.setFullRefund(false);
@@ -205,6 +205,7 @@ export default class Payment extends React.Component {
             tipAmount = '0.00';
             tipText = 'Add Tip';
         }
+        const partialRefundAmount = this.state.partialRefundAmount !== undefined ? this.formatter.convertToFloatDisplay(this.state.partialRefundAmount) : '';
         const showPartialRefunds = this.state.showPartialRefunds;
         const showRefunds = this.state.showRefund;
         let showTipAdj = this.state.showTipAdjust;
@@ -235,10 +236,7 @@ export default class Payment extends React.Component {
                         <div className="row center row_padding"><strong>Payment Refund</strong></div>
                         <div className="row center row_padding">
                             <div className="input_title">Enter Refund Amount:</div>
-                            <div className="span_container">
-                                <span className="input_span">$</span>
-                                <input className="input_dollar_sign" type="text" value={this.state.partialRefundAmount} onChange={this.changePartialRefundAmount}/>
-                            </div>
+                            <input className="input_input" type="text" value={partialRefundAmount} onChange={this.changePartialRefundAmount}/>
                         </div>
                         <div className="row center row_padding">
                             <ButtonNormal title="Make Full Refund" extra="partial_refund_button" color="white" onClick={this.makeRefund} disabled={this.state.fullRefundDisabled}/>

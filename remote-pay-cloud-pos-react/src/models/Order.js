@@ -132,29 +132,30 @@ export default class Order {
         this.displayItems.forEach(function(item){
             let _item = this.getItemById(item.id);
             if (_item.getTaxable()) {
-                sub = parseFloat(parseFloat(sub) + (this.formatter.convertToFloat(_item.price) * item.quantity));
+                sub = parseFloat(parseFloat(sub) + (this.formatter.convertFromFloat(item.price)  * item.quantity));
             }
         }, this);
         if (this.discount != null) {
             sub = this.discount.appliedTo(sub);
         }
-        return parseFloat(sub).toFixed(2);
+        return this.formatter.convertToFloat(sub);
     }
 
     getPreTaxSubTotal() {
         let sub = 0;
         this.displayItems.forEach(function(item){
-            let _item = this.getItemById(item.id);
-            sub = parseFloat(parseFloat(sub) + (this.formatter.convertToFloat(_item.price) * item.quantity));
+            sub = parseFloat(parseFloat(sub) + (this.formatter.convertFromFloat(item.price) * item.quantity));
         }, this);
         if (this.discount != null) {
             sub = this.discount.appliedTo(sub);
         }
-        return parseFloat(sub).toFixed(2);
+        return this.formatter.convertToFloat(sub);
     }
 
     getTaxAmount() {
-        let taxAmount = parseFloat(this.getTaxableSubtotal() * 0.07).toFixed(2);
+        let taxable = this.getTaxableSubtotal();
+        taxable = taxable.replace('$', '');
+        let taxAmount = parseFloat(taxable * 0.07).toFixed(2);
         return taxAmount;
     }
 

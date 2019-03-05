@@ -74,14 +74,14 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
     }
 
     onDeviceReady(merchantInfo){ // called when the Clover device is ready to communicate
-        console.log('onDeviceReady', merchantInfo);
+        // console.log('onDeviceReady', merchantInfo);
         this.store.setStoreName(merchantInfo.merchantName);
         this.store.setDeviceId(merchantInfo.deviceInfo.serial);
         this.toggleConnection(true);
     }
 
     onReady(merchantInfo){
-        console.log('onReady', merchantInfo);
+        // console.log('onReady', merchantInfo);
         this.onDeviceReady(merchantInfo);
     }
     //</editor-fold>
@@ -539,10 +539,11 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
         orderPayment.cloverOrderId = payment.order.id;
         orderPayment.cardType = payment.cardTransaction.cardType;
         orderPayment.transactionTitle = type;
+        console.log(orderPayment);
         return orderPayment;
     }
 
-    createTransactionFromOrderPayment(payment, result){     // creates a new Transaction object from payment
+    createTransactionFromOrderPayment(payment, result){// creates a new Transaction object from payment
         let transaction = new Transaction();
         transaction.amount = payment.getTotal();
         transaction.cardDetails = payment.getCardDetails();
@@ -553,6 +554,9 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
         transaction.tender = payment.getTender();
         transaction.transactionType = payment.getTransactionType();
         transaction.transactionTitle = payment.getTransactionTitle();
+        let tipAmount = payment.getTipAmount().toString();
+        transaction.tipAmount = payment.getTipAmount().toString();
+        console.log(transaction);
         return transaction;
     }
 
