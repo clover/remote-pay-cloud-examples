@@ -2,7 +2,7 @@
 
 # Remote Pay Cloud Examples
 
-Please see the [Getting Started with Clover Connector tutorial](https://docs.clover.com/build/getting-started-with-clover-connector/) for more information and a list of prerequisites.
+Please see the [Getting Started with Clover Connector tutorial](https://docs.clover.com/clover-platform/docs/cloud-sdk-v3) for more information and a list of prerequisites.
 
 ## remote-pay-cloud-starter
 A simple web application that demonstrates how to connect to a Clover device through the Clover Cloud Connector APIs and perform a few simple operations.
