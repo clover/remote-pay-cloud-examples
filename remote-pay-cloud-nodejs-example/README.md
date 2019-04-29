@@ -3,7 +3,7 @@
 This example contains a simple Node.js application that demonstrates how to connect to a Clover device using the Clover Javascript Cloud Connector. It also shows how to communicate with the device to display information, transact sales, and perform other operations.
 
 ## Requirements
-- Node.js. We recommend [v6.11.3 LTS](https://nodejs.org/en/).  
+- Node.js. We recommend [10.15.3 LTS](https://nodejs.org/en/).  
 
 ## Running the example
 
@@ -18,8 +18,8 @@ $ node ./lib/ExampleCLI.js
 The JavaScript Cloud Connector requires WebSocket and XMLHttpRequest (cloud only) implementations. The browser provides these implementations when using the Cloud Connector in a web application. However, implementations must be provided in a Node.js environment. Implementations can be found on npm. We've included a list of libraries that work with the JavaScript Cloud Connector below.
 
 - WebSocket
-    - [ws 3.2.0](https://www.npmjs.com/package/ws) (recommended) - This library works out of the box with the JavaScript Cloud Connector.
-    - [nodejs-websocket 1.7.1](https://www.npmjs.com/package/nodejs-websocket) (alternative) - While this library works with the JavaScript Cloud Connector, the `CloverWebSocketInterface.connect` method must be overridden, due to API differences. From `./lib/support/ExampleWebSocketFactory.js`:
+    - [ws](https://www.npmjs.com/package/ws) (recommended) - This library works out of the box with the JavaScript Cloud Connector.
+    - [nodejs-websocket](https://www.npmjs.com/package/nodejs-websocket) (alternative) - While this library works with the JavaScript Cloud Connector, the `CloverWebSocketInterface.connect` method must be overridden, due to API differences. From `./lib/support/ExampleWebSocketFactory.js`:
     
     ```javascript
       webSocketOverrides["connect"] = function () {
