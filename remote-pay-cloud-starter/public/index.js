@@ -103,7 +103,7 @@ const cloudExample = () => {
          * It is important to properly dispose of your Clover Connector, this function is called in window.onbeforeunload in index.html.
          */
         cleanup: function () {
-            //getCloverConnector().dispose();
+            getCloverConnector().dispose();
             toggleActions(false);
             updateStatus("Not connected to your Clover device.  Please refresh the page to re-connect and perform an action.");
         }
@@ -121,7 +121,6 @@ const cloudExample = () => {
             connectionConfiguration.deviceId, connectionConfiguration.merchantId, connectionConfiguration.accessToken);
         configBuilder.setCloverServer(connectionConfiguration.cloverServer);
         configBuilder.setFriendlyId(connectionConfiguration.friendlyId);
-        configBuilder.setHeartbeatInterval(10000);
         return configBuilder.build();
     }
 
