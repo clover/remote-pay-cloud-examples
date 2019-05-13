@@ -10,10 +10,10 @@ const cloudExample = () => {
      * Clover Connector tutorial for more information - https://docs.clover.com/build/getting-started-with-cloverconnector/?sdk=browser.
      */
 
-        // Set useCloudConfiguration to true to use Cloud Pay Display, or false to use Secure Network Pay Display.
-        // If useCloudConfiguration is true you must properly set baseConfiguration and cloudConfiguration below.
-        // If useCloudConfigruation is false you must set baseConfiguration and networkConfiguration below.
-    const useCloudConfiguration = false;
+    // Set useCloudConfiguration to true to use Cloud Pay Display, or false to use Secure Network Pay Display.
+    // If useCloudConfiguration is true you must properly set baseConfiguration and cloudConfiguration below.
+    // If useCloudConfigruation is false you must set baseConfiguration and networkConfiguration below.
+    const useCloudConfiguration = true;
 
     // Shared by both Network and Cloud configurations.
     // Enter your app's Remote Application Id below!
@@ -65,7 +65,8 @@ const cloudExample = () => {
             let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(builderConfiguration);
             let cloverConnector = cloverConnectorFactory.createICloverConnector(cloverDeviceConnectionConfiguration);
             setCloverConnector(cloverConnector);
-            cloverConnector.addCloverConnectorListener(buildCloverConnectionListener(cloverConnector));
+            // We recommend creating a single listener right after creating and initializing the connector.
+            cloverConnector.addCloverConnectorListener(buildCloverConnectionListener());
             cloverConnector.initializeConnection();
         },
 
@@ -94,38 +95,6 @@ const cloudExample = () => {
             saleRequest.setAmount(10);
             saleRequest.setAutoAcceptSignature(false);
             console.log({message: "Sending sale", request: saleRequest});
-
-            let defaultCloverConnectorListener = buildCloverConnectionListener();
-            // Add a Clover Listener to handle Sale responses.
-            getCloverConnector().addCloverConnectorListener(Object.assign({}, defaultCloverConnectorListener, {
-
-                onSaleResponse: function (response) {
-                    updateStatus("Sale complete.", response.result === "SUCCESS");
-                    setTimeout(() => updateStatus("Please select an action to execute"), 5000);
-                    console.log({message: "Sale response received", response: response});
-                    if (!response.getIsSale()) {
-                        console.log({error: "Response is not a sale!"});
-                    }
-                },
-
-                // See https://docs.clover.com/build/working-with-challenges/
-                onConfirmPaymentRequest: function (request) {
-                    console.log({message: "Automatically accepting payment", request: request});
-                    updateStatus("Automatically accepting payment");
-                    getCloverConnector().acceptPayment(request.getPayment());
-                    // to reject a payment, pass the payment and the challenge that was the basis for the rejection
-                    // getCloverConnector().rejectPayment(request.getPayment(), request.getChallenges()[REJECTED_CHALLENGE_INDEX]);
-                },
-
-                // See https://docs.clover.com/build/working-with-challenges/
-                onVerifySignatureRequest: function (request) {
-                    console.log({message: "Automatically accepting signature", request: request});
-                    updateStatus("Automatically accepting signature");
-                    getCloverConnector().acceptSignature(request);
-                    // to reject a signature, pass the request to verify
-                    // getCloverConnector().rejectSignature(request);
-                }
-            }));
             // Perform the sale.
             getCloverConnector().sale(saleRequest);
         },
@@ -134,7 +103,7 @@ const cloudExample = () => {
          * It is important to properly dispose of your Clover Connector, this function is called in window.onbeforeunload in index.html.
          */
         cleanup: function () {
-            getCloverConnector().dispose();
+            //getCloverConnector().dispose();
             toggleActions(false);
             updateStatus("Not connected to your Clover device.  Please refresh the page to re-connect and perform an action.");
         }
@@ -152,6 +121,7 @@ const cloudExample = () => {
             connectionConfiguration.deviceId, connectionConfiguration.merchantId, connectionConfiguration.accessToken);
         configBuilder.setCloverServer(connectionConfiguration.cloverServer);
         configBuilder.setFriendlyId(connectionConfiguration.friendlyId);
+        configBuilder.setHeartbeatInterval(10000);
         return configBuilder.build();
     }
 
@@ -171,10 +141,8 @@ const cloudExample = () => {
             console.log(`    > Got Pairing Auth Token: ${authToken}`);
             setAuthToken(authToken);
         };
-
         const configBuilder = new clover.WebSocketPairedCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
             connectionConfiguration.endpoint, connectionConfiguration.posName, connectionConfiguration.serialNumber, connectionConfiguration.authToken, onPairingCode, onPairingSuccess);
-
         return configBuilder.build();
     }
 
@@ -201,6 +169,33 @@ const cloudExample = () => {
                 updateStatus("The connection to your Clover Device has been dropped.", false);
                 console.log({message: "Disconnected"});
                 toggleActions(false);
+            },
+
+            onSaleResponse: function (response) {
+                updateStatus("Sale complete.", response.result === "SUCCESS");
+                setTimeout(() => updateStatus("Please select an action to execute"), 5000);
+                console.log({message: "Sale response received", response: response});
+                if (!response.getIsSale()) {
+                    console.log({error: "Response is not a sale!"});
+                }
+            },
+
+            // See https://docs.clover.com/build/working-with-challenges/
+            onConfirmPaymentRequest: function (request) {
+                console.log({message: "Automatically accepting payment", request: request});
+                updateStatus("Automatically accepting payment");
+                getCloverConnector().acceptPayment(request.getPayment());
+                // to reject a payment, pass the payment and the challenge that was the basis for the rejection
+                // getCloverConnector().rejectPayment(request.getPayment(), request.getChallenges()[REJECTED_CHALLENGE_INDEX]);
+            },
+
+            // See https://docs.clover.com/build/working-with-challenges/
+            onVerifySignatureRequest: function (request) {
+                console.log({message: "Automatically accepting signature", request: request});
+                updateStatus("Automatically accepting signature");
+                getCloverConnector().acceptSignature(request);
+                // to reject a signature, pass the request to verify
+                // getCloverConnector().rejectSignature(request);
             }
 
         });
