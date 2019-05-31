@@ -11,18 +11,28 @@ const cloudExample = () => {
             if (!connectionConfiguration) {
                 connectionConfiguration = buildConnectionConfigFromWebForm();
             }
-            toggleElement("connectionForm", false);
             clover.DebugConfig.loggingEnabled = true;
             let cloverDeviceConnectionConfiguration = null;
             if (isCloudConfig()) {
+                const cloudFormValid = document.getElementById("cloudForm").checkValidity();
+                if (!cloudFormValid) {
+                    updateStatus("The connection configuration is not valid.", false);
+                    return false;
+                }
                 updateStatus("Attempting to connect to your Clover device, please wait  ....");
                 // Configuration Note: See: https://docs.clover.com/build/getting-started-with-clover-connector/?sdk=browser for more information
                 // on how to obtain the required connection parameter values.
                 cloverDeviceConnectionConfiguration = getDeviceConfigurationForCloud(connectionConfiguration);
             } else {
+                const networkFormValid = document.getElementById("networkForm").checkValidity();
+                if (!networkFormValid) {
+                    updateStatus("The connection configuration is not valid.", false);
+                    return false;
+                }
                 updateStatus("Attempting to connect to your Clover device, you may need to enter the manager PIN, please wait  ....");
                 cloverDeviceConnectionConfiguration = getDeviceConfigurationForNetwork(connectionConfiguration);
             }
+            toggleElement("connectionForm", false);
             let builderConfiguration = {};
             builderConfiguration[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
             let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(builderConfiguration);
