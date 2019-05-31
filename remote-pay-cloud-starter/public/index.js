@@ -16,7 +16,7 @@ const cloudExample = () => {
             if (isCloudConfig()) {
                 const cloudFormValid = document.getElementById("cloudForm").checkValidity();
                 if (!cloudFormValid) {
-                    updateStatus("The connection configuration is not valid.", false);
+                    updateStatus("The connection configuration is not valid.  Please update the form below and try again.", false);
                     return false;
                 }
                 updateStatus("Attempting to connect to your Clover device, please wait  ....");
@@ -26,7 +26,7 @@ const cloudExample = () => {
             } else {
                 const networkFormValid = document.getElementById("networkForm").checkValidity();
                 if (!networkFormValid) {
-                    updateStatus("The connection configuration is not valid.", false);
+                    updateStatus("The connection configuration is not valid.  Please update the form below and try again.", false);
                     return false;
                 }
                 updateStatus("Attempting to connect to your Clover device, you may need to enter the manager PIN, please wait  ....");
