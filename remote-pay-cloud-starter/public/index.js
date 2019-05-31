@@ -8,6 +8,7 @@ const cloudExample = () => {
          * Establishes a connection to the Clover device based on the configuration provided.
          */
         connect: function (connectionConfiguration = null) {
+            this.cleanup(); // any existing connections.
             if (!connectionConfiguration) {
                 connectionConfiguration = buildConnectionConfigFromWebForm();
             }
@@ -75,9 +76,11 @@ const cloudExample = () => {
          * It is important to properly dispose of your Clover Connector, this function is called in window.onbeforeunload in index.html.
          */
         cleanup: function () {
-            getCloverConnector().dispose();
-            toggleElement("actions", false);
-            updateStatus("Not connected to your Clover device.  Please refresh the page to re-connect and perform an action.");
+            if (getCloverConnector()) {
+                getCloverConnector().dispose();
+                toggleElement("actions", false);
+                updateStatus("Not connected to your Clover device.  Please refresh the page to re-connect and perform an action.");
+            }
         },
 
         showNetworkInfo: function() {
@@ -208,6 +211,7 @@ const cloudExample = () => {
 
             onDeviceError: function (cloverDeviceErrorEvent) {
                 updateStatus(`An error has occurred and we could not connect to your Clover Device. ${cloverDeviceErrorEvent.message}`, false);
+                toggleElement("connectionForm", true);
                 toggleElement("actions", false);
             },
 

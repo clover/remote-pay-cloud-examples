@@ -35,7 +35,7 @@
       </small>
     </div>
     <div class="form-group" id="networkInfo" style="display:none">
-      <form id="networkForm" class="needs-validation" novalidate>
+      <form id="networkForm" class="needs-validation" novalidate onsubmit="connect(); return false;">
         <div class="form-row">
           <div class="col-md-4 mb-3">
             <label for="snpdAppId">Application ID</label>
@@ -78,13 +78,13 @@
             </small>
           </div>
         </div>
-        <button type="submit" onclick="connect();" class="btn btn-success">
+        <button type="submit" class="btn btn-success">
           Connect to your Clover device
         </button>
       </form>
     </div>
     <div class="form-group" id="cloudInfo" style="display:none">
-      <form id="cloudForm" class="needs-validation" novalidate>
+      <form id="cloudForm" class="needs-validation" onsubmit="connect(); return false;" novalidate>
         <div class="form-row">
           <div class="col-md-4 mb-3">
             <label for="cloudAppId">Application ID</label>
@@ -146,7 +146,7 @@
             </small>
           </div>
         </div>
-        <button type="submit" onclick="connect();" class="btn btn-success">
+        <button type="submit" class="btn btn-success">
           Connect to your Clover device
         </button>
       </form>
