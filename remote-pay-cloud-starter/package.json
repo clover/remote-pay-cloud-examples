@@ -1,5 +1,5 @@
 {
-  "name": "remote-pay-cloud-nodejs-example",
+  "name": "remote-pay-cloud-starter-example",
   "description": "An example web application that uses the Clover Remote APIs to connect to a Clover Device and perform some basic operations.",
   "version": "1.0.0",
   "license": "ISC",
@@ -20,7 +20,7 @@
     "bootstrap": "^4.1.2",
     "copyfiles": "^1.2.0",
     "express": "^4.15.3",
-    "remote-pay-cloud": "~3.0.0",
+    "remote-pay-cloud": "^3.1.0",
     "webpack": "^3.4.0"
   }
 }

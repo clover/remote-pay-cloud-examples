@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="eng">
-<head>
+<head title="remote-pay-cloud starter">
   <link rel="stylesheet" href="built/bootstrap.css">
-  <script src="built/babel.js"></script>
-  <script src="built/cloudExample.js"></script>
   <style>
     .top-buffer {
       margin-top: 10px
@@ -11,35 +9,150 @@
   </style>
 </head>
 <body>
-<script>
-    const cloudExample = clover.cloudExample();
-    cloudExample.connect();
-
-    function showMessage() {
-        cloudExample.showMessage();
-    }
-
-    function performSale() {
-        cloudExample.performSale();
-    }
-
-    function resetDevice() {
-        cloudExample.resetDevice();
-    }
-
-    window.onbeforeunload = function() {
-        cloudExample.cleanup();
-    };
-
-</script>
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+  <h5 class="my-0 mr-md-auto font-weight-normal"><img alt="Clover logo" src="clover_logo.png" width="250"/></h5>
+</div>
 <div class="container">
-  <div class="row top-buffer">
-    <img src="clover_logo.png" width="700" height="150"/>
+  <div class="row top-buffer" id="statusContainer" style="display:none">
+    <div id="statusMessage" class="alert alert-warning"></div>
   </div>
-  <div class="row top-buffer">
-    <div id="status" class="alert alert-warning">Connecting to your Clover device, standby ....</div>
+  <div class="form-group" id="connectionForm">
+    <label for="connectionType" style="display: block">Connect with</label>
+    <div class="btn-group" id="connectionType" role="group">
+      <button onclick="showNetworkInfo()" type="button" class="btn btn-secondary">Network</button>
+      <button onclick="showCloudInfo()" type="button" class="btn btn-secondary">Cloud</button>
+    </div>
+    <div>
+      <small class="form-text text-muted"><span class="font-weight-bold">For Network:</span>You must have Secure Network
+        Pay Display installed and running on
+        your Clover device. If you would like to use a secure connection (wss) you will need to have the Clover Device
+        certificate installed in your web browser.
+      </small>
+    </div>
+    <div>
+      <small class="form-text text-muted"><span class="font-weight-bold">For Cloud:</span> You must have Cloud Pay
+        Display installed on your Clover device.
+      </small>
+    </div>
+    <div class="form-group" id="networkInfo" style="display:none">
+      <form>
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="snpdAppId">Application ID</label>
+            <input type="text" class="form-control" id="snpdAppId" aria-describedby="snpdAppIdHelp" required>
+            <small id="snpdAppIdHelp" class="form-text text-muted">The <a
+                href="https://docs.clover.com/clover-platform/docs/create-your-remote-app-id" target="_blank">remote
+              application ID
+              (RAID)</a>
+              of the POS app.
+            </small>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="endpoint">Enter the URI of your device</label>
+            <input type="text" class="form-control" id="endpoint" aria-describedby="deviceUriHelp"
+                   value="ws://enter-device-ip:12345/remote_pay" required>
+            <small id="deviceUriHelp" class="form-text text-muted">The URI is displayed on the start screen of Secure
+              Network
+              Pay Display.
+            </small>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="posName">POS Name</label>
+            <input type="text" class="form-control" id="posName" aria-describedby="posNameHelp" value="CloudStarterPOS"
+                   required>
+            <small id="posNameHelp" class="form-text text-muted">A name displayed during pairing to identify the POS
+              attempting
+              to connect to the device.
+            </small>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="serialNumber">POS Serial Number/Identifier</label>
+            <input type="text" class="form-control" id="serialNumber" aria-describedby="serialNumberHelp"
+                   value="Register_1"
+                   required>
+            <small id="serialNumberHelp" class="form-text text-muted">The serial number/identifier of the POS, as
+              displayed in
+              the Secure Network Pay Display app. Note: This is not the same as the Clover device’s serial number.
+            </small>
+          </div>
+        </div>
+        <button type="submit" onclick="connect(); return false;" class="btn btn-success">
+          Connect to your Clover device
+        </button>
+      </form>
+    </div>
+    <div class="form-group" id="cloudInfo" style="display:none">
+      <form>
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="cloudAppId">Application ID</label>
+            <input type="text" class="form-control" id="cloudAppId" aria-describedby="cloudAppIdHelp" required>
+            <small id="cloudAppIdHelp" class="form-text text-muted">The <a
+                href="https://docs.clover.com/clover-platform/docs/create-your-remote-app-id" target="_blank">remote
+              application ID (RAID)</a>
+              of the POS app.
+            </small>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="accessToken">Access Token</label>
+            <input type="text" class="form-control" id="accessToken" aria-describedby="accessTokenHelp" required>
+            <small id="accessTokenHelp" class="form-text text-muted">The OAuth token used when contacting the Clover
+              server.
+              The steps for obtaining the token are available <a
+                  href="https://docs.clover.com/clover-platform/docs/using-oauth-20" target="_blank">on the Using OAuth
+                2.0
+                page</a>.
+            </small>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="cloverServer">Clover Server</label>
+            <input type="text" class="form-control" id="cloverServer" aria-describedby="cloverServerHelp"
+                   value="https://sandbox.dev.clover.com/" required>
+            <small id="cloverServerHelp" class="form-text text-muted">The base URL for the Clover server used in the
+              cloud
+              connection (for example, https://www.clover.com or https://sandbox.dev.clover.com/
+            </small>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="merchantId">Merchant ID</label>
+            <input type="text" class="form-control" id="merchantId" aria-describedby="merchantIdHelp" required>
+            <small id="merchantIdHelp" class="form-text text-muted">The steps for finding your merchantId are available
+              <a
+                  href="https://docs.clover.com/clover-platform/docs/merchant-id-and-api-token-for-development"
+                  target="_blank">on the Test Merchant IDs & API Tokens page</a>.
+            </small>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="deviceId">Device ID</label>
+            <input type="text" class="form-control" id="deviceId" aria-describedby="deviceIdHelp" required>
+            <small id="deviceIdHelp" class="form-text text-muted">To obtain the deviceId, you must first retrieve an
+              accessToken and your merchantId. Then, make the following GET request to the Clover REST API:
+              https://{cloverServer}/v3/merchants/{merchantId}/devices?access_token={accessToken}
+            </small>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="friendlyId">Friendly ID</label>
+            <input type="text" class="form-control" id="friendlyId" aria-describedby="friendlyIdHelp" value="Register_1"
+                   required>
+            <small id="friendlyIdHelp" class="form-text text-muted">An identifier for the specific terminal connected to
+              this device. This ID is used in debugging and may be sent to other clients if they attempt to connect to
+              the
+              same device. Clover will also send it to other clients that are currently connected if the device does a
+              forceConnect.
+            </small>
+          </div>
+        </div>
+        <button type="submit" onclick="connect(); return false;" class="btn btn-success">
+          Connect to your Clover device
+        </button>
+      </form>
+    </div>
   </div>
-  <div class="row top-buffer" id="actions" style="display:none;">
+  <div class="row top-buffer" id="actions" style="display:none">
     <div class="col-lg-12">
       <div class="btn-group">
         <button type="button" onclick="performSale()" class="btn btn-success">Perform a sale
@@ -53,4 +166,38 @@
   </div>
 </div>
 </body>
+<script src="built/babel.js"></script>
+<script src="built/cloudExample.js"></script>
+<script>
+    const cloudExample = clover.cloudExample();
+
+    function connect() {
+        cloudExample.connect();
+    }
+
+    function showMessage() {
+        cloudExample.showMessage();
+    }
+
+    function performSale() {
+        cloudExample.performSale();
+    }
+
+    function resetDevice() {
+        cloudExample.resetDevice();
+    }
+
+    function showNetworkInfo() {
+        cloudExample.showNetworkInfo();
+    }
+
+    function showCloudInfo() {
+        cloudExample.showCloudInfo();
+    }
+
+    window.onbeforeunload = function () {
+        cloudExample.cleanup();
+    };
+
+</script>
 </html>
