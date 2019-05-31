@@ -17,3 +17,5 @@ This will start a local server on port 3000. You can then navigate to http://loc
     
 ## Prerequisites
 Please see the [Getting Started with Clover Connector tutorial](https://docs.clover.com/clover-platform/docs/cloud-sdk-v3) for more information and a list of prerequisites.
+
+Please see our [codelab](https://github.com/clover/codelab-remote-pay-cloud) for a tutorial style walkthrough of Remote Pay Cloud.
