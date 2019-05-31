@@ -9,7 +9,8 @@
   },
   "scripts": {
     "build": "webpack && copyfiles -u 4 \"./node_modules/bootstrap/dist/css/bootstrap.css\" \"public/built\"",
-    "start": "node server.js"
+    "start": "node server.js",
+    "watch": "webpack --watch"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
