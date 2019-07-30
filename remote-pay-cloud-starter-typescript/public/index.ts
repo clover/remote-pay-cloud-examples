@@ -18,7 +18,7 @@ const cloudExample = () => {
             clover.DebugConfig.loggingEnabled = true;
             let cloverDeviceConnectionConfiguration = null;
             if (isCloudConfig()) {
-                const cloudFormValid = document.getElementById("cloudForm").checkValidity();
+                const cloudFormValid = (document.getElementById("cloudForm") as HTMLInputElement).checkValidity();
                 if (!cloudFormValid) {
                     updateStatus("The connection configuration is not valid.  Please update the form below and try again.", false);
                     return false;
@@ -28,7 +28,7 @@ const cloudExample = () => {
                 // on how to obtain the required connection parameter values.
                 cloverDeviceConnectionConfiguration = getDeviceConfigurationForCloud(connectionConfiguration);
             } else {
-                const networkFormValid = document.getElementById("networkForm").checkValidity();
+                const networkFormValid = (document.getElementById("networkForm") as HTMLInputElement).checkValidity();
                 if (!networkFormValid) {
                     updateStatus("The connection configuration is not valid.  Please update the form below and try again.", false);
                     return false;
@@ -41,7 +41,8 @@ const cloudExample = () => {
             builderConfiguration[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
             let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(builderConfiguration);
             cloverConnector = cloverConnectorFactory.createICloverConnector(cloverDeviceConnectionConfiguration);
-            cloverConnector.addCloverConnectorListener(buildCloverConnectionListener());
+            // Work-around for typings issue in 3.1.0.  This will be fixed in the next release.
+            (cloverConnector as any).addCloverConnectorListener(buildCloverConnectionListener());
             cloverConnector.initializeConnection();
         },
 
@@ -103,17 +104,17 @@ const cloudExample = () => {
     function buildConnectionConfigFromWebForm() {
         const config = {};
         if (isCloudConfig()) {
-            config["applicationId"] = document.getElementById("cloudAppId").value;
-            config["accessToken"] = document.getElementById("accessToken").value;
-            config["cloverServer"] = document.getElementById("cloverServer").value;
-            config["merchantId"] = document.getElementById("merchantId").value;
-            config["deviceId"] = document.getElementById("deviceId").value;
-            config["friendlyId"] = document.getElementById("friendlyId").value;
+            config["applicationId"] = (document.getElementById("cloudAppId") as HTMLInputElement).value;
+            config["accessToken"] = (document.getElementById("accessToken") as HTMLInputElement).value;
+            config["cloverServer"] = (document.getElementById("cloverServer") as HTMLInputElement).value;
+            config["merchantId"] = (document.getElementById("merchantId") as HTMLInputElement).value;
+            config["deviceId"] = (document.getElementById("deviceId") as HTMLInputElement).value;
+            config["friendlyId"] = (document.getElementById("friendlyId") as HTMLInputElement).value;
         } else {
-            config["applicationId"] = document.getElementById("snpdAppId").value;
-            config["endpoint"] = document.getElementById("endpoint").value;
-            config["posName"] = document.getElementById("posName").value;
-            config["serialNumber"] = document.getElementById("serialNumber").value;
+            config["applicationId"] = (document.getElementById("snpdAppId") as HTMLInputElement).value;
+            config["endpoint"] = (document.getElementById("endpoint") as HTMLInputElement).value;
+            config["posName"] = (document.getElementById("posName") as HTMLInputElement).value;
+            config["serialNumber"] = (document.getElementById("serialNumber") as HTMLInputElement).value;
             config["authToken"] = authToken;
         }
         return config;
@@ -131,7 +132,8 @@ const cloudExample = () => {
      * @returns {WebSocketCloudCloverDeviceConfiguration}
      */
     function getDeviceConfigurationForCloud(connectionConfiguration) {
-        const configBuilder = new clover.WebSocketCloudCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
+        // Work-around for typings issue in 3.1.0.  This will be fixed in the next release.
+        const configBuilder = new (clover as any).WebSocketCloudCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
             connectionConfiguration.deviceId, connectionConfiguration.merchantId, connectionConfiguration.accessToken);
         configBuilder.setCloverServer(connectionConfiguration.cloverServer);
         configBuilder.setFriendlyId(connectionConfiguration.friendlyId);
@@ -160,7 +162,8 @@ const cloudExample = () => {
             authToken = authTokenFromPairing;
         };
 
-        const configBuilder = new clover.WebSocketPairedCloverDeviceConfigurationBuilder(
+        // Work-around for typings issue in 3.1.0.  This will be fixed in the next release.
+        const configBuilder = new (clover as any).WebSocketPairedCloverDeviceConfigurationBuilder(
             connectionConfiguration.applicationId,
             connectionConfiguration.endpoint,
             connectionConfiguration.posName,
@@ -192,7 +195,7 @@ const cloudExample = () => {
                 updateStatus("Automatically accepting payment", true);
                 cloverConnector.acceptPayment(request.getPayment());
                 // to reject a payment, pass the payment and the challenge that was the basis for the rejection
-                // cloverConnector.rejectPayment(request.getPayment(), request.getChallenges()[REJECTED_CHALLENGE_INDEX]);
+                // getCloverConnector().rejectPayment(request.getPayment(), request.getChallenges()[REJECTED_CHALLENGE_INDEX]);
             },
 
             // See https://docs.clover.com/build/working-with-challenges/
@@ -201,7 +204,7 @@ const cloudExample = () => {
                 updateStatus("Automatically accepting signature", true);
                 cloverConnector.acceptSignature(request);
                 // to reject a signature, pass the request to verify
-                // cloverConnector.rejectSignature(request);
+                // getCloverConnector().rejectSignature(request);
             },
 
             onDeviceReady: function (merchantInfo) {
@@ -236,7 +239,7 @@ const cloudExample = () => {
         }
     }
 
-    function updateStatus(message, success) {
+    function updateStatus(message, success = false) {
         toggleElement("statusContainer", true);
         const statusEle = document.getElementById("statusMessage");
         statusEle.innerHTML = message;

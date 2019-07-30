@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "lib": ["es2015", "es2017", "dom"],
+        "outDir": "./built",
+        "moduleResolution": "node",
+        "declaration": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true
+    }
+}
