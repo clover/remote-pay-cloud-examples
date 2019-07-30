@@ -1,7 +1,7 @@
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = {
+    mode: "development",
     entry: {
         "babel": "babel-polyfill",
         "cloudExample": "./public/index.js"

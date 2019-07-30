@@ -1,0 +1,7 @@
+/.idea
+/ideaConfig
+/node_modules
+/npm-debug.log
+built
+*.js
+index.d.ts

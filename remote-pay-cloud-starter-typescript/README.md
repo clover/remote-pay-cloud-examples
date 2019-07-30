@@ -1,11 +1,11 @@
-# Remote Pay Cloud Starter
+# Remote Pay Cloud Starter TypeScript
 
-This repository contains a sample web application that uses Clover Connector to connect to a Clover device and perform basic operations.
+This repository contains a sample web application written in TypeScript that uses Clover Connector to connect to a Clover device and perform basic operations.
 
 To clone this repository, enter the following on the command line:
 
     git clone git@github.com:clover/remote-pay-cloud-examples.git
-    cd remote-pay-cloud-starter
+    cd remote-pay-cloud-starter-typescript
    
 Next, you can build and run the application locally with the following commands:
   
@@ -13,7 +13,7 @@ Next, you can build and run the application locally with the following commands:
     npm run build
     npm start 
     
-If you are prompted to download the webpack-cli, select yes.       
+If you are prompted to download the webpack-cli, select yes.    
     
 This will start a local server on port 3000. You can then navigate to http://localhost:3000 to view the application.    
     
