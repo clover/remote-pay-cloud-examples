@@ -1,5 +1,5 @@
 {
-  "name": "remote-pay-cloud-starter-example",
+  "name": "remote-pay-cloud-starter-example-typescript",
   "description": "An example web application that uses the Clover Remote APIs to connect to a Clover Device and perform some basic operations.",
   "version": "1.0.0",
   "license": "ISC",

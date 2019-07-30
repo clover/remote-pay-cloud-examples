@@ -1,4 +1,4 @@
-# Remote Pay Cloud Starter
+# Remote Pay Cloud Starter TypeScript
 
 This repository contains a sample web application written in TypeScript that uses Clover Connector to connect to a Clover device and perform basic operations.
 
