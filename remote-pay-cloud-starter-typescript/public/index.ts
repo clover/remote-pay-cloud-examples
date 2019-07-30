@@ -2,44 +2,44 @@ import * as clover from "remote-pay-cloud";
 
 const cloudExample = () => {
 
-    let cloverConnector = null;
-    let authToken = null;
+    let cloverConnector: clover.remotepay.ICloverConnector = null;
+    let authToken: string = null;
 
     return {
 
         /**
          * Establishes a connection to the Clover device based on the configuration provided.
          */
-        connect: function (connectionConfiguration = null) {
+        connect: function (connectionConfiguration = null): void {
             this.cleanup(); // any existing connections.
             if (!connectionConfiguration) {
                 connectionConfiguration = buildConnectionConfigFromWebForm();
             }
             clover.DebugConfig.loggingEnabled = true;
-            let cloverDeviceConnectionConfiguration = null;
+            let cloverDeviceConnectionConfiguration: clover.CloverDeviceConfiguration = null;
             if (isCloudConfig()) {
-                const cloudFormValid = (document.getElementById("cloudForm") as HTMLInputElement).checkValidity();
+                const cloudFormValid: boolean = (document.getElementById("cloudForm") as HTMLInputElement).checkValidity();
                 if (!cloudFormValid) {
                     updateStatus("The connection configuration is not valid.  Please update the form below and try again.", false);
-                    return false;
+                    return;
                 }
                 updateStatus("Attempting to connect to your Clover device, please wait  ....");
                 // Configuration Note: See: https://docs.clover.com/build/getting-started-with-clover-connector/?sdk=browser for more information
                 // on how to obtain the required connection parameter values.
                 cloverDeviceConnectionConfiguration = getDeviceConfigurationForCloud(connectionConfiguration);
             } else {
-                const networkFormValid = (document.getElementById("networkForm") as HTMLInputElement).checkValidity();
+                const networkFormValid: boolean = (document.getElementById("networkForm") as HTMLInputElement).checkValidity();
                 if (!networkFormValid) {
                     updateStatus("The connection configuration is not valid.  Please update the form below and try again.", false);
-                    return false;
+                    return;
                 }
                 updateStatus("Attempting to connect to your Clover device, you may need to enter the manager PIN, please wait  ....");
                 cloverDeviceConnectionConfiguration = getDeviceConfigurationForNetwork(connectionConfiguration);
             }
             toggleElement("connectionForm", false);
-            let builderConfiguration = {};
+            let builderConfiguration: any = {};
             builderConfiguration[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
-            let cloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(builderConfiguration);
+            let cloverConnectorFactory: clover.CloverConnectorFactory = clover.CloverConnectorFactoryBuilder.createICloverConnectorFactory(builderConfiguration);
             cloverConnector = cloverConnectorFactory.createICloverConnector(cloverDeviceConnectionConfiguration);
             // Work-around for typings issue in 3.1.0.  This will be fixed in the next release.
             (cloverConnector as any).addCloverConnectorListener(buildCloverConnectionListener());
@@ -49,7 +49,7 @@ const cloudExample = () => {
         /**
          * Sends a message to your Clover device.
          */
-        showMessage: function () {
+        showMessage: function (): void {
             cloverConnector.showMessage("Welcome to Clover Connector!");
             // NOTE:  We are NOT returning the device to the default screen!  Because we are not,
             // the message will remain on the device until it is told to change it.
@@ -58,15 +58,15 @@ const cloudExample = () => {
         /**
          * Resets your Clover device (will cancel ongoing transactions and return to the welcome screen).
          */
-        resetDevice: function () {
+        resetDevice: function (): void {
             cloverConnector.resetDevice();
         },
 
         /**
          * Performs a sale on your Clover device.
          */
-        performSale: function () {
-            const saleRequest = new clover.remotepay.SaleRequest();
+        performSale: function (): void {
+            const saleRequest: clover.remotepay.SaleRequest = new clover.remotepay.SaleRequest();
             saleRequest.setExternalId(clover.CloverID.getNewId());
             saleRequest.setAmount(10);
             saleRequest.setAutoAcceptSignature(false);
@@ -78,7 +78,7 @@ const cloudExample = () => {
         /**
          * It is important to properly dispose of your Clover Connector, this function is called in window.onbeforeunload in index.html.
          */
-        cleanup: function () {
+        cleanup: function (): void {
             if (cloverConnector) {
                 cloverConnector.dispose();
                 toggleElement("actions", false);
@@ -86,12 +86,12 @@ const cloudExample = () => {
             }
         },
 
-        showNetworkInfo: function() {
+        showNetworkInfo: function(): void {
             toggleElement("networkInfo", true);
             toggleElement("cloudInfo", false);
         },
 
-        showCloudInfo: function() {
+        showCloudInfo: function(): void {
             toggleElement("cloudInfo", true);
             toggleElement("networkInfo", false);
         }
@@ -101,8 +101,8 @@ const cloudExample = () => {
     /**
      * Builds a configuration container from the web form.
      */
-    function buildConnectionConfigFromWebForm() {
-        const config = {};
+    function buildConnectionConfigFromWebForm(): any {
+        const config: any = {};
         if (isCloudConfig()) {
             config["applicationId"] = (document.getElementById("cloudAppId") as HTMLInputElement).value;
             config["accessToken"] = (document.getElementById("accessToken") as HTMLInputElement).value;
@@ -120,7 +120,7 @@ const cloudExample = () => {
         return config;
     }
 
-    function isCloudConfig() {
+    function isCloudConfig(): boolean {
         const cloudInfo = document.getElementById("cloudInfo");
         return cloudInfo && cloudInfo.style.display === "block";
     }
@@ -131,9 +131,9 @@ const cloudExample = () => {
      * @param connectionConfiguration
      * @returns {WebSocketCloudCloverDeviceConfiguration}
      */
-    function getDeviceConfigurationForCloud(connectionConfiguration) {
+    function getDeviceConfigurationForCloud(connectionConfiguration): clover.CloverDeviceConfiguration {
         // Work-around for typings issue in 3.1.0.  This will be fixed in the next release.
-        const configBuilder = new (clover as any).WebSocketCloudCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
+        const configBuilder: any = new (clover as any).WebSocketCloudCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
             connectionConfiguration.deviceId, connectionConfiguration.merchantId, connectionConfiguration.accessToken);
         configBuilder.setCloverServer(connectionConfiguration.cloverServer);
         configBuilder.setFriendlyId(connectionConfiguration.friendlyId);
@@ -151,7 +151,7 @@ const cloudExample = () => {
      * @param connectionConfiguration
      * @returns {WebSocketPairedCloverDeviceConfiguration}
      */
-    function getDeviceConfigurationForNetwork(connectionConfiguration) {
+    function getDeviceConfigurationForNetwork(connectionConfiguration): clover.CloverDeviceConfiguration {
         const onPairingCode = (pairingCode) => {
             const pairingCodeMessage = `Please enter pairing code ${pairingCode} on the device`;
             updateStatus(pairingCodeMessage, true);
@@ -163,7 +163,7 @@ const cloudExample = () => {
         };
 
         // Work-around for typings issue in 3.1.0.  This will be fixed in the next release.
-        const configBuilder = new (clover as any).WebSocketPairedCloverDeviceConfigurationBuilder(
+        const configBuilder: any = new (clover as any).WebSocketPairedCloverDeviceConfigurationBuilder(
             connectionConfiguration.applicationId,
             connectionConfiguration.endpoint,
             connectionConfiguration.posName,
@@ -181,7 +181,7 @@ const cloudExample = () => {
     function buildCloverConnectionListener() {
         return Object.assign({}, clover.remotepay.ICloverConnectorListener.prototype, {
 
-            onSaleResponse: function (response) {
+            onSaleResponse: function (response): void {
                 updateStatus("Sale complete.", response.result === "SUCCESS");
                 console.log({message: "Sale response received", response: response});
                 if (!response.getIsSale()) {
@@ -190,7 +190,7 @@ const cloudExample = () => {
             },
 
             // See https://docs.clover.com/build/working-with-challenges/
-            onConfirmPaymentRequest: function (request) {
+            onConfirmPaymentRequest: function (request): void {
                 console.log({message: "Automatically accepting payment", request: request});
                 updateStatus("Automatically accepting payment", true);
                 cloverConnector.acceptPayment(request.getPayment());
@@ -199,7 +199,7 @@ const cloudExample = () => {
             },
 
             // See https://docs.clover.com/build/working-with-challenges/
-            onVerifySignatureRequest: function (request) {
+            onVerifySignatureRequest: function (request): void {
                 console.log({message: "Automatically accepting signature", request: request});
                 updateStatus("Automatically accepting signature", true);
                 cloverConnector.acceptSignature(request);
@@ -207,20 +207,20 @@ const cloudExample = () => {
                 // getCloverConnector().rejectSignature(request);
             },
 
-            onDeviceReady: function (merchantInfo) {
+            onDeviceReady: function (merchantInfo): void {
                 updateStatus("Your Clover device is ready to process requests.", true);
                 console.log({message: "Device Ready to process requests!", merchantInfo: merchantInfo});
                 toggleElement("connectionForm", false);
                 toggleElement("actions", true);
             },
 
-            onDeviceError: function (cloverDeviceErrorEvent) {
+            onDeviceError: function (cloverDeviceErrorEvent): void {
                 updateStatus(`An error has occurred and we could not connect to your Clover Device. ${cloverDeviceErrorEvent.message}`, false);
                 toggleElement("connectionForm", true);
                 toggleElement("actions", false);
             },
 
-            onDeviceDisconnected: function () {
+            onDeviceDisconnected: function (): void {
                 updateStatus("The connection to your Clover Device has been dropped.", false);
                 console.log({message: "Disconnected"});
                 toggleElement("connectionForm", true);
@@ -230,8 +230,8 @@ const cloudExample = () => {
         });
     }
 
-    function toggleElement(eleId, show) {
-        let actionsEle = document.getElementById(eleId);
+    function toggleElement(eleId, show): void {
+        let actionsEle: HTMLElement = document.getElementById(eleId);
         if (show) {
             actionsEle.style.display = "block";
         } else {
@@ -239,9 +239,9 @@ const cloudExample = () => {
         }
     }
 
-    function updateStatus(message, success = false) {
+    function updateStatus(message, success = false): void  {
         toggleElement("statusContainer", true);
-        const statusEle = document.getElementById("statusMessage");
+        const statusEle: HTMLElement = document.getElementById("statusMessage");
         statusEle.innerHTML = message;
         if (success === false) {
             statusEle.className = "alert alert-danger";

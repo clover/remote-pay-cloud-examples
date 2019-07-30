@@ -5,7 +5,7 @@ This repository contains a sample web application written in TypeScript that use
 To clone this repository, enter the following on the command line:
 
     git clone git@github.com:clover/remote-pay-cloud-examples.git
-    cd remote-pay-cloud-starter
+    cd remote-pay-cloud-starter-typescript
    
 Next, you can build and run the application locally with the following commands:
   
