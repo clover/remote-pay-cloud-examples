@@ -215,7 +215,7 @@ const cloudExample = () => {
             },
 
             onDeviceError: function (cloverDeviceErrorEvent: clover.remotepay.CloverDeviceErrorEvent): void {
-                updateStatus(`An error has occurred and we could not connect to your Clover Device. ${cloverDeviceErrorEvent.message}`, false);
+                updateStatus(`An error has occurred and we could not connect to your Clover Device. ${cloverDeviceErrorEvent.getMessage()}`, false);
                 toggleElement("connectionForm", true);
                 toggleElement("actions", false);
             },
