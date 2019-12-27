@@ -113,7 +113,6 @@ var exampleCLI = (function (module) {
         let defaultConnectorListener = DefaultConnectionListener.create(cloverConnector);
         return Object.assign(defaultConnectorListener, {
             onDeviceReady: function (merchantInfo) {
-                cloverConnector.resetDevice();
                 executeAction(answers);
             }
         });
