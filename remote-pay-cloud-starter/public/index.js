@@ -4,6 +4,9 @@ const cloudExample = () => {
 
     let cloverConnector = null;
     let authToken = null;
+    // Stores active/open SaleRequests, we should NOT allow our POS to perform a new SaleRequest until we have received
+    // a SaleResponse for any open requests.
+    let activeSaleRequest = null;
 
     return {
 
@@ -65,13 +68,14 @@ const cloudExample = () => {
          * Performs a sale on your Clover device.
          */
         performSale: function () {
-            const saleRequest = new clover.remotepay.SaleRequest();
-            saleRequest.setExternalId(clover.CloverID.getNewId());
-            saleRequest.setAmount(10);
-            saleRequest.setAutoAcceptSignature(false);
-            console.log({message: "Sending sale", request: saleRequest});
-            // Perform the sale.
-            cloverConnector.sale(saleRequest);
+            activeSaleRequest = new clover.remotepay.SaleRequest();
+            activeSaleRequest.setExternalId(clover.CloverID.getNewId());
+            activeSaleRequest.setAmount(10000);
+            activeSaleRequest.setAutoAcceptSignature(false);
+            activeSaleRequest.setCardEntryMethods(clover.CardEntryMethods.ALL);
+            console.log({message: "Sending sale", request: activeSaleRequest});
+            // Send the sale to the device.
+            cloverConnector.sale(activeSaleRequest);
         },
 
         /**
@@ -179,10 +183,26 @@ const cloudExample = () => {
         return Object.assign({}, clover.remotepay.ICloverConnectorListener.prototype, {
 
             onSaleResponse: function (response) {
-                updateStatus("Sale complete.", response.result === "SUCCESS");
-                console.log({message: "Sale response received", response: response});
-                if (!response.getIsSale()) {
-                    console.log({error: "Response is not a sale!"});
+                const requestAmount = activeSaleRequest.getAmount();
+                activeSaleRequest = null; // The SaleRequest is complete
+                if (response.getSuccess()) {
+                    const payment = response.getPayment();
+                    // We are choosing to void the payment if it was not authorized for hte full amount.
+                    if (payment && payment.getAmount() < requestAmount) {
+                        const voidPaymentRequest = new clover.remotepay.VoidPaymentRequest();
+                        voidPaymentRequest.setPaymentId(payment.getId());
+                        voidPaymentRequest.setVoidReason(clover.order.VoidReason.REJECT_PARTIAL_AUTH);
+                        updateStatus(`The sale was approved for a partial amount (${payment.getAmount()}) and will be voided.`, false);
+                        cloverConnector.voidPayment(voidPaymentRequest);
+                    } else {
+                        updateStatus("Sale complete.", response.result === "SUCCESS");
+                        console.log({message: "Sale response received", response: response});
+                        if (!response.getIsSale()) {
+                            console.log({error: "Response is not a sale!"});
+                        }
+                    }
+                } else {
+                    updateStatus(`The sale was not successful.`, false);
                 }
             },
 
@@ -204,11 +224,39 @@ const cloudExample = () => {
                 // cloverConnector.rejectSignature(request);
             },
 
+            // See https://docs.clover.com/clover-platform/docs/ui-state-messages
+            onDeviceActivityStart: function(cloverDeviceEvent) {
+                // We recommend using this handler to to notify the POS of what the device is doing and allow the
+                // merchant to potentially take action on the customer's behalf (e.g. Would you like a receipt?).
+                // For this simple example we will just display the event's message in the UI.
+                updateStatus(cloverDeviceEvent.message);
+                console.log({message: "onDeviceActivityStart: ", cloverDeviceEvent});
+            },
+
+            onVoidPaymentResponse: function(response) {
+              if (response.getSuccess()) {
+                  updateStatus("The payment was voided", true);
+              } else {
+                  updateStatus("The payment could not be voided", false);
+              }
+            },
+
             onDeviceReady: function (merchantInfo) {
-                updateStatus("Your Clover device is ready to process requests.", true);
-                console.log({message: "Device Ready to process requests!", merchantInfo: merchantInfo});
-                toggleElement("connectionForm", false);
-                toggleElement("actions", true);
+                if (!activeSaleRequest) {
+                    updateStatus("Your Clover device is ready to process requests.", true);
+                    console.log({message: "Device Ready to process requests!", merchantInfo: merchantInfo});
+                    toggleElement("connectionForm", false);
+                    toggleElement("actions", true);
+                } else {
+                    // We have an unresolved sale.  It is likely that the connection to the device was lost
+                    // and the customer is in the middle of or finished the transaction with the POS disconnected.
+                    // Calling retrieveDeviceStatus with setSendLastMessage to true will force the Clover device to
+                    // send us the last message it sent in case something was missed, and allow the POS to proceed with
+                    // or close the transaction.
+                    const retrieveDeviceStatusRequest = new clover.remotepay.RetrieveDeviceStatusRequest();
+                    retrieveDeviceStatusRequest.setSendLastMessage(true);
+                    cloverConnector.retrieveDeviceStatus(retrieveDeviceStatusRequest);
+                }
             },
 
             onDeviceError: function (cloverDeviceErrorEvent) {
