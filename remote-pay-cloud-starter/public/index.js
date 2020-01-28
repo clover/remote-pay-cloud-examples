@@ -205,6 +205,9 @@ const cloudExample = () => {
             },
 
             onDeviceReady: function (merchantInfo) {
+                const retrieveDeviceStatusRequest = new clover.remotepay.RetrieveDeviceStatusRequest();
+                retrieveDeviceStatusRequest.setSendLastMessage(true);
+                cloverConnector.retrieveDeviceStatus(retrieveDeviceStatusRequest);
                 updateStatus("Your Clover device is ready to process requests.", true);
                 console.log({message: "Device Ready to process requests!", merchantInfo: merchantInfo});
                 toggleElement("connectionForm", false);
@@ -212,9 +215,7 @@ const cloudExample = () => {
             },
 
             onDeviceError: function (cloverDeviceErrorEvent) {
-                updateStatus(`An error has occurred and we could not connect to your Clover Device. ${cloverDeviceErrorEvent.message}`, false);
-                toggleElement("connectionForm", true);
-                toggleElement("actions", false);
+                updateStatus(`An error has occurred. ${cloverDeviceErrorEvent.message}`, false);
             },
 
             onDeviceDisconnected: function () {
