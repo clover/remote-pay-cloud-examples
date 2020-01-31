@@ -164,6 +164,17 @@
       </div>
     </div>
   </div>
+  <div class="row top-buffer" id="pendingStatusContainer" style="display:none">
+    <div class="col-lg-12">
+      <div class="row top-buffer">
+        <div id="pendingMessage" class="alert alert-warning"></div>
+      </div>
+      <div class="btn-group">
+        <button type="button" onclick="checkPaymentStatus()" class="btn btn-success">Check payment status
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 <script type="text/javascript" src="built/babel.js"></script>
@@ -187,8 +198,20 @@
         cloudExample.resetDevice();
     }
 
+    function forceResetDevice() {
+        cloudExample.forceResetDevice();
+    }
+
+    function checkPaymentStatus() {
+        cloudExample.checkPaymentStatus();
+    }
+
     function showNetworkInfo() {
         cloudExample.showNetworkInfo();
+    }
+
+    function resetDevice() {
+        cloudExample.resetDevice();
     }
 
     function showCloudInfo() {
