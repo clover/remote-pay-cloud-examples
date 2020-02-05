@@ -324,9 +324,9 @@ const cloudExample = () => {
             },
 
             onDeviceReady: function (merchantInfo) {
+                updateStatus("The connection to your Clover Device has been established.", true);
                 toggleElement("connectionForm", false);
                 if (!pendingSaleRequest) {
-                    updateStatus("Your Clover device is ready to process requests.", true);
                     console.log({message: "Device Ready to process requests!", merchantInfo: merchantInfo});
                     toggleElement("actions", true);
                 } else {
