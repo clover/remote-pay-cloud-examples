@@ -132,8 +132,7 @@ const cloudExample = () => {
      * @returns {WebSocketCloudCloverDeviceConfiguration}
      */
     function getDeviceConfigurationForCloud(connectionConfiguration: any): clover.CloverDeviceConfiguration {
-        // Work-around for typings issue in 3.1.0.  This will be fixed in the next release.
-        const configBuilder: any = new (clover as any).WebSocketCloudCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
+        const configBuilder: clover.WebSocketCloudCloverDeviceConfigurationBuilder = new clover.WebSocketCloudCloverDeviceConfigurationBuilder(connectionConfiguration.applicationId,
             connectionConfiguration.deviceId, connectionConfiguration.merchantId, connectionConfiguration.accessToken);
         configBuilder.setCloverServer(connectionConfiguration.cloverServer);
         configBuilder.setFriendlyId(connectionConfiguration.friendlyId);
@@ -151,7 +150,7 @@ const cloudExample = () => {
      * @param connectionConfiguration
      * @returns {WebSocketPairedCloverDeviceConfiguration}
      */
-    function getDeviceConfigurationForNetwork(connectionConfiguration: any): clover.CloverDeviceConfiguration {
+    function getDeviceConfigurationForNetwork(connectionConfiguration: any): clover.WebSocketPairedCloverDeviceConfiguration {
         const onPairingCode = (pairingCode) => {
             const pairingCodeMessage = `Please enter pairing code ${pairingCode} on the device`;
             updateStatus(pairingCodeMessage, true);
@@ -162,8 +161,7 @@ const cloudExample = () => {
             authToken = authTokenFromPairing;
         };
 
-        // Work-around for typings issue in 3.1.0.  This will be fixed in the next release.
-        const configBuilder: any = new (clover as any).WebSocketPairedCloverDeviceConfigurationBuilder(
+        const configBuilder: clover.WebSocketPairedCloverDeviceConfigurationBuilder = new clover.WebSocketPairedCloverDeviceConfigurationBuilder(
             connectionConfiguration.applicationId,
             connectionConfiguration.endpoint,
             connectionConfiguration.posName,
