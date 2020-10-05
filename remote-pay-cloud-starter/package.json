@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.1.2",
-    "remote-pay-cloud": "3.1.0"
+    "remote-pay-cloud": "^4.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

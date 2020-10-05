@@ -12,7 +12,7 @@
     "image-downloader": "3.4.2",
     "inquirer": "4.0.2",
     "nodejs-websocket": "1.7.1",
-    "remote-pay-cloud": "^3.1.0",
+    "remote-pay-cloud": "^4.0.0",
     "ws": "6.2.1",
     "xmlhttprequest-ssl": "1.5.5"
   },
