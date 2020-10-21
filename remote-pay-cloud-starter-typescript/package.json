@@ -11,7 +11,8 @@
     "build": "webpack && copyfiles -u 4 \"./node_modules/bootstrap/dist/css/bootstrap.css\" \"public/built\"",
     "start": "node server.js",
     "watch": "webpack --watch"
-cd ..  "dependencies": {
+  },
+  "dependencies": {
     "bootstrap": "^4.1.2",
     "remote-pay-cloud": "^4.0.2"
   },
