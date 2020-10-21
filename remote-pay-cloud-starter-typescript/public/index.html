@@ -41,7 +41,7 @@
             <label for="snpdAppId">Application ID</label>
             <input type="text" class="form-control" id="snpdAppId" aria-describedby="snpdAppIdHelp" required>
             <small id="snpdAppIdHelp" class="form-text text-muted">The <a
-                href="https://docs.clover.com/clover-platform/docs/create-your-remote-app-id" target="_blank">remote
+                    href="https://docs.clover.com/clover-platform/docs/create-your-remote-app-id" target="_blank">remote
               application ID
               (RAID)</a>
               of the POS app.
@@ -90,7 +90,7 @@
             <label for="cloudAppId">Application ID</label>
             <input type="text" class="form-control" id="cloudAppId" aria-describedby="cloudAppIdHelp" required>
             <small id="cloudAppIdHelp" class="form-text text-muted">The <a
-                href="https://docs.clover.com/clover-platform/docs/create-your-remote-app-id" target="_blank">remote
+                    href="https://docs.clover.com/clover-platform/docs/create-your-remote-app-id" target="_blank">remote
               application ID (RAID)</a>
               of the POS app.
             </small>
@@ -101,7 +101,7 @@
             <small id="accessTokenHelp" class="form-text text-muted">The OAuth token used when contacting the Clover
               server.
               The steps for obtaining the token are available <a
-                  href="https://docs.clover.com/clover-platform/docs/using-oauth-20" target="_blank">on the Using OAuth
+                      href="https://docs.clover.com/clover-platform/docs/using-oauth-20" target="_blank">on the Using OAuth
                 2.0
                 page</a>.
             </small>
@@ -122,8 +122,8 @@
             <input type="text" class="form-control" id="merchantId" aria-describedby="merchantIdHelp" required>
             <small id="merchantIdHelp" class="form-text text-muted">The steps for finding your merchantId are available
               <a
-                  href="https://docs.clover.com/clover-platform/docs/merchant-id-and-api-token-for-development"
-                  target="_blank">on the Test Merchant IDs & API Tokens page</a>.
+                      href="https://docs.clover.com/clover-platform/docs/merchant-id-and-api-token-for-development"
+                      target="_blank">on the Test Merchant IDs & API Tokens page</a>.
             </small>
           </div>
           <div class="col-md-4 mb-3">
@@ -164,59 +164,83 @@
       </div>
     </div>
   </div>
+  <div class="row top-buffer" id="pendingStatusContainer" style="display:none">
+    <div class="col-lg-12">
+      <div class="row top-buffer">
+        <div id="pendingMessage" class="alert alert-warning"></div>
+      </div>
+      <div class="btn-group">
+        <button type="button" onclick="checkPaymentStatus()" class="btn btn-success">Check payment status
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
+<script type="text/javascript" src="built/babel.js"></script>
 <script type="text/javascript" src="built/cloudExample.js"></script>
 <script>
-    const cloudExample = clover.cloudExample();
+  const cloudExample = clover.cloudExample();
 
-    function connect() {
-        cloudExample.connect();
-    }
+  function connect() {
+    cloudExample.connect();
+  }
 
-    function showMessage() {
-        cloudExample.showMessage();
-    }
+  function showMessage() {
+    cloudExample.showMessage();
+  }
 
-    function performSale() {
-        cloudExample.performSale();
-    }
+  function performSale() {
+    cloudExample.performSale();
+  }
 
-    function resetDevice() {
-        cloudExample.resetDevice();
-    }
+  function resetDevice() {
+    cloudExample.resetDevice();
+  }
 
-    function showNetworkInfo() {
-        cloudExample.showNetworkInfo();
-    }
+  function forceResetDevice() {
+    cloudExample.forceResetDevice();
+  }
 
-    function showCloudInfo() {
-        cloudExample.showCloudInfo();
-    }
+  function checkPaymentStatus() {
+    cloudExample.checkPaymentStatus();
+  }
 
-    window.onbeforeunload = function () {
-        cloudExample.cleanup();
-    };
+  function showNetworkInfo() {
+    cloudExample.showNetworkInfo();
+  }
+
+  function resetDevice() {
+    cloudExample.resetDevice();
+  }
+
+  function showCloudInfo() {
+    cloudExample.showCloudInfo();
+  }
+
+  window.onbeforeunload = function () {
+    cloudExample.cleanup();
+  };
 
 </script>
 <script>
-    // Bootstrap JS for handling form validation.
-    (function() {
-        'use strict';
-        window.addEventListener('load', function() {
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.getElementsByClassName('needs-validation');
-            // Loop over them and prevent submission
-            Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
+  // Bootstrap JS for handling form validation.
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.getElementsByClassName('needs-validation');
+      // Loop over them and prevent submission
+      Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
         }, false);
-    })();
+      });
+    }, false);
+  })();
 </script>
 </html>
