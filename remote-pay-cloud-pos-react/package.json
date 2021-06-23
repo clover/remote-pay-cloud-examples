@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
+    "watch": "webpack -w",
     "start": "node_modules/.bin/babel-node --presets react,es2015 src/server.js"
   },
   "author": "",
@@ -29,7 +30,7 @@
     "react-dom": "^15.3.2",
     "react-qr-reader": "^1.2.1",
     "react-router": "^2.6.1",
-    "remote-pay-cloud": "^4.0.2",
+    "remote-pay-cloud": "^4.0.6",
     "webrtc-adapter": "^5.0.4",
     "xmlhttprequest": "^1.8.0"
   },

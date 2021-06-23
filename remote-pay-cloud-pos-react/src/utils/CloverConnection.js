@@ -52,7 +52,7 @@ export default class CloverConnection {
         this.cloverConnector.initializeConnection();
     }
 
-    connectToDeviceCloud(accessToken, merchantId, deviceId) {
+    connectToDeviceCloud(accessToken, merchantId, deviceId, forceConnect = false) {
         console.log('connecting.....', accessToken, merchantId, deviceId);
         let factoryConfig = {};
         factoryConfig[clover.CloverConnectorFactoryBuilder.FACTORY_VERSION] = clover.CloverConnectorFactoryBuilder.VERSION_12;
@@ -60,10 +60,10 @@ export default class CloverConnection {
 
         const cloudConfigurationBuilder = new clover.WebSocketCloudCloverDeviceConfigurationBuilder(this.applicationId, deviceId, merchantId, accessToken);
         const cloudConfiguration = cloudConfigurationBuilder.setCloverServer(myConfig.cloverServer)
-            .setFriendlyId('')
-            .setForceConnect(false)
+            .setFriendlyId(clover.CloverID.getNewId())
+            .setForceConnect(forceConnect)
             .setHeartbeatInterval(1000)
-            .setReconnectDelay(3000)
+            .setHeartbeatDisconnectTimeout(3000)
             .build();
         this.cloverConnector = cloverConnectorFactory.createICloverConnector(cloudConfiguration);
 

@@ -66,11 +66,18 @@ export default class POSCloverConnectorListener extends clover.sdk.remotepay.ICl
 
     onDeviceDisconnected(){     // called when the Clover device is disconnected
         console.log('onDeviceDisconnected');
+        this.setStatus(`The device is disconnected!  Refresh the webapp to reconnect.`);
     }
 
     onDeviceError(deviceErrorEvent){    // called when a Clover device error event is encountered
         console.log('onDeviceError', deviceErrorEvent);
-        //TODO
+        if (deviceErrorEvent.code === clover.sdk.remotepay.DeviceErrorEventCode.AccessDenied && deviceErrorEvent.message.includes("already connected to")) {
+            this.setStatus(`${deviceErrorEvent.message}  You should refresh the page and use the 'Force Connect' flag.`);
+        } else if (deviceErrorEvent.code === clover.sdk.remotepay.DeviceErrorEventCode.NotConnected) {
+            this.setStatus(`Device is disconnected. You should refresh the page and reconnect`);
+        } else {
+            this.setStatus(`A device error has occurred: ${deviceErrorEvent}`);
+        }
     }
 
     onDeviceReady(merchantInfo){ // called when the Clover device is ready to communicate

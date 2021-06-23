@@ -19,6 +19,7 @@ export default class Layout extends Component {
     constructor(props){
         super(props);
         this.state = {
+            forceConnect: false,
             cloudConnect: false,
             challenge: false,
             challengeContent: null,
@@ -342,7 +343,7 @@ export default class Layout extends Component {
 
     selectDevice(device){
         console.log('device selected: ', device);
-        this.cloverConnection.connectToDeviceCloud(this.access_code, this.merchantId, device.id);
+        this.cloverConnection.connectToDeviceCloud(this.access_code, this.merchantId, device.id, this.state.forceConnect);
         this.setState({ cloudConnect: false, showCloudOptions: true });
     }
 
@@ -485,9 +486,15 @@ export default class Layout extends Component {
             <div className="app-content">
                 {fadeBackground && <div className="popup_opaque"></div>}
                 {cloudConnect && <div className="popup_full_opaque">
+
                     <div className="popup devices_popup">
+                        <div className="force_connect">
+                            <label htmlFor="forceConnect">Force Connect:</label>
+                            <input id="forceConnect" type="checkbox" checked={this.state.forceConnect} onChange={() => this.setState({ forceConnect: !this.state.forceConnect})}/>
+                        </div>
                         {devices}
                     </div>
+
                 </div>}
                 <div className="page_header">
                     <Link to="/">
