@@ -187,6 +187,7 @@ const cloudExample = () => {
         configBuilder.setCloverServer(connectionConfiguration.cloverServer);
         configBuilder.setFriendlyId(connectionConfiguration.friendlyId);
         configBuilder.setHeartbeatInterval(1000);
+        configBuilder.setForceConnect(true);
         return configBuilder.build();
     }
 
