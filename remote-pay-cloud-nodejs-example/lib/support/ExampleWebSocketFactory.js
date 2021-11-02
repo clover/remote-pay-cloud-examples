@@ -16,10 +16,10 @@
                             rejectUnauthorized: false
                         };
                         if (config && config.webSocketLibrary === "nodejs-websocket") {
-                            return WebSocketClient.connect(endpoint, sslOptions);
+                            return WebSocketClient.connect(endpoint, { ...sslOptions, protocols: [config.accessToken] });
                         }
                         // Use the ws library by default.
-                        return new WebSocket(endpoint, sslOptions);
+                        return new WebSocket(endpoint, config.accessToken, sslOptions);
                     }
                 }
                 if (config && config.webSocketLibrary === "nodejs-websocket") {
