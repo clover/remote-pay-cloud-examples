@@ -119,7 +119,7 @@ export default class Layout extends Component {
 
             this.merchantId = this.merchant_array[1];
             this.access_code = this.token_array[1];
-            this.devicesUrl = `${myConfig.devicesDomain}${this.merchantId}/devices?access_token=${this.access_code}`;
+            this.devicesUrl = `${myConfig.devicesDomain}${this.merchantId}/devices`;
 
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
@@ -135,6 +135,7 @@ export default class Layout extends Component {
                 // ... and use it as needed by your app.
             }.bind(this);
             xhttp.open("GET", this.devicesUrl, true);
+            xhttp.setRequestHeader("authorization", `Bearer ${this.access_code}`);
             //xhttp.setRequestHeader("Content-type", "application/json");
             xhttp.send();
 
