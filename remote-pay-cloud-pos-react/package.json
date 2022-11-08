@@ -35,8 +35,8 @@
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
-    "babel-loader": "^6.2.10",
+    "babel-loader": "^9.1.0",
     "http-server": "^0.9.0",
-    "webpack": "^1.13.3"
+    "webpack": "^5.74.0"
   }
 }
