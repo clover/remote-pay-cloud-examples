@@ -458,7 +458,7 @@ export default class Layout extends Component {
             );
             inputContainer = (<div className="input_buttons">{inputButtons}</div>);
         }
-        let devices = <div></div>;
+        let devices = <div style={{overflow: "scroll"}}></div>;
         let numDevices = 0;
         if(cloudConnect && this.devices.elements.length > 0){
             let _devices = Object.keys(this.devices.elements).map((device, i) => {
@@ -469,7 +469,7 @@ export default class Layout extends Component {
                     }
                 }
             );
-            devices = (<div>{_devices}</div>);
+            devices = (<div style={{overflow: "scroll"}}>{_devices}</div>);
         }
         if(parseInt(numDevices) < 1) {
             devices = (<div className="container_padding">
@@ -493,13 +493,15 @@ export default class Layout extends Component {
                             <label htmlFor="forceConnect">Force Connect:</label>
                             <input id="forceConnect" type="checkbox" checked={this.state.forceConnect} onChange={() => this.setState({ forceConnect: !this.state.forceConnect})}/>
                         </div>
-                        {devices}
+                        <div style={{overflow: "scroll"}}>
+                            {devices}
+                        </div>
                     </div>
 
                 </div>}
                 <div className="page_header">
                     <Link to="/">
-                       <Home/>
+                        <Home/>
                     </Link>
                     <div id="connection_status">
                         {connectionState}
@@ -508,36 +510,36 @@ export default class Layout extends Component {
                 </div>
 
                 {showSignature &&
-                <div className="popup popup_container">
-                    <div className="close_popup" onClick={this.closeSignature}>X</div>
-                    <canvas className="signature" ref="canvas"/>
-                    <div className="reject_accept">
-                        <ButtonNormal title="Reject" color="white" extra="left dialog_button" onClick={this.rejectSignature}/>
-                        <ButtonNormal title="Accept" color="white" extra="right dialog_button" onClick={this.acceptSignature}/>
+                    <div className="popup popup_container">
+                        <div className="close_popup" onClick={this.closeSignature}>X</div>
+                        <canvas className="signature" ref="canvas"/>
+                        <div className="reject_accept">
+                            <ButtonNormal title="Reject" color="white" extra="left dialog_button" onClick={this.rejectSignature}/>
+                            <ButtonNormal title="Accept" color="white" extra="right dialog_button" onClick={this.acceptSignature}/>
+                        </div>
                     </div>
-                </div>
                 }
 
                 {showStatusArray &&
-                <div className="card_data popup">
-                    <div className="close_popup" onClick={this.closeStatusArray}>X</div>
-                    <h3>{statusArrayTitle}</h3>
-                    {listContainer}
-                </div>}
+                    <div className="card_data popup">
+                        <div className="close_popup" onClick={this.closeStatusArray}>X</div>
+                        <h3>{statusArrayTitle}</h3>
+                        {listContainer}
+                    </div>}
                 {showStatus &&
-                <div className="popup_container popup">
-                    <div className="close_popup" onClick={this.closeStatus}>X</div>
-                    <div className="status">
-                        {status}
+                    <div className="popup_container popup">
+                        <div className="close_popup" onClick={this.closeStatus}>X</div>
+                        <div className="status">
+                            {status}
+                        </div>
+                        {showInputOptions && <div>{inputContainer}</div>}
+                        {showChallenge &&
+                            <div className="reject_accept">
+                                <ButtonNormal title="Reject" color="white" extra="left dialog_button" onClick={this.rejectPayment} />
+                                <ButtonNormal title="Accept" color="white" extra="right dialog_button" onClick={this.acceptPayment}/>
+                            </div>
+                        }
                     </div>
-                    {showInputOptions && <div>{inputContainer}</div>}
-                    {showChallenge &&
-                    <div className="reject_accept">
-                        <ButtonNormal title="Reject" color="white" extra="left dialog_button" onClick={this.rejectPayment} />
-                        <ButtonNormal title="Accept" color="white" extra="right dialog_button" onClick={this.acceptPayment}/>
-                    </div>
-                    }
-                </div>
                 }
 
                 {showBody ? (
@@ -572,47 +574,47 @@ export default class Layout extends Component {
                         <img className="clover_logo" src={"images/clover_logo.png"}/>
                         <p>Example POS</p>
                         {showConnectionOptions &&
-                        <div className="row connect_row">
-                            <div onClick={this.showNetworkOptions}>
-                                <Network/>
-                                <p>Connect with Network</p>
-                            </div>
-                            <div onClick={this.cloudConnect}>
-                                <Cloud/>
-                                <p>Connect with Cloud</p>
-                            </div>
-                        </div>
-                        }
-                        {(showNetworkOptions&&!showQR) &&
-                        <div className="column_plain center">
-                            <h3>Enter the URI of your device</h3>
-                            <p> This can be found in the Network Pay Display app</p>
-                            <div className="connect_box">
-                                <input className="input_field" type="text" id="uri" value={this.state.uriText} onChange={this.handleChange}/>
-                                <ButtonNormal color="white" title="Connect" extra="connect_button" onClick={this.connect}/>
-                            </div>
-                            {localhost &&
-                            <div className="qr_box">
-                                <div className="row_padding">or</div>
-                                < div className="qr_button">
-                                    <ButtonNormal color="white"  extra="connect_button margin_right" title="Connect with QR" onClick={this.QRClicked}/>
-                                    <span className="qr_tooltip">This can be found by running your finger up and down four times on the screen while in Network Pay Display and then pressing the QR code to print</span>
+                            <div className="row connect_row">
+                                <div onClick={this.showNetworkOptions}>
+                                    <Network/>
+                                    <p>Connect with Network</p>
+                                </div>
+                                <div onClick={this.cloudConnect}>
+                                    <Cloud/>
+                                    <p>Connect with Cloud</p>
                                 </div>
                             </div>
-                            }
-                        </div>
+                        }
+                        {(showNetworkOptions&&!showQR) &&
+                            <div className="column_plain center">
+                                <h3>Enter the URI of your device</h3>
+                                <p> This can be found in the Network Pay Display app</p>
+                                <div className="connect_box">
+                                    <input className="input_field" type="text" id="uri" value={this.state.uriText} onChange={this.handleChange}/>
+                                    <ButtonNormal color="white" title="Connect" extra="connect_button" onClick={this.connect}/>
+                                </div>
+                                {localhost &&
+                                    <div className="qr_box">
+                                        <div className="row_padding">or</div>
+                                        < div className="qr_button">
+                                            <ButtonNormal color="white"  extra="connect_button margin_right" title="Connect with QR" onClick={this.QRClicked}/>
+                                            <span className="qr_tooltip">This can be found by running your finger up and down four times on the screen while in Network Pay Display and then pressing the QR code to print</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
                         }
                         {pairing}
                         {showQR &&
-                        <div className="column_plain center">
-                            <QrReader
-                                delay={this.state.delay}
-                                style={previewStyle}
-                                onError={this.handleError}
-                                onScan={this.handleScan}
-                            />
-                            <p>{this.state.result}</p>
-                        </div>
+                            <div className="column_plain center">
+                                <QrReader
+                                    delay={this.state.delay}
+                                    style={previewStyle}
+                                    onError={this.handleError}
+                                    onScan={this.handleScan}
+                                />
+                                <p>{this.state.result}</p>
+                            </div>
                         }
                     </div>
                 )}
@@ -620,4 +622,4 @@ export default class Layout extends Component {
         );
     }
 
-    }
+}

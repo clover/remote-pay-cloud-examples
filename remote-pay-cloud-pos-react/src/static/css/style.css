@@ -632,14 +632,14 @@ h3{
     flex-direction: column;
 }
 /*.settings_left{*/
-    /*flex-grow: 1;*/
-    /*padding-right: 30px;*/
+/*flex-grow: 1;*/
+/*padding-right: 30px;*/
 /*}*/
 /*.settings_right{*/
-    /*flex-grow: 1;*/
-    /*padding-left: 30px;*/
-    /*display: flex;*/
-    /*flex-direction: column;*/
+/*flex-grow: 1;*/
+/*padding-left: 30px;*/
+/*display: flex;*/
+/*flex-direction: column;*/
 /*}*/
 
 .settings_row{
@@ -715,6 +715,7 @@ h3{
     box-shadow: 0 0 4px #000000;
     position: absolute;
     top: 30%;
+    bottom: 30%;
     margin-left: auto;
     margin-right: auto;
     left: 0;
